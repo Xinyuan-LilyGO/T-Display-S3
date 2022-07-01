@@ -1,0 +1,394 @@
+diff --git a/Processors/TFT_eSPI_ESP32_S3.h b/Processors/TFT_eSPI_ESP32_S3.h
+index 4ec4e20..6b2a257 100644
+--- a/Processors/TFT_eSPI_ESP32_S3.h
++++ b/Processors/TFT_eSPI_ESP32_S3.h
+@@ -343,31 +343,42 @@ SPI3_HOST = 2
+ ////////////////////////////////////////////////////////////////////////////////////////
+ #if defined (TFT_PARALLEL_8_BIT)
+ 
++#if defined(TFT_DATA_PIN_OFFSET_EN)  /* Micky modifies this to select the GPIO control register - 20220701 */
++#define MASK_OFFSET 32
++#define GPIO_CLR_REG GPIO.out1_w1tc.val
++#define GPIO_SET_REG GPIO.out1_w1ts.val
++#else
++#define MASK_OFFSET 0
++#define GPIO_CLR_REG GPIO.out_w1tc
++#define GPIO_SET_REG GPIO.out_w1ts
++#endif
++  
++
+   // Create a bit set lookup table for data bus - wastes 1kbyte of RAM but speeds things up dramatically
+   // can then use e.g. GPIO.out_w1ts = set_mask(0xFF); to set data bus to 0xFF
+   #define PARALLEL_INIT_TFT_DATA_BUS               \
+   for (int32_t c = 0; c<256; c++)                  \
+   {                                                \
+     xset_mask[c] = 0;                              \
+-    if ( c & 0x01 ) xset_mask[c] |= (1 << TFT_D0); \
+-    if ( c & 0x02 ) xset_mask[c] |= (1 << TFT_D1); \
+-    if ( c & 0x04 ) xset_mask[c] |= (1 << TFT_D2); \
+-    if ( c & 0x08 ) xset_mask[c] |= (1 << TFT_D3); \
+-    if ( c & 0x10 ) xset_mask[c] |= (1 << TFT_D4); \
+-    if ( c & 0x20 ) xset_mask[c] |= (1 << TFT_D5); \
+-    if ( c & 0x40 ) xset_mask[c] |= (1 << TFT_D6); \
+-    if ( c & 0x80 ) xset_mask[c] |= (1 << TFT_D7); \
++    if ( c & 0x01 ) xset_mask[c] |= (1 << (TFT_D0-MASK_OFFSET)); \
++    if ( c & 0x02 ) xset_mask[c] |= (1 << (TFT_D1-MASK_OFFSET)); \
++    if ( c & 0x04 ) xset_mask[c] |= (1 << (TFT_D2-MASK_OFFSET)); \
++    if ( c & 0x08 ) xset_mask[c] |= (1 << (TFT_D3-MASK_OFFSET)); \
++    if ( c & 0x10 ) xset_mask[c] |= (1 << (TFT_D4-MASK_OFFSET)); \
++    if ( c & 0x20 ) xset_mask[c] |= (1 << (TFT_D5-MASK_OFFSET)); \
++    if ( c & 0x40 ) xset_mask[c] |= (1 << (TFT_D6-MASK_OFFSET)); \
++    if ( c & 0x80 ) xset_mask[c] |= (1 << (TFT_D7-MASK_OFFSET)); \
+   }                                                \
+ 
+   // Mask for the 8 data bits to set pin directions
+-  #define dir_mask ((1 << TFT_D0) | (1 << TFT_D1) | (1 << TFT_D2) | (1 << TFT_D3) | (1 << TFT_D4) | (1 << TFT_D5) | (1 << TFT_D6) | (1 << TFT_D7))
++  #define dir_mask ((1 << (TFT_D0-MASK_OFFSET)) | (1 << (TFT_D1-MASK_OFFSET)) | (1 << (TFT_D2-MASK_OFFSET)) | (1 << (TFT_D3-MASK_OFFSET)) | (1 << (TFT_D4-MASK_OFFSET)) | (1 << (TFT_D5-MASK_OFFSET)) | (1 << (TFT_D6-MASK_OFFSET)) | (1 << (TFT_D7-MASK_OFFSET)))
+ 
+   #if (TFT_WR >= 32)
+     // Data bits and the write line are cleared sequentially
+     #define clr_mask (dir_mask); WR_L
+   #elif (TFT_WR >= 0)
+     // Data bits and the write line are cleared to 0 in one step (1.25x faster)
+-    #define clr_mask (dir_mask | (1 << TFT_WR))
++    #define clr_mask (dir_mask /* | (1 << TFT_WR) */)
+   #else
+     #define clr_mask
+   #endif
+@@ -381,7 +392,7 @@ SPI3_HOST = 2
+   //*/
+ 
+   // Write 8 bits to TFT
+-  #define tft_Write_8(C)  GPIO.out_w1tc = clr_mask; GPIO.out_w1ts = set_mask((uint8_t)(C)); WR_H
++  #define tft_Write_8(C)  WR_L;GPIO_CLR_REG = clr_mask; GPIO_SET_REG = set_mask((uint8_t)(C)); WR_H
+ 
+   #if defined (SSD1963_DRIVER)
+ 
+@@ -401,33 +412,33 @@ SPI3_HOST = 2
+       #define tft_Write_16S(C) GPIO.out_w1tc = clr_mask; GPIO.out_w1ts = set_mask((uint8_t) ((C) >> 8)); WR_H
+     #else
+       // Write 16 bits to TFT
+-      #define tft_Write_16(C) GPIO.out_w1tc = clr_mask; GPIO.out_w1ts = set_mask((uint8_t) ((C) >> 8)); WR_H; \
+-                              GPIO.out_w1tc = clr_mask; GPIO.out_w1ts = set_mask((uint8_t) ((C) >> 0)); WR_H
++      #define tft_Write_16(C)  WR_L;GPIO_CLR_REG = clr_mask; GPIO_SET_REG = set_mask((uint8_t) ((C) >> 8)); WR_H; \
++                               WR_L;GPIO_CLR_REG = clr_mask; GPIO_SET_REG = set_mask((uint8_t) ((C) >> 0)); WR_H
+ 
+       // 16 bit write with swapped bytes
+-      #define tft_Write_16S(C) GPIO.out_w1tc = clr_mask; GPIO.out_w1ts = set_mask((uint8_t) ((C) >> 0)); WR_H; \
+-                               GPIO.out_w1tc = clr_mask; GPIO.out_w1ts = set_mask((uint8_t) ((C) >> 8)); WR_H
++      #define tft_Write_16S(C)  WR_L;GPIO_CLR_REG = clr_mask; GPIO_SET_REG = set_mask((uint8_t) ((C) >> 0)); WR_H; \
++                                WR_L;GPIO_CLR_REG = clr_mask; GPIO_SET_REG = set_mask((uint8_t) ((C) >> 8)); WR_H
+     #endif
+ 
+   #endif
+ 
+   // Write 32 bits to TFT
+-  #define tft_Write_32(C) GPIO.out_w1tc = clr_mask; GPIO.out_w1ts = set_mask((uint8_t) ((C) >> 24)); WR_H; \
+-                          GPIO.out_w1tc = clr_mask; GPIO.out_w1ts = set_mask((uint8_t) ((C) >> 16)); WR_H; \
+-                          GPIO.out_w1tc = clr_mask; GPIO.out_w1ts = set_mask((uint8_t) ((C) >>  8)); WR_H; \
+-                          GPIO.out_w1tc = clr_mask; GPIO.out_w1ts = set_mask((uint8_t) ((C) >>  0)); WR_H
++  #define tft_Write_32(C)  WR_L;GPIO_CLR_REG = clr_mask; GPIO.out1_w1t.val = set_mask((uint8_t) ((C) >> 24)); WR_H; \
++                           WR_L;GPIO_CLR_REG = clr_mask; GPIO.out1_w1t.val = set_mask((uint8_t) ((C) >> 16)); WR_H; \
++                           WR_L;GPIO_CLR_REG = clr_mask; GPIO.out1_w1t.val = set_mask((uint8_t) ((C) >>  8)); WR_H; \
++                           WR_L;GPIO_CLR_REG = clr_mask; GPIO.out1_w1t.val = set_mask((uint8_t) ((C) >>  0)); WR_H
+ 
+   // Write two concatenated 16 bit values to TFT
+-  #define tft_Write_32C(C,D) GPIO.out_w1tc = clr_mask; GPIO.out_w1ts = set_mask((uint8_t) ((C) >> 8)); WR_H; \
+-                             GPIO.out_w1tc = clr_mask; GPIO.out_w1ts = set_mask((uint8_t) ((C) >> 0)); WR_H; \
+-                             GPIO.out_w1tc = clr_mask; GPIO.out_w1ts = set_mask((uint8_t) ((D) >> 8)); WR_H; \
+-                             GPIO.out_w1tc = clr_mask; GPIO.out_w1ts = set_mask((uint8_t) ((D) >> 0)); WR_H
++  #define tft_Write_32C(C,D)  WR_L;GPIO_CLR_REG = clr_mask; GPIO_SET_REG = set_mask((uint8_t) ((C) >> 8)); WR_H; \
++                              WR_L;GPIO_CLR_REG = clr_mask; GPIO_SET_REG = set_mask((uint8_t) ((C) >> 0)); WR_H; \
++                              WR_L;GPIO_CLR_REG = clr_mask; GPIO_SET_REG = set_mask((uint8_t) ((D) >> 8)); WR_H; \
++                              WR_L;GPIO_CLR_REG = clr_mask; GPIO_SET_REG = set_mask((uint8_t) ((D) >> 0)); WR_H
+ 
+   // Write 16 bit value twice to TFT - used by drawPixel()
+-  #define tft_Write_32D(C) GPIO.out_w1tc = clr_mask; GPIO.out_w1ts = set_mask((uint8_t) ((C) >> 8)); WR_H; \
+-                           GPIO.out_w1tc = clr_mask; GPIO.out_w1ts = set_mask((uint8_t) ((C) >> 0)); WR_H; \
+-                           GPIO.out_w1tc = clr_mask; GPIO.out_w1ts = set_mask((uint8_t) ((C) >> 8)); WR_H; \
+-                           GPIO.out_w1tc = clr_mask; GPIO.out_w1ts = set_mask((uint8_t) ((C) >> 0)); WR_H
++  #define tft_Write_32D(C)  WR_L;GPIO_CLR_REG = clr_mask; GPIO_SET_REG = set_mask((uint8_t) ((C) >> 8)); WR_H; \
++                            WR_L;GPIO_CLR_REG = clr_mask; GPIO_SET_REG = set_mask((uint8_t) ((C) >> 0)); WR_H; \
++                            WR_L;GPIO_CLR_REG = clr_mask; GPIO_SET_REG = set_mask((uint8_t) ((C) >> 8)); WR_H; \
++                            WR_L;GPIO_CLR_REG = clr_mask; GPIO_SET_REG = set_mask((uint8_t) ((C) >> 0)); WR_H
+ 
+    // Read pin
+   #ifdef TFT_RD
+diff --git a/TFT_Drivers/ST7789_Init.h b/TFT_Drivers/ST7789_Init.h
+index 4855f08..fa1257c 100644
+--- a/TFT_Drivers/ST7789_Init.h
++++ b/TFT_Drivers/ST7789_Init.h
+@@ -98,6 +98,7 @@
+   writedata(0x1e);
+ 
+   writecommand(ST7789_INVON);
++  writecommand(ST7789_INVOFF);
+ 
+   writecommand(ST7789_CASET);    // Column address set
+   writedata(0x00);
+diff --git a/User_Setup.h b/User_Setup.h
+index 49d2ac7..931f12d 100644
+--- a/User_Setup.h
++++ b/User_Setup.h
+@@ -35,14 +35,14 @@
+ //#define STM_PORTB_DATA_BUS
+ 
+ // Tell the library to use parallel mode (otherwise SPI is assumed)
+-//#define TFT_PARALLEL_8_BIT
++#define TFT_PARALLEL_8_BIT
+ //#defined TFT_PARALLEL_16_BIT // **** 16 bit parallel ONLY for RP2040 processor ****
+ 
+ // Display type -  only define if RPi display
+ //#define RPI_DISPLAY_TYPE // 20MHz maximum SPI
+ 
+ // Only define one driver, the other ones must be commented out
+-#define ILI9341_DRIVER       // Generic driver for common displays
++// #define ILI9341_DRIVER       // Generic driver for common displays
+ //#define ILI9341_2_DRIVER     // Alternative ILI9341 driver, see https://github.com/Bodmer/TFT_eSPI/issues/1172
+ //#define ST7735_DRIVER      // Define additional parameters below for this display
+ //#define ILI9163_DRIVER     // Define additional parameters below for this display
+@@ -52,8 +52,8 @@
+ //#define ILI9481_DRIVER
+ //#define ILI9486_DRIVER
+ //#define ILI9488_DRIVER     // WARNING: Do not connect ILI9488 display SDO to MISO if other devices share the SPI bus (TFT SDO does NOT tristate when CS is high)
+-//#define ST7789_DRIVER      // Full configuration option, define additional parameters below for this display
+-//#define ST7789_2_DRIVER    // Minimal configuration option, define additional parameters below for this display
++#define ST7789_DRIVER      // Full configuration option, define additional parameters below for this display
++// #define ST7789_2_DRIVER    // Minimal configuration option, define additional parameters below for this display
+ //#define R61581_DRIVER
+ //#define RM68140_DRIVER
+ //#define ST7796_DRIVER
+@@ -74,7 +74,7 @@
+ // Try ONE option at a time to find the correct colour order for your display
+ 
+ //  #define TFT_RGB_ORDER TFT_RGB  // Colour order Red-Green-Blue
+-//  #define TFT_RGB_ORDER TFT_BGR  // Colour order Blue-Green-Red
++ #define TFT_RGB_ORDER TFT_BGR  // Colour order Blue-Green-Red
+ 
+ // For M5Stack ESP32 module with integrated ILI9341 display ONLY, remove // in line below
+ 
+@@ -83,12 +83,12 @@
+ // For ST7789, ST7735, ILI9163 and GC9A01 ONLY, define the pixel width and height in portrait orientation
+ // #define TFT_WIDTH  80
+ // #define TFT_WIDTH  128
+-// #define TFT_WIDTH  172 // ST7789 172 x 320
++#define TFT_WIDTH  172 // ST7789 172 x 320
+ // #define TFT_WIDTH  240 // ST7789 240 x 240 and 240 x 320
+ // #define TFT_HEIGHT 160
+ // #define TFT_HEIGHT 128
+ // #define TFT_HEIGHT 240 // ST7789 240 x 240
+-// #define TFT_HEIGHT 320 // ST7789 240 x 320
++#define TFT_HEIGHT 320 // ST7789 240 x 320
+ // #define TFT_HEIGHT 240 // GC9A01 240 x 240
+ 
+ // For ST7735 ONLY, define the type of display, originally this was based on the
+@@ -165,9 +165,9 @@
+ // ###### EDIT THE PIN NUMBERS IN THE LINES FOLLOWING TO SUIT YOUR ESP8266 SETUP ######
+ 
+ // For NodeMCU - use pin numbers in the form PIN_Dx where Dx is the NodeMCU pin designation
+-#define TFT_CS   PIN_D8  // Chip select control pin D8
+-#define TFT_DC   PIN_D3  // Data Command control pin
+-#define TFT_RST  PIN_D4  // Reset pin (could connect to NodeMCU RST, see next line)
++// #define TFT_CS   PIN_D8  // Chip select control pin D8
++// #define TFT_DC   PIN_D3  // Data Command control pin
++// #define TFT_RST  PIN_D4  // Reset pin (could connect to NodeMCU RST, see next line)
+ //#define TFT_RST  -1    // Set TFT_RST to -1 if the display RESET is connected to NodeMCU RST or 3.3V
+ 
+ //#define TFT_BL PIN_D1  // LED back-light (only for ST7789 with backlight control pin)
+@@ -231,7 +231,7 @@
+ //#define TFT_CS   14  // Chip select control pin
+ //#define TFT_DC   27  // Data Command control pin
+ //#define TFT_RST  33  // Reset pin (could connect to Arduino RESET pin)
+-//#define TFT_BL   32  // LED back-light (required for M5Stack)
++#define TFT_BL   38  // LED back-light (required for M5Stack)
+ 
+ // ######       EDIT THE PINs BELOW TO SUIT YOUR ESP32 PARALLEL TFT SETUP        ######
+ 
+@@ -244,24 +244,24 @@
+ // Example below is for ESP32 Parallel interface with UNO displays
+ 
+ // Tell the library to use 8 bit parallel mode (otherwise SPI is assumed)
+-//#define TFT_PARALLEL_8_BIT
++#define TFT_PARALLEL_8_BIT
+ 
+ // The ESP32 and TFT the pins used for testing are:
+-//#define TFT_CS   33  // Chip select control pin (library pulls permanently low
+-//#define TFT_DC   15  // Data Command control pin - must use a pin in the range 0-31
+-//#define TFT_RST  32  // Reset pin, toggles on startup
+-
+-//#define TFT_WR    4  // Write strobe control pin - must use a pin in the range 0-31
+-//#define TFT_RD    2  // Read strobe control pin
+-
+-//#define TFT_D0   12  // Must use pins in the range 0-31 for the data bus
+-//#define TFT_D1   13  // so a single register write sets/clears all bits.
+-//#define TFT_D2   26  // Pins can be randomly assigned, this does not affect
+-//#define TFT_D3   25  // TFT screen update performance.
+-//#define TFT_D4   17
+-//#define TFT_D5   16
+-//#define TFT_D6   27
+-//#define TFT_D7   14
++#define TFT_CS   6  // Chip select control pin (library pulls permanently low
++#define TFT_DC   7  // Data Command control pin - must use a pin in the range 0-31
++#define TFT_RST  5  // Reset pin, toggles on startup
++
++#define TFT_WR    8  // Write strobe control pin - must use a pin in the range 0-31
++#define TFT_RD    -1  // Read strobe control pin
++
++#define TFT_D0   39  // Must use pins in the range 0-31 for the data bus
++#define TFT_D1   40  // so a single register write sets/clears all bits.
++#define TFT_D2   41  // Pins can be randomly assigned, this does not affect
++#define TFT_D3   42  // TFT screen update performance.
++#define TFT_D4   45
++#define TFT_D5   46
++#define TFT_D6   47
++#define TFT_D7   48
+ 
+ // ######       EDIT THE PINs BELOW TO SUIT YOUR STM32 SPI TFT SETUP        ######
+ 
+@@ -336,16 +336,16 @@
+ // With an ILI9163 display 27 MHz works OK.
+ 
+ // #define SPI_FREQUENCY   1000000
+-// #define SPI_FREQUENCY   5000000
++#define SPI_FREQUENCY   5000000
+ // #define SPI_FREQUENCY  10000000
+ // #define SPI_FREQUENCY  20000000
+-#define SPI_FREQUENCY  27000000
++// #define SPI_FREQUENCY  27000000
+ // #define SPI_FREQUENCY  40000000
+ // #define SPI_FREQUENCY  55000000 // STM32 SPI1 only (SPI2 maximum is 27MHz)
+ // #define SPI_FREQUENCY  80000000
+ 
+ // Optional reduced SPI frequency for reading TFT
+-#define SPI_READ_FREQUENCY  20000000
++#define SPI_READ_FREQUENCY  2000000
+ 
+ // The XPT2046 requires a lower SPI clock rate of 2.5MHz so we define that here:
+ #define SPI_TOUCH_FREQUENCY  2500000
+diff --git a/User_Setup_Select.h b/User_Setup_Select.h
+index 999a288..4f2ed01 100644
+--- a/User_Setup_Select.h
++++ b/User_Setup_Select.h
+@@ -19,7 +19,7 @@
+ 
+ // Only ONE line below should be uncommented.  Add extra lines and files as needed.
+ 
+-#include <User_Setup.h>           // Default setup is root library folder
++// #include <User_Setup.h>           // Default setup is root library folder
+ 
+ //#include <User_Setups/Setup1_ILI9341.h>  // Setup file for ESP8266 configured for my ILI9341
+ //#include <User_Setups/Setup2_ST7735.h>   // Setup file for ESP8266 configured for my ST7735
+@@ -49,7 +49,7 @@
+ //#include <User_Setups/Setup22_TTGO_T4.h>           // Setup file for ESP32 and TTGO T4 version 1.2
+ //#include <User_Setups/Setup22_TTGO_T4_v1.3.h>      // Setup file for ESP32 and TTGO T4 version 1.3
+ //#include <User_Setups/Setup23_TTGO_TM.h>           // Setup file for ESP32 and TTGO TM ST7789 SPI bus TFT
+-//#include <User_Setups/Setup24_ST7789.h>            // Setup file for DSTIKE/ESP32/ESP8266 configured for ST7789 240 x 240
++#include <User_Setups/Setup24_ST7789.h>            // Setup file for DSTIKE/ESP32/ESP8266 configured for ST7789 240 x 240
+ //#include <User_Setups/Setup25_TTGO_T_Display.h>    // Setup file for ESP32 and TTGO T-Display ST7789V SPI bus TFT
+ //#include <User_Setups/Setup26_TTGO_T_Wristband.h>  // Setup file for ESP32 and TTGO T-Wristband ST7735 SPI bus TFT
+ 
+diff --git a/User_Setups/Setup24_ST7789.h b/User_Setups/Setup24_ST7789.h
+index 2acc6c3..b00cb58 100644
+--- a/User_Setups/Setup24_ST7789.h
++++ b/User_Setups/Setup24_ST7789.h
+@@ -1,55 +1,61 @@
+ // ST7789 240 x 240 display with no chip select line
+ #define USER_SETUP_ID 24
+ 
+-#define ST7789_DRIVER     // Configure all registers
++#define ST7789_DRIVER // Configure all registers
+ 
+-#define TFT_WIDTH  240
+-#define TFT_HEIGHT 240
++// #define TFT_RGB_ORDER TFT_BGR // Colour order Blue-Green-Red
+ 
+-//#define TFT_RGB_ORDER TFT_RGB  // Colour order Red-Green-Blue
+-//#define TFT_RGB_ORDER TFT_BGR  // Colour order Blue-Green-Red
++#define TFT_WIDTH 170  // ST7789 172 x 320
++#define TFT_HEIGHT 320 // ST7789 240 x 320
+ 
+-//#define TFT_INVERSION_ON
++#define CGRAM_OFFSET
++// #define TFT_RGB_ORDER TFT_RGB  // Colour order Red-Green-Blue
++#define TFT_RGB_ORDER TFT_BGR  // Colour order Blue-Green-Red
++
++#define TFT_INVERSION_ON
+ //#define TFT_INVERSION_OFF
+ 
+-// DSTIKE stepup
+-//#define TFT_DC    23
+-//#define TFT_RST   32
+-//#define TFT_MOSI  26
+-//#define TFT_SCLK  27
+-
+-// Generic ESP32 setup
+-//#define TFT_MISO 19
+-//#define TFT_MOSI 23
+-//#define TFT_SCLK 18
+-//#define TFT_CS    -1 // Not connected
+-//#define TFT_DC    2
+-//#define TFT_RST   4  // Connect reset to ensure display initialises
+-
+-// For NodeMCU - use pin numbers in the form PIN_Dx where Dx is the NodeMCU pin designation
+-#define TFT_CS   -1      // Define as not used
+-#define TFT_DC   PIN_D1  // Data Command control pin
+-#define TFT_RST  PIN_D4  // TFT reset pin (could connect to NodeMCU RST, see next line)
+-//#define TFT_RST  -1    // TFT reset pin connect to NodeMCU RST, must also then add 10K pull down to TFT SCK
+-
+-
+-#define LOAD_GLCD   // Font 1. Original Adafruit 8 pixel font needs ~1820 bytes in FLASH
+-#define LOAD_FONT2  // Font 2. Small 16 pixel high font, needs ~3534 bytes in FLASH, 96 characters
+-#define LOAD_FONT4  // Font 4. Medium 26 pixel high font, needs ~5848 bytes in FLASH, 96 characters
+-#define LOAD_FONT6  // Font 6. Large 48 pixel font, needs ~2666 bytes in FLASH, only characters 1234567890:-.apm
+-#define LOAD_FONT7  // Font 7. 7 segment 48 pixel font, needs ~2438 bytes in FLASH, only characters 1234567890:.
+-#define LOAD_FONT8  // Font 8. Large 75 pixel font needs ~3256 bytes in FLASH, only characters 1234567890:-.
++#define TFT_PARALLEL_8_BIT
++
++// The ESP32 and TFT the pins used for testing are:
++#define TFT_CS 6  // Chip select control pin (library pulls permanently low
++#define TFT_DC 7  // Data Command control pin - must use a pin in the range 0-31
++#define TFT_RST 5 // Reset pin, toggles on startup
++
++#define TFT_WR 8 // Write strobe control pin - must use a pin in the range 0-31
++#define TFT_RD 9 // Read strobe control pin
++
++#define TFT_DATA_PIN_OFFSET_EN /* The ESP32S3 controller is controlled by two registers. \
++                                Select data pin numbers higher than 32 to enable this option, \
++                                this macro definition added by Micky -20220701 */
++
++#define TFT_D0 39 // Must use pins in the range 0-31 for the data bus
++#define TFT_D1 40 // so a single register write sets/clears all bits.
++#define TFT_D2 41 // Pins can be randomly assigned, this does not affect
++#define TFT_D3 42 // TFT screen update performance.
++#define TFT_D4 45
++#define TFT_D5 46
++#define TFT_D6 47
++#define TFT_D7 48
++
++#define TFT_BL 38 // LED back-light (required for M5Stack)
++
++#define LOAD_GLCD  // Font 1. Original Adafruit 8 pixel font needs ~1820 bytes in FLASH
++#define LOAD_FONT2 // Font 2. Small 16 pixel high font, needs ~3534 bytes in FLASH, 96 characters
++#define LOAD_FONT4 // Font 4. Medium 26 pixel high font, needs ~5848 bytes in FLASH, 96 characters
++#define LOAD_FONT6 // Font 6. Large 48 pixel font, needs ~2666 bytes in FLASH, only characters 1234567890:-.apm
++#define LOAD_FONT7 // Font 7. 7 segment 48 pixel font, needs ~2438 bytes in FLASH, only characters 1234567890:.
++#define LOAD_FONT8 // Font 8. Large 75 pixel font needs ~3256 bytes in FLASH, only characters 1234567890:-.
+ //#define LOAD_FONT8N // Font 8. Alternative to Font 8 above, slightly narrower, so 3 digits fit a 160 pixel TFT
+-#define LOAD_GFXFF  // FreeFonts. Include access to the 48 Adafruit_GFX free fonts FF1 to FF48 and custom fonts
++#define LOAD_GFXFF // FreeFonts. Include access to the 48 Adafruit_GFX free fonts FF1 to FF48 and custom fonts
+ 
+ #define SMOOTH_FONT
+ 
+-
+ // #define SPI_FREQUENCY  27000000
+-#define SPI_FREQUENCY  40000000
++// #define SPI_FREQUENCY  40000000
+ 
+-#define SPI_READ_FREQUENCY  20000000
++// #define SPI_READ_FREQUENCY  20000000
+ 
+-#define SPI_TOUCH_FREQUENCY  2500000
++// #define SPI_TOUCH_FREQUENCY  2500000
+ 
+ // #define SUPPORT_TRANSACTIONS
+\ No newline at end of file

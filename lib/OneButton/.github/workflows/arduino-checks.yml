@@ -1,0 +1,57 @@
+# This is a basic workflow to help you get started with Actions for Arduino library projects
+
+name: Arduino Library Checks
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the develop branch
+  push:
+    branches: [develop,master]
+  pull_request:
+    branches: [develop,master]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+
+  # This defines a job for checking the Arduino library format specifications
+  # see <https://github.com/marketplace/actions/arduino-arduino-lint-action>
+  lint:
+    name: check library format
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # Arduino - lint
+      - name: Arduino-lint
+        uses: arduino/arduino-lint-action@v1
+        with:
+          library-manager: update
+          verbose: false
+
+  # These jobs are used to compile the examples fot the specific processor/board.
+  # see <https://github.com/marketplace/actions/compile-arduino-sketches>
+  compile-uno:
+    name: compile uno examples
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # Compile Examples for UNO
+      - name: Compile examples on uno
+        uses: arduino/compile-sketches@v1
+        with:
+          verbose: true
+          fqbn: arduino:avr:uno
+          sketch-paths: |
+            - 'examples/SimpleOneButton'
+            - 'examples/TwoButtons'
+            - 'examples/BlinkMachine'
+            - 'examples/InterruptOneButton'
+            - 'examples/SpecialInput'
+

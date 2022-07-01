@@ -1,0 +1,37 @@
+Hynitron touch controller
+
+The Hynitron controller is connected to host processor via i2c. The controller generates interrupts when the user touches the panel. The host controller is expected to read the touch coordinates over i2c and pass the coordinates to the rest of the system.
+
+Required properties:
+ - compatible		: should be "hynitron,hyn_ts"
+ - reg				: i2c slave address of the device, should be <0x1a(mutcap) or 0x15(slefcap)>
+ - hynitron,irq-gpio	: irq gpio, same as "interrupts" node. 
+ - hynitron,reset-gpio	: reset gpio,keep high voltage in normal mode.
+ - hynitron,max-touch-number: maximum number of touches support
+ - hynitron,display-coords 	: display resolution in pixels. A two tuple consisting of x_resolution, y_resolution.
+
+Optional properties:
+ - hynitron,have-key		: specify if virtual keys are supported
+ - hynitron,key-number		: number of keys 
+ - hynitron,key-code		: virtual key codes mapping to the coords
+ - hynitron,key-y-coord		: constant y coordinate of keys, depends on the y resolution
+ - hynitron,key-x-coord 	: constant x coordinates of keys, depends on the x resolution
+ 
+ 
+Example: 
+	i2c@f9927000 { 
+		hynitron@1a{ 
+			compatible = "hynitron,hyn_ts";	
+			reg = <0x1a>;  					
+			hynitron,reset-gpio = <&gpio 12 0x01>; 
+			hynitron,irq-gpio = <&gpio 13 0x02>; 	
+			hynitron,max-touch-number = <5>;			
+			hynitron,display-coords =  <1080 1920>;	
+
+			hynitron,have-key;
+			hynitron,key-number = <3>;	
+			hynitron,key-code = <139 172 158>; 	
+			hynitron,key-y-coord = <2000 2000 2000>; 
+			hynitron,key-x-coord = <200 600 800>;
+		};
+	}; 

@@ -1,0 +1,19 @@
+{
+  "name": "OneButton",
+  "version": "2.0.3",
+  "keywords": "arduino, button, pushbutton",
+  "description": "This Arduino library is improving the usage of a singe button for input. It shows how to use an digital input pin with a single pushbutton attached for detecting some of the typical button press events like single clicks, double clicks and long-time pressing. This enables you to reuse the same button for multiple functions and lowers the hardware invests.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mathertel/OneButton"
+  },
+  "authors": {
+    "name": "Matthias Hertel",
+    "email": "mathertel@hotmail.com",
+    "url": "https://www.mathertel.de/impressum.aspx"
+  },
+  "license": "BSD-3-Clause",
+  "homepage": "http://www.mathertel.de/Arduino/OneButtonLibrary.aspx",
+  "frameworks": "arduino",
+  "platforms": "*"
+}

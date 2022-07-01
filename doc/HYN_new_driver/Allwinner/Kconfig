@@ -1,0 +1,12 @@
+#
+# Touchscreen driver configuration
+#
+config CONFIG_TOUCHSCREEN_HYNITRON_TS
+    bool "hynitorn Ts for TOUCHSCREEN"
+    depends on I2C
+    default n
+    help
+      Say Y here if you have hynitorn touch panel.
+      If unsure, say N.
+      
+    

@@ -1,0 +1,5 @@
+{
+    "files.associations": {
+        "tft_espi_esp32_s3.c": "cpp"
+    }
+}

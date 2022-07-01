@@ -1,0 +1,41 @@
+#######################################
+# Syntax Coloring Map for OneButton
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+callbackFunction	KEYWORD1
+parameterizedCallbackFunction	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+setClickTicks	KEYWORD2
+setPressTicks	KEYWORD2
+setDebounceTicks	KEYWORD2
+attachClick	KEYWORD2
+attachDoubleClick	KEYWORD2
+attachMultiClick	KEYWORD2
+attachLongPressStart	KEYWORD2
+attachLongPressStop	KEYWORD2
+attachDuringLongPress	KEYWORD2
+tick	KEYWORD2
+reset	KEYWORD2
+getNumberClicks	KEYWORD2
+isIdle	KEYWORD2
+isLongPressed	KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+OneButton	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+
