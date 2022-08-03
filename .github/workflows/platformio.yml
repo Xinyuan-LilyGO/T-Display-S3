@@ -25,10 +25,10 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          cd example/arduino/factory/
           pip install -U platformio
           pio pkg update
       - name: Submitted library code test
         run: |
-          cd example/arduino/factory/
           pio run
       
