@@ -1,4 +1,5 @@
-.example/arduino/CST328touch
+.vscode
+example/arduino/CST328touch
 # Prerequisites
 *.d
 

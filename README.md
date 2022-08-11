@@ -16,8 +16,9 @@ T-Display-S3 is a development board whose main control chip is ESP32-S3. It is e
 
 |  Product |  Product Link |
 | :--------: | :---------: |
-| T-Display-S3 |  [AliExpress]()   |
-
+| T-Display-S3 |  [Website](https://www.lilygo.cc/products/t-display-s3)   |
+| T-Display-S3 |  [Amazon](https://www.amazon.com/dp/B0B7X5RVTH?ref=myi_title_dp)   |
+| T-Display-S3 |  [Aliexpress](https://www.aliexpress.com/item/3256804310228562.html)   |
 
 ***
 ## Quick Start
