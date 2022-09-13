@@ -26,7 +26,7 @@ T-Display-S3 is a development board whose main control chip is ESP32-S3. It is e
 > Arduino:
 >- Click "File" in the upper left corner -> Preferences -> Additional Development >Board Manager URL -> Enter the URL in the input box.
 (ESP32S3 is a new chip, and the SDK version needs to be version 2.0.3 or above)
-> `https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pagespackage_esp32_index.json`
+> `https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json`
 >-  Click OK and the software will be installed by itself. After installation, restart the Arduino IDE software.
 >- Copy all files in the lib folder to `\Arduino\libraries`
 
