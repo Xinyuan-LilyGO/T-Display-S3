@@ -1,6 +1,7 @@
 #include "Arduino.h"
 #include "OneButton.h"
 #include "WiFi.h"
+#include "cstxx.h"
 #include "esp_lcd_panel_io.h"
 #include "esp_lcd_panel_ops.h"
 #include "esp_lcd_panel_vendor.h"
@@ -17,6 +18,10 @@ static lv_color_t *lv_disp_buf;
 static bool is_initialized_lvgl = false;
 OneButton button1(PIN_BUTTON_1, true);
 OneButton button2(PIN_BUTTON_2, true);
+CSTXXX touch(0, 0, 170, 320);
+
+bool inited_touch = false;
+
 extern const unsigned char img_logo[20000];
 void wifi_test(void);
 void timeavailable(struct timeval *t);
@@ -113,9 +118,6 @@ void setup() {
     ledcWrite(0, i);
     delay(2);
   }
-  
-  esp_lcd_panel_draw_bitmap(panel_handle, 0, 0, 100, 100, img_logo);
-  delay(2000);
 
   lv_init();
   lv_disp_buf = (lv_color_t *)heap_caps_malloc(LVGL_LCD_BUF_SIZE * sizeof(lv_color_t), MALLOC_CAP_DMA | MALLOC_CAP_INTERNAL);
@@ -133,6 +135,9 @@ void setup() {
 
   is_initialized_lvgl = true;
 
+  Wire.begin(PIN_IIC_SDA, PIN_IIC_SCL);
+  inited_touch = touch.init(Wire, PIN_TOUCH_RES, PIN_TOUCH_INT);
+
   wifi_test();
 
   button1.attachClick([]() {
@@ -143,6 +148,7 @@ void setup() {
     esp_sleep_enable_ext0_wakeup((gpio_num_t)PIN_BUTTON_2, 0); // 1 = High, 0 = Low
     esp_deep_sleep_start();
   });
+  
   button2.attachClick([]() { ui_switch_page(); });
 }
 
@@ -152,7 +158,7 @@ void loop() {
   button2.tick();
   delay(3);
   static uint32_t last_tick;
-  if (millis() - last_tick > 1000) {
+  if (millis() - last_tick > 100) {
     struct tm timeinfo;
     if (getLocalTime(&timeinfo)) {
       lv_msg_send(MSG_NEW_HOUR, &timeinfo.tm_hour);
@@ -160,6 +166,26 @@ void loop() {
     }
     uint32_t volt = (analogRead(PIN_BAT_VOLT) * 2 * 3.3 * 1000) / 4096;
     lv_msg_send(MSG_NEW_VOLT, &volt);
+
+    if (inited_touch) {
+      touch_info_t t;
+      String str_buf;
+      static uint8_t last_finger;
+      touch.get_touch_point(&t);
+      str_buf += " Finger num :";
+      str_buf += t.finger_num;
+      str_buf += " \n";
+      for (uint8_t i = 0; i < t.finger_num; i++) {
+        str_buf += "x:";
+        str_buf += t.point[i].x;
+        str_buf += " y:";
+        str_buf += t.point[i].y;
+        str_buf += " p:";
+        str_buf += t.point[i].pressure;
+        str_buf += " \n";
+      }
+      lv_msg_send(MSG_NEW_TOUCH_POINT, str_buf.c_str());
+    }
     last_tick = millis();
   }
 }

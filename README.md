@@ -43,3 +43,21 @@ T-Display-S3 is a development board whose main control chip is ESP32-S3. It is e
 1. The TFT_eSPI library used does not display properly?
 > The TFT_eSPI library needs to modify some settings. It has been modified in the lib. Please use this library or add Micky_commit.patch to the local library.
 
+
+
+## Tips
+1. Use board as delivered. Connect board to usb to computer without
+touching anything else. Upload the code. The code will start right after
+download and run. Unplug the board and connect to usb again. The board
+will not do anything.
+
+2. Use board as delivered. Push down boot button. While boot button is
+pushed, connect usb to computer. Release boot button. Upload the code.
+The code will not start right after download. Nothing will happen.
+Unplug the board and connect to usb again.The board will now boot the
+code. Unplug the board from USB to computer and connect to other power
+source like LiPO battery. Again the board will start the code. The
+computer is not needed again.
+
+New code can be loaded to the board by going to step 1 or 2. Both will
+still work.

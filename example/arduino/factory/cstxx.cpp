@@ -47,12 +47,12 @@ bool CSTXXX::init(TwoWire &wire, uint8_t res_pin, uint8_t int_pin) {
     delay(200);
   }
 
-  // _wire->beginTransmission(_addr);
-  // if (_wire->endTransmission() == 0) {
+  _wire->beginTransmission(_addr);
+  if (_wire->endTransmission() == 0) {
     is_inited = true;
-  // } else {
-  //   return false;
-  // }
+  } else {
+    return false;
+  }
 
   prop_x = CST328_RAW_MAX_X / reso_x;
   prop_y = CST328_RAW_MAX_Y / reso_y;
@@ -88,12 +88,3 @@ bool CSTXXX::get_touch_point(touch_info_t *t) {
   }
   return false;
 }
-
-void CSTXXX::sleep(void) {
-  if (is_inited) {
-    _wire->beginTransmission(_addr);
-    _wire->write(0xd105);
-    _wire->endTransmission();
-  }
-}
-

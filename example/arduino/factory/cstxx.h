@@ -50,7 +50,6 @@ public:
   bool init(TwoWire &wire, uint8_t res_pin = -1, uint8_t int_pin = -1);
   bool get_touch_point(touch_info_t *t);
   bool is_update();
-  void sleep(void);
 
 private:
   void _wirte_reg(uint8_t *data, uint8_t len);

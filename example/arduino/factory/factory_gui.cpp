@@ -1,5 +1,6 @@
 #include "factory_gui.h"
 #include "Arduino.h"
+#include "cstxx.h"
 #include "lvgl.h"
 
 LV_FONT_DECLARE(font_Alibaba);
@@ -7,6 +8,7 @@ LV_IMG_DECLARE(lilygo1_gif);
 static lv_point_t line_points[] = {{-320, 0}, {320, 0}};
 
 static void update_text_subscriber_cb(lv_event_t *e);
+static void update_touch_point_subscriber_cb(lv_event_t *e);
 static void timer_task(lv_timer_t *t);
 static lv_obj_t *dis;
 
@@ -15,7 +17,6 @@ void ui_switch_page(void) {
   n++;
   lv_obj_set_tile_id(dis, 0, n % UI_PAGE_COUNT, LV_ANIM_ON);
 }
-
 
 void ui_begin() {
 
@@ -99,10 +100,16 @@ void ui_begin() {
   text += " KB\n";
   lv_label_set_text(debug_label, text.c_str());
   lv_obj_align(debug_label, LV_ALIGN_TOP_LEFT, 0, 0);
+
   lv_obj_t *bat_label = lv_label_create(tv3);
   lv_obj_align_to(bat_label, debug_label, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
   lv_obj_add_event_cb(bat_label, update_text_subscriber_cb, LV_EVENT_MSG_RECEIVED, NULL);
   lv_msg_subsribe_obj(MSG_NEW_VOLT, bat_label, (void *)"VOLT : %d mV");
+
+  lv_obj_t *touch_label = lv_label_create(tv3);
+  lv_obj_align_to(touch_label, bat_label, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
+  lv_obj_add_event_cb(touch_label, update_touch_point_subscriber_cb, LV_EVENT_MSG_RECEIVED, NULL);
+  lv_msg_subsribe_obj(MSG_NEW_TOUCH_POINT, touch_label, (void *)"%s");
 
   lv_timer_t *timer = lv_timer_create(timer_task, 500, seg_text);
 }
@@ -125,4 +132,14 @@ static void update_text_subscriber_cb(lv_event_t *e) {
   const int32_t *v = (const int32_t *)lv_msg_get_payload(m);
 
   lv_label_set_text_fmt(label, fmt, *v);
+}
+
+static void update_touch_point_subscriber_cb(lv_event_t *e) {
+  lv_obj_t *label = lv_event_get_target(e);
+  lv_msg_t *m = lv_event_get_msg(e);
+
+  const char *fmt = (const char *)lv_msg_get_user_data(m);
+  const char *t = (const char *)lv_msg_get_payload(m);
+
+  lv_label_set_text_fmt(label, fmt, t);
 }
