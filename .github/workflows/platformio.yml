@@ -28,7 +28,7 @@ jobs:
           pip install -U platformio
       - name: Submitted library code test
         run: |
-          cd example/arduino/factory/
+          cd example/factory/
           pio pkg update
           pio run
       
