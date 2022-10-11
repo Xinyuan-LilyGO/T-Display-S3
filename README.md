@@ -23,7 +23,12 @@ T-Display-S3 is a development board whose main control chip is ESP32-S3. It is e
 (ESP32S3 is a new chip, and the SDK version needs to be version 2.0.3 or above)
 > `https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json`
 >-  Click OK and the software will be installed by itself. After installation, restart the Arduino IDE software.
+>- Search for ESP32 in Tools->Board Manager and install ESP32-Arduino SDK
+![](image/Arduino_board.png)
 >- Copy all files in the lib folder to `\Arduino\libraries`
+>- Select the settings as shown. Note that the FLASH size partition and size may be modified depending on the board.
+![](image/Arduino_Config.png)
+
 
 > PlatfromIO:
 > - PlatformIO plug-in installation: Click on the extension on the left column -> search platformIO -> install the first plug-in
