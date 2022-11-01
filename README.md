@@ -25,7 +25,7 @@ T-Display-S3 is a development board whose main control chip is ESP32-S3. It is e
 >-  Click OK and the software will be installed by itself. After installation, restart the Arduino IDE software.
 >- Search for ESP32 in Tools->Board Manager and install ESP32-Arduino SDK
 ![](image/Arduino_board.png)
->- Copy all files in the lib folder to `\Arduino\libraries`
+>- Copy all files in the lib folder to `C:\Users\YourName\Documents\Arduino\libraries`
 >- Select the settings as shown. Note that the FLASH size partition and size may be modified depending on the board.
 ![](image/Arduino_Config.png)
 
@@ -41,7 +41,8 @@ T-Display-S3 is a development board whose main control chip is ESP32-S3. It is e
 ## Quick question and answer
 
 1. The TFT_eSPI library used does not display properly?
-> The TFT_eSPI library needs to modify some settings. It has been modified in the lib. Please use this library or add Micky_commit.patch to the local library.
+> The TFT_eSPI library needs to modify some settings. It has been modified in the lib. Please use this library or add Micky_commit.patch to the local library. 
+> Drag and drop all files in the lib directory directly into the [`C:\Users\YourName\Documents\Arduino\libraries`] directory
 
 ## Tips
 
