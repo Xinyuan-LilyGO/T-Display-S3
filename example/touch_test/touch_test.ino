@@ -1,16 +1,23 @@
+#define TOUCH_MODULES_CST_MUTUAL
+
 #include "Arduino.h"
 #include "OneButton.h"
 #include "TFT_eSPI.h" /* Please use the TFT library provided in the library. */
+#include "TouchLib.h"
 #include "Wire.h"
-#include "cstxx.h"
 #include "img_logo.h"
 #include "pin_config.h"
 
 #warning Please confirm that you have purchased a display screen with a touch chip, otherwise the touch routine cannot be implemented.
-CSTXXX touch(0, 0, 170, 320);
-TFT_eSPI tft = TFT_eSPI();
+TouchLib touch(Wire, PIN_IIC_SDA, PIN_IIC_SCL, CTS328_SLAVE_ADDRESS);
 
+#define TOUCH_GET_FORM_INT 0
+
+TFT_eSPI tft = TFT_eSPI();
 bool flags_sleep = false;
+#if TOUCH_GET_FORM_INT
+bool get_int = false;
+#endif
 OneButton button(PIN_BUTTON_1, true);
 
 void setup() {
@@ -36,59 +43,55 @@ void setup() {
   tft.setTextColor(TFT_GREEN, TFT_BLACK);
 
   Wire.begin(PIN_IIC_SDA, PIN_IIC_SCL);
-  if (!touch.init(Wire, PIN_TOUCH_RES, PIN_TOUCH_INT)) {
+  if (!touch.init()) {
     Serial.println("Touch IC not found");
   }
 
   button.attachClick([] { flags_sleep = 1; });
   tft.drawString("Press the BOT button to go", 0, 15);
   tft.drawString(" to sleep", 0, 40);
-  // delay(500);
-  // digitalWrite(PIN_POWER_ON, LOW);
-  // gpio_hold_en((gpio_num_t)PIN_TOUCH_RES);
-  // esp_sleep_enable_ext0_wakeup((gpio_num_t)PIN_TOUCH_INT, 0);
-  // esp_deep_sleep_start();
-
-  // attachInterrupt(
-  //     PIN_TOUCH_INT,
-  //     [] {
-  //       Serial.println("get int");
-  //       get_int_conut++;
-  //     },
-  //     FALLING);
+#if TOUCH_GET_FORM_INT
+  attachInterrupt(
+      PIN_TOUCH_INT, [] { get_int = true; }, FALLING);
+#endif
 }
 
 void loop() {
-  // touch_info_t t;
-  // char str_buf[100];
-  // static uint8_t last_finger;
-  // if (touch.get_touch_point(&t)) {
-  //   sprintf(str_buf, "finger num :%d \r\n", t.finger_num);
-  //   tft.drawString(str_buf, 0, 15);
-  //   for (uint8_t i = 0; i < t.finger_num; i++) {
-  //     sprintf(str_buf, "x:%04d y:%04d p:%04d \r\n", t.point[i].x, t.point[i].y, t.point[i].pressure);
-  //     tft.drawString(str_buf, 0, 35 + (20 * i));
-  //   }
-  //   if (last_finger > t.finger_num) {
-  //     tft.fillRect(0, 55, 320, 100, TFT_BLACK);
-  //   }
-  //   last_finger = t.finger_num;
-  // } else {
-  //   tft.fillScreen(TFT_BLACK);
-  // }
-  // sprintf(str_buf, "Int count :%d \r\n", get_int_conut);
-  // tft.drawString(str_buf, 0, 15);
+  char str_buf[100];
+  static uint8_t last_finger;
+#if TOUCH_GET_FORM_INT
+  if (get_int) {
+    get_int = 0;
+    touch.read();
+#else
+  if (touch.read()) {
+#endif
+    uint8_t n = touch.getPointNum();
+    sprintf(str_buf, "finger num :%d \r\n", n);
+    tft.drawString(str_buf, 0, 15);
+    for (uint8_t i = 0; i < n; i++) {
+      TP_Point t = touch.getPoint(i);
+      sprintf(str_buf, "x:%04d y:%04d p:%04d \r\n", t.x, t.y, t.pressure);
+      tft.drawString(str_buf, 0, 35 + (20 * i));
+    }
+    if (last_finger > n) {
+      tft.fillRect(0, 55, 320, 100, TFT_BLACK);
+    }
+    last_finger = n;
+  } else {
+    tft.fillScreen(TFT_BLACK);
+  }
+
   button.tick();
   if (flags_sleep) {
     flags_sleep = false;
     tft.fillScreen(TFT_BLACK);
     tft.drawString("about to go to sleep", 0, 15);
-    touch.sleep();
+    touch.enableSleep();
     delay(2000);
     digitalWrite(PIN_POWER_ON, LOW);
     gpio_hold_en((gpio_num_t)PIN_TOUCH_RES);
     esp_sleep_enable_ext0_wakeup((gpio_num_t)PIN_TOUCH_INT, 0);
-    // esp_sleep_enable_ext1_wakeup((gpio_num_t)PIN_BUTTON_1, ESP_EXT1_WAKEUP_ALL_LOW);
     esp_deep_sleep_start();
   }
   delay(1);

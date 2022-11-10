@@ -99,11 +99,11 @@ public:
     return thisChip().initImpl();
   }
 
-// private:
+  // private:
 protected:
   int readRegister(uint8_t reg) {
     uint8_t val = 0;
-    if (thisReadRegCallback) {
+    if (thisReadRegCallback != nullptr) {
       if (thisReadRegCallback(__addr, reg, &val, 1) != 0) {
         return 0;
       }
@@ -122,7 +122,28 @@ protected:
 #endif
     return -1;
   }
-
+  int readRegister(uint16_t reg) {
+    uint8_t val = 0;
+    if (thisReadRegCallback != nullptr) {
+      if (thisReadRegCallback(__addr, reg, &val, 1) != 0) {
+        return 0;
+      }
+      return val;
+    }
+#if defined(ARDUINO)
+    if (__wire) {
+      __wire->beginTransmission(__addr);
+      __wire->write((uint8_t)(reg >> 8));
+      __wire->write((uint8_t)(reg & 0xff));
+      if (__wire->endTransmission() != 0) {
+        return -1;
+      }
+      __wire->requestFrom(__addr, 1U);
+      return __wire->read();
+    }
+#endif
+    return -1;
+  }
   int writeRegister(uint8_t reg, uint8_t val) {
     if (thisWriteRegCallback) {
       return thisWriteRegCallback(__addr, reg, &val, 1);
@@ -148,6 +169,23 @@ protected:
       __wire->write(reg >> 8);
       __wire->write(reg & 0xff);
       __wire->write(val);
+      return (__wire->endTransmission() == 0) ? 0 : -1;
+    }
+#endif
+    return -1;
+  }
+
+  int writeRegister(uint16_t reg, uint16_t val) {
+    if (thisWriteRegCallback) {
+      return thisWriteRegCallback(__addr, reg, (uint8_t *)&val, 2);
+    }
+#if defined(ARDUINO)
+    if (__wire) {
+      __wire->beginTransmission(__addr);
+      __wire->write(reg >> 8);
+      __wire->write(reg & 0xff);
+      __wire->write(val >> 8);
+      __wire->write(val & 0xff);
       return (__wire->endTransmission() == 0) ? 0 : -1;
     }
 #endif

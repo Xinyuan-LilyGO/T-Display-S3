@@ -9,12 +9,10 @@
  *
  */
 
-#ifndef _TOUCHLIB_H_
-#define _TOUCHLIB_H_
+#ifndef __TOUCHLIB_H__
+#define __TOUCHLIB_H__
 
-#if defined(TOUCH_MODULES_CST816S)
-
-#elif defined(TOUCH_MODULES_CST_SELF)
+#if  defined(TOUCH_MODULES_CST_SELF)
 #include "ModulesCSTSelf.tpp"
 typedef TouchLibCSTSelf TouchLib;
 #elif defined(TOUCH_MODULES_CST_MUTUAL)
@@ -26,7 +24,7 @@ typedef TouchLibGT911 TouchLib;
 #elif defined(TOUCH_MODULES_ZTW622)
 #include "ModulesZTW622.tpp"
 typedef TouchLibZTW622 TouchLib;
-#elif defined(TOUCH_MODULES_FT3267)
+#elif defined(TOUCH_MODULES_L58)
 
 #else
 #error "Please define a touch chip model."

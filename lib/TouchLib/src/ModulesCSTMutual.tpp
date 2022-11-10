@@ -35,12 +35,14 @@
 #include "TouchLibCommon.tpp"
 #include "TouchLibInterface.hpp"
 
-class TouchLibCSTMutual : public TouchLibCommon<TouchLibCSTMutual>, public TouchLibInterface {
+class TouchLibCSTMutual : public TouchLibCommon<TouchLibCSTMutual>, public TouchLibInterface
+{
   friend class TouchLibCommon<TouchLibCSTMutual>;
 
 public:
 #if defined(ARDUINO)
-  TouchLibCSTMutual(TwoWire &w, int sda = SDA, int scl = SCL, uint8_t addr = CTS328_SLAVE_ADDRESS, int rst = -1) {
+  TouchLibCSTMutual(TwoWire &w, int sda = SDA, int scl = SCL, uint8_t addr = CTS328_SLAVE_ADDRESS, int rst = -1)
+  {
     __wire = &w;
     __sda = sda;
     __scl = scl;
@@ -49,7 +51,8 @@ public:
   }
 #endif
 
-  TouchLibCSTMutual() {
+  TouchLibCSTMutual()
+  {
 #if defined(ARDUINO)
     __wire = &Wire;
     __sda = SDA;
@@ -59,7 +62,8 @@ public:
     __addr = CTS328_SLAVE_ADDRESS;
   }
 
-  ~TouchLibCSTMutual() {
+  ~TouchLibCSTMutual()
+  {
     log_i("~TouchLibCSTMutual");
     deinit();
   }
@@ -70,17 +74,21 @@ public:
 
   bool enableSleep() { return this->writeRegister((uint8_t)(CHIP_DEEP_SLEEP_REG >> 8), (uint8_t)(CHIP_DEEP_SLEEP_REG & 0xFF)); }
 
-  bool read() {
+  bool read()
+  {
     this->readRegister(MODE_NORMAL_0_REG, raw_data, sizeof(raw_data));
-    this->writeRegister(MODE_NORMAL_0_REG, 0xAB); // sync signal
-    return raw_data[MODE_NORMAL_6_REG & 0xFF] == 0XAB ? 1 : 0;
+    this->writeRegister(MODE_NORMAL_0_REG, (uint8_t)0xAB); // sync signal
+    // return raw_data[MODE_NORMAL_6_REG & 0xFF] == 0XAB ? 1 : 0;
+    return ((raw_data[MODE_NORMAL_5_REG & 0xff] & 0x0f) != 0 ? 1 : 0);
   }
 
   uint8_t getPointNum() { return raw_data[MODE_NORMAL_5_REG & 0xff] & 0x0f; }
 
-  TP_Point getPoint(uint8_t n) {
+  TP_Point getPoint(uint8_t n)
+  {
     TP_Point t;
-    switch (n) {
+    switch (n)
+    {
     case 0:
       t.state = raw_data[MODE_NORMAL_0_REG & 0xFF] & 0xF;
       t.x = COMBINE_H8L4_H(MODE_NORMAL_1_REG, MODE_NORMAL_3_REG);
@@ -117,8 +125,11 @@ public:
     }
     t.id = n;
 
-    if (rotation == 0) {
-    } else if (rotation == 1) {
+    if (rotation == 0)
+    {
+    }
+    else if (rotation == 1)
+    {
       uint16_t tmp = t.x;
       t.x = t.y;
       t.y = tmp;

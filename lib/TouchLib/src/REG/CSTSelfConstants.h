@@ -1,6 +1,7 @@
 #pragma once
 
 #define CTS826_SLAVE_ADDRESS  (0X15)
+#define CTS820_SLAVE_ADDRESS  (0X15)
 #define CTS816S_SLAVE_ADDRESS (0X15)
 
 /* Working mode switching command */

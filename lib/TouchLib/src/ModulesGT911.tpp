@@ -66,19 +66,34 @@ public:
 
   bool init() {
     begin();
-    if (rst == -1)
-      return this->writeRegister(GT911_COMMAND, 0x02); // software reset
-    else
+    if (__rst == -1) {
+
+      // this->writeRegister(GT911_COMMAND, (uint8_t)0x05);
+      // delay(200);
+      this->writeRegister(GT911_COMMAND, (uint8_t)0x02); // software reset
+      delay(200);
+
+      // this->writeRegister(GT911_COMMAND, (uint8_t)0x00);
+      // uint8_t buf;
+      // buf = this->readRegister(GT911_MODULE_SWITCH_1);
+      // buf = buf & 0xfc;
+      // buf = buf | 0x01;
+      // this->writeRegister(GT911_MODULE_SWITCH_1, buf);
+
+      // buf = this->readRegister(GT911_MODULE_SWITCH_1);
+      // Serial.printf("2buf :0x%02X \r\n", buf);
+      return 0;
+    } else
       return 1;
   }
 
   void deinit() { end(); }
 
-  bool enableSleep() { return this->writeRegister(GT911_COMMAND, 0x05); }
+  bool enableSleep() { return 0; /* this->writeRegister(GT911_COMMAND, (uint8_t)0x05); */ }
 
   bool read() {
     this->readRegister(GT911_POINT_INFO, raw_data, sizeof(raw_data));
-    this->writeRegister(GT911_POINT_INFO, 0x00); // sync signal
+    this->writeRegister(GT911_POINT_INFO, (uint8_t)0x00); // sync signal
     return (raw_data[0] & 0xF) != 0 ? true : false;
   }
 
