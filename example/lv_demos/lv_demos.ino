@@ -2,27 +2,22 @@
 #include "TouchLib.h"
 #define TOUCH_READ_FROM_INTERRNUPT
 
-#include "OneButton.h" /* https://github.com/mathertel/OneButton.git */
-#include "lvgl.h"      /* https://github.com/lvgl/lvgl.git */
+#include "demos/lv_demos.h"
+#include "lv_conf.h"
+#include "lvgl.h" /* https://github.com/lvgl/lvgl.git */
 
 #include "Arduino.h"
-#include "WiFi.h"
 #include "Wire.h"
 #include "esp_lcd_panel_io.h"
 #include "esp_lcd_panel_ops.h"
 #include "esp_lcd_panel_vendor.h"
-#include "factory_gui.h"
 #include "pin_config.h"
-#include "sntp.h"
-#include "time.h"
 
 esp_lcd_panel_io_handle_t io_handle = NULL;
 static lv_disp_draw_buf_t disp_buf; // contains internal graphic buffer(s) called draw buffer(s)
 static lv_disp_drv_t disp_drv;      // contains callback functions
 static lv_color_t *lv_disp_buf;
 static bool is_initialized_lvgl = false;
-OneButton button1(PIN_BUTTON_1, true);
-OneButton button2(PIN_BUTTON_2, true);
 
 TouchLib touch(Wire, PIN_IIC_SDA, PIN_IIC_SCL, CTS328_SLAVE_ADDRESS, PIN_TOUCH_RES);
 
@@ -30,11 +25,6 @@ bool inited_touch = false;
 #if defined(TOUCH_READ_FROM_INTERRNUPT)
 bool get_int_signal = false;
 #endif
-
-void wifi_test(void);
-void timeavailable(struct timeval *t);
-void printLocalTime();
-void SmartConfig();
 
 static bool example_notify_lvgl_flush_ready(esp_lcd_panel_io_handle_t panel_io, esp_lcd_panel_io_event_data_t *edata, void *user_ctx) {
   if (is_initialized_lvgl) {
@@ -62,18 +52,10 @@ static void lv_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data
 #else
   if (touch.read()) {
 #endif
-    String str_buf;
-    uint8_t fn = touch.getPointNum();
-    str_buf += " Finger num : " + String(fn) + " \n";
-    for (uint8_t i = 0; i < fn; i++) {
-      TP_Point t = touch.getPoint(i);
-      str_buf += "x: " + String(t.x) + " y: " + String(t.y) + " p: " + String(t.pressure) + " \n";
-    }
     TP_Point t = touch.getPoint(0);
     data->point.x = t.x;
     data->point.y = t.y;
     data->state = LV_INDEV_STATE_PR;
-    lv_msg_send(MSG_NEW_TOUCH_POINT, str_buf.c_str());
   } else
     data->state = LV_INDEV_STATE_REL;
 }
@@ -82,9 +64,6 @@ void setup() {
   pinMode(PIN_POWER_ON, OUTPUT);
   digitalWrite(PIN_POWER_ON, HIGH);
   Serial.begin(115200);
-
-  sntp_servermode_dhcp(1); // (optional)
-  configTime(GMT_OFFSET_SEC, DAY_LIGHT_OFFSET_SEC, NTP_SERVER1, NTP_SERVER2);
 
   pinMode(PIN_LCD_RD, OUTPUT);
   digitalWrite(PIN_LCD_RD, HIGH);
@@ -181,149 +160,21 @@ void setup() {
   attachInterrupt(
       PIN_TOUCH_INT, [] { get_int_signal = true; }, FALLING);
 #endif
-  wifi_test();
 
-  button1.attachClick([]() {
-    pinMode(PIN_POWER_ON, OUTPUT);
-    pinMode(PIN_LCD_BL, OUTPUT);
-    digitalWrite(PIN_POWER_ON, LOW);
-    digitalWrite(PIN_LCD_BL, LOW);
-    esp_sleep_enable_ext0_wakeup((gpio_num_t)PIN_BUTTON_2, 0); // 1 = High, 0 = Low
-    esp_deep_sleep_start();
-  });
-
-  button2.attachClick([]() { ui_switch_page(); });
+#if LV_USE_DEMO_WIDGETS
+  lv_demo_widgets();
+#elif LV_USE_DEMO_BENCHMARK
+  lv_demo_benchmark();
+#elif LV_USE_DEMO_STRESS
+  lv_demo_stress();
+#elif LV_USE_DEMO_KEYPAD_AND_ENCODER
+  lv_demo_keypad_encoder();
+#else LV_USE_DEMO_MUSIC
+  lv_demo_music();
+#endif
 }
 
 void loop() {
   lv_timer_handler();
-  button1.tick();
-  button2.tick();
-  delay(3);
-  static uint32_t last_tick;
-  if (millis() - last_tick > 100) {
-    struct tm timeinfo;
-    if (getLocalTime(&timeinfo)) {
-      lv_msg_send(MSG_NEW_HOUR, &timeinfo.tm_hour);
-      lv_msg_send(MSG_NEW_MIN, &timeinfo.tm_min);
-    }
-    uint32_t volt = (analogRead(PIN_BAT_VOLT) * 2 * 3.3 * 1000) / 4096;
-    lv_msg_send(MSG_NEW_VOLT, &volt);
-
-    last_tick = millis();
-  }
-}
-
-LV_IMG_DECLARE(lilygo2_gif);
-
-void wifi_test(void) {
-  String text;
-  lv_obj_t *logo_img = lv_gif_create(lv_scr_act());
-  lv_obj_center(logo_img);
-  lv_gif_set_src(logo_img, &lilygo2_gif);
-  LV_DELAY(1200);
-  lv_obj_del(logo_img);
-
-  lv_obj_t *log_label = lv_label_create(lv_scr_act());
-  lv_obj_align(log_label, LV_ALIGN_TOP_LEFT, 0, 0);
-  lv_obj_set_width(log_label, LV_PCT(100));
-  lv_label_set_text(log_label, "Scan WiFi");
-  lv_label_set_long_mode(log_label, LV_LABEL_LONG_SCROLL);
-  lv_label_set_recolor(log_label, true);
-  LV_DELAY(1);
-  WiFi.mode(WIFI_STA);
-  WiFi.disconnect();
-  delay(100);
-  int n = WiFi.scanNetworks();
-  Serial.println("scan done");
-  if (n == 0) {
-    text = "no networks found";
-  } else {
-    text = n;
-    text += " networks found\n";
-    for (int i = 0; i < n; ++i) {
-      text += (i + 1);
-      text += ": ";
-      text += WiFi.SSID(i);
-      text += " (";
-      text += WiFi.RSSI(i);
-      text += ")";
-      text += (WiFi.encryptionType(i) == WIFI_AUTH_OPEN) ? " \n" : "*\n";
-      delay(10);
-    }
-  }
-  lv_label_set_text(log_label, text.c_str());
-  Serial.println(text);
-  LV_DELAY(2000);
-  text = "Connecting to ";
-  Serial.print("Connecting to ");
-  text += WIFI_SSID;
-  text += "\n";
-  Serial.print(WIFI_SSID);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORLD);
-  uint32_t last_tick = millis();
-  uint32_t i = 0;
-  bool is_smartconfig_connect = false;
-  lv_label_set_long_mode(log_label, LV_LABEL_LONG_WRAP);
-  while (WiFi.status() != WL_CONNECTED) {
-    Serial.print(".");
-    text += ".";
-    lv_label_set_text(log_label, text.c_str());
-    LV_DELAY(100);
-    if (millis() - last_tick > WIFI_CONNECT_WAIT_MAX) { /* Automatically start smartconfig when connection times out */
-      text += "\nConnection timed out, start smartconfig";
-      lv_label_set_text(log_label, text.c_str());
-      LV_DELAY(100);
-      is_smartconfig_connect = true;
-      WiFi.mode(WIFI_AP_STA);
-      Serial.println("\r\n wait for smartconfig....");
-      text += "\r\n wait for smartconfig....";
-      text += "\nPlease use #ff0000 EspTouch# Apps to connect to the distribution network";
-      lv_label_set_text(log_label, text.c_str());
-      WiFi.beginSmartConfig();
-      while (1) {
-        LV_DELAY(100);
-        if (WiFi.smartConfigDone()) {
-          Serial.println("\r\nSmartConfig Success\r\n");
-          Serial.printf("SSID:%s\r\n", WiFi.SSID().c_str());
-          Serial.printf("PSW:%s\r\n", WiFi.psk().c_str());
-          text += "\nSmartConfig Success";
-          text += "\nSSID:";
-          text += WiFi.SSID().c_str();
-          text += "\nPSW:";
-          text += WiFi.psk().c_str();
-          lv_label_set_text(log_label, text.c_str());
-          LV_DELAY(1000);
-          last_tick = millis();
-          break;
-        }
-      }
-    }
-  }
-  if (!is_smartconfig_connect) {
-    text += "\nCONNECTED \nTakes ";
-    Serial.print("\n CONNECTED \nTakes ");
-    text += millis() - last_tick;
-    Serial.print(millis() - last_tick);
-    text += " ms\n";
-    Serial.println(" millseconds");
-    lv_label_set_text(log_label, text.c_str());
-  }
-  LV_DELAY(2000);
-  ui_begin();
-}
-
-void printLocalTime() {
-  struct tm timeinfo;
-  if (!getLocalTime(&timeinfo)) {
-    Serial.println("No time available (yet)");
-    return;
-  }
-  Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
-}
-// Callback function (get's called when time adjusts via NTP)
-void timeavailable(struct timeval *t) {
-  Serial.println("Got time adjustment from NTP!");
-  printLocalTime();
-  WiFi.disconnect();
+  delay(2);
 }
