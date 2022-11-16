@@ -1,7 +1,9 @@
 #pragma once
 
-#define WIFI_SSID                    "Your-ssid"
-#define WIFI_PASSWORLD               "Your-password"
+// #define WIFI_SSID                    "Your-ssid"
+// #define WIFI_PASSWORLD               "Your-password"
+#define WIFI_SSID                    "GL-MT1300-44e"
+#define WIFI_PASSWORLD               "88888888"
 
 #define WIFI_CONNECT_WAIT_MAX        (30 * 1000)
 

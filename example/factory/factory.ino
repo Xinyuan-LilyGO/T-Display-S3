@@ -1,12 +1,17 @@
+#define TOUCH_MODULES_CST_MUTUAL
+#include "TouchLib.h"
+#define TOUCH_READ_FROM_INTERRNUPT
+
+#include "OneButton.h" /* https://github.com/mathertel/OneButton.git */
+#include "lvgl.h"      /* https://github.com/lvgl/lvgl.git */
+
 #include "Arduino.h"
-#include "OneButton.h"
 #include "WiFi.h"
-#include "cstxx.h"
+#include "Wire.h"
 #include "esp_lcd_panel_io.h"
 #include "esp_lcd_panel_ops.h"
 #include "esp_lcd_panel_vendor.h"
 #include "factory_gui.h"
-#include "lvgl.h"
 #include "pin_config.h"
 #include "sntp.h"
 #include "time.h"
@@ -18,11 +23,14 @@ static lv_color_t *lv_disp_buf;
 static bool is_initialized_lvgl = false;
 OneButton button1(PIN_BUTTON_1, true);
 OneButton button2(PIN_BUTTON_2, true);
-CSTXXX touch(0, 0, 170, 320);
+
+TouchLib touch(Wire, PIN_IIC_SDA, PIN_IIC_SCL, CTS328_SLAVE_ADDRESS, PIN_TOUCH_RES);
 
 bool inited_touch = false;
+#if defined(TOUCH_READ_FROM_INTERRNUPT)
+bool get_int_signal = false;
+#endif
 
-extern const unsigned char img_logo[20000];
 void wifi_test(void);
 void timeavailable(struct timeval *t);
 void printLocalTime();
@@ -44,6 +52,30 @@ static void example_lvgl_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_
   int offsety2 = area->y2;
   // copy a buffer's content to a specific area of the display
   esp_lcd_panel_draw_bitmap(panel_handle, offsetx1, offsety1, offsetx2 + 1, offsety2 + 1, color_map);
+}
+
+static void lv_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data) {
+#if defined(TOUCH_READ_FROM_INTERRNUPT)
+  if (get_int_signal) {
+    get_int_signal = false;
+    touch.read();
+#else
+  if (touch.read()) {
+#endif
+    String str_buf;
+    uint8_t fn = touch.getPointNum();
+    str_buf += " Finger num : " + String(fn) + " \n";
+    for (uint8_t i = 0; i < fn; i++) {
+      TP_Point t = touch.getPoint(i);
+      str_buf += "x: " + String(t.x) + " y: " + String(t.y) + " p: " + String(t.pressure) + " \n";
+    }
+    TP_Point t = touch.getPoint(0);
+    data->point.x = t.x;
+    data->point.y = t.y;
+    data->state = LV_INDEV_STATE_PR;
+    lv_msg_send(MSG_NEW_TOUCH_POINT, str_buf.c_str());
+  } else
+    data->state = LV_INDEV_STATE_REL;
 }
 
 void setup() {
@@ -133,11 +165,21 @@ void setup() {
   disp_drv.user_data = panel_handle;
   lv_disp_drv_register(&disp_drv);
 
+  /* Register touch brush with LVGL */
+  Wire.begin(PIN_IIC_SDA, PIN_IIC_SCL, 800000);
+  inited_touch = touch.init();
+  if (inited_touch) {
+    static lv_indev_drv_t indev_drv;
+    lv_indev_drv_init(&indev_drv);
+    indev_drv.type = LV_INDEV_TYPE_POINTER;
+    indev_drv.read_cb = lv_touchpad_read;
+    lv_indev_drv_register(&indev_drv);
+  }
   is_initialized_lvgl = true;
-
-  Wire.begin(PIN_IIC_SDA, PIN_IIC_SCL);
-  inited_touch = touch.init(Wire, PIN_TOUCH_RES, PIN_TOUCH_INT);
-
+#if defined(TOUCH_READ_FROM_INTERRNUPT)
+  attachInterrupt(
+      PIN_TOUCH_INT, [] { get_int_signal = true; }, FALLING);
+#endif
   wifi_test();
 
   button1.attachClick([]() {
@@ -148,7 +190,7 @@ void setup() {
     esp_sleep_enable_ext0_wakeup((gpio_num_t)PIN_BUTTON_2, 0); // 1 = High, 0 = Low
     esp_deep_sleep_start();
   });
-  
+
   button2.attachClick([]() { ui_switch_page(); });
 }
 
@@ -167,25 +209,6 @@ void loop() {
     uint32_t volt = (analogRead(PIN_BAT_VOLT) * 2 * 3.3 * 1000) / 4096;
     lv_msg_send(MSG_NEW_VOLT, &volt);
 
-    if (inited_touch) {
-      touch_info_t t;
-      String str_buf;
-      static uint8_t last_finger;
-      touch.get_touch_point(&t);
-      str_buf += " Finger num :";
-      str_buf += t.finger_num;
-      str_buf += " \n";
-      for (uint8_t i = 0; i < t.finger_num; i++) {
-        str_buf += "x:";
-        str_buf += t.point[i].x;
-        str_buf += " y:";
-        str_buf += t.point[i].y;
-        str_buf += " p:";
-        str_buf += t.point[i].pressure;
-        str_buf += " \n";
-      }
-      lv_msg_send(MSG_NEW_TOUCH_POINT, str_buf.c_str());
-    }
     last_tick = millis();
   }
 }

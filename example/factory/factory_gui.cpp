@@ -1,6 +1,5 @@
 #include "factory_gui.h"
 #include "Arduino.h"
-#include "cstxx.h"
 #include "lvgl.h"
 
 LV_FONT_DECLARE(font_Alibaba);
