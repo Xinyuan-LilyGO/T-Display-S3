@@ -166,7 +166,7 @@ void setup() {
   lv_disp_drv_register(&disp_drv);
 
   /* Register touch brush with LVGL */
-  Wire.begin(PIN_IIC_SDA, PIN_IIC_SCL, 800000);
+  //Wire.begin(PIN_IIC_SDA, PIN_IIC_SCL, 800000);
   inited_touch = touch.init();
   if (inited_touch) {
     touch.setRotation(1);

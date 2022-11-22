@@ -1,7 +1,16 @@
+#ifndef USEPLATFORMIO
+#error "This example can only be run on platformIO"
+#endif
+
 #define TOUCH_MODULES_CST_MUTUAL
 #include "TouchLib.h"
-#define TOUCH_READ_FROM_INTERRNUPT
+// #define TOUCH_READ_FROM_INTERRNUPT
 
+
+/* 
+This example can only be run on platformIO. 
+Because Arduino cannot index into the demos directory. 
+*/
 #include "demos/lv_demos.h"
 #include "lv_conf.h"
 #include "lvgl.h" /* https://github.com/lvgl/lvgl.git */
