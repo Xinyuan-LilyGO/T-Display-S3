@@ -1,0 +1,19 @@
+---
+# ref: https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+# 语言: None, Cpp, Java, JavaScript, ObjC, Proto, TableGen, TextProto
+Language: Cpp
+# BasedOnStyle: LLVM
+
+# 每行字符的限制，0表示没有限制
+ColumnLimit: 150
+
+# 预处理器指令的缩进样式
+IndentPPDirectives: None
+
+MacroBlockBegin: Without
+
+# 宏定义对齐
+AlignConsecutiveMacros: AcrossEmptyLinesAndComments
+#  Enabled: true
+#  AcrossEmptyLines: false
+#  AcrossComments: true
