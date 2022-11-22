@@ -18,6 +18,14 @@ T-Display-S3 is a development board whose main control chip is ESP32-S3. It is e
 
 ## Quick Start
 
+### Notice
+> The board uses USB as the JTAG upload port. When printing serial port information on USB, CDC_ON_BOOT configuration needs to be turned on. 
+> If the port cannot be found when uploading the program or the USB has been used for other functions, the port does not appear. 
+> Please enter the upload mode manually. 
+>-  Press and hold the BOOT button when the power is off, the button is located behind the RST button.
+>-  When the USB is connected, first press and hold the BOOT button, then click reset and then release the BOOT button
+
+
 > Arduino:
 >- Click "File" in the upper left corner -> Preferences -> Additional Development >Board Manager URL -> Enter the URL in the input box.
 (ESP32S3 is a new chip, and the SDK version needs to be version 2.0.3 or above)
