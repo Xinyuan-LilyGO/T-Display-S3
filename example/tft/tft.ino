@@ -1,6 +1,5 @@
 #include "Arduino.h"
 #include "TFT_eSPI.h" /* Please use the TFT library provided in the library. */
-#include "cai.h"
 #include "img_logo.h"
 #include "pin_config.h"
 
@@ -18,11 +17,11 @@ void setup() {
   tft.begin();
   tft.setRotation(3);
   tft.setSwapBytes(true);
-  tft.pushImage(0, 0, 302, 170, (uint16_t *)gImage_cai);
+  tft.pushImage(0, 0, 320, 170, (uint16_t *)img_logo);
   delay(2000);
 
-  ledcSetup(0, 2000, 8); 
-  ledcAttachPin(TFT_BL, 0); 
+  ledcSetup(0, 2000, 8);
+  ledcAttachPin(TFT_BL, 0);
   ledcWrite(0, 255);
 }
 
@@ -180,5 +179,4 @@ void loop() {
 
   tft.drawNumber(millis() - targetTime, 0, 100, 4);
   delay(4000);
-  ;
 }
