@@ -1,0 +1,178 @@
+#######################################
+# Syntax Coloring Map For Dabble
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+DabbleESP32	KEYWORD1
+Dabble	KEYWORD1
+LedControl	KEYWORD1
+GamePad	KEYWORD1
+Inputs	KEYWORD1
+Terminal	KEYWORD1
+PinMonitor	KEYWORD1
+Internet	KEYWORD1
+Sensor	KEYWORD1
+IOT	KEYWORD1
+Camera	KEYWORD1
+ColorDetector	KEYWORD1
+DataLogger	KEYWORD1
+Controls	KEYWORD1
+#######################################
+# Functions (KEYWORD2)
+#######################################
+readBrightness	KEYWORD2
+getpinState	KEYWORD2	
+getpinNumber	KEYWORD2
+getx_axis	KEYWORD2	
+gety_axis	KEYWORD2	
+getAngle	KEYWORD2	
+getRadius	KEYWORD2	
+isStartPressed	KEYWORD2	
+isSelectPressed	KEYWORD2	
+isCirclePressed	KEYWORD2	
+isCrossPressed	KEYWORD2	
+isSquarePressed	KEYWORD2	
+isTrianglePressed	KEYWORD2	
+isLeftPressed	KEYWORD2	
+isRightPressed	KEYWORD2	
+isUpPressed	KEYWORD2	
+isDownPressed	KEYWORD2	
+defineServopins	KEYWORD2	
+motorControls	KEYWORD2	
+getpwm_Motor1	KEYWORD2	
+getpwm_Motor2	KEYWORD2	
+runMotor1	KEYWORD2	
+runMotor2	KEYWORD2
+runServo1	KEYWORD2
+runServo2	KEYWORD2	
+sendpinsStatus	KEYWORD2	
+sendanalogData	KEYWORD2	
+sendDigitalData	KEYWORD2	
+sendAnalogData	KEYWORD2	
+getvalue_Pot1	KEYWORD2	
+getvalue_Pot2	KEYWORD2	
+getStatus_SlideSwitch1	KEYWORD2	
+getStatus_SlideSwitch2	KEYWORD2	
+getStatus_TactileSwitch1	KEYWORD2	
+getStatus_TactileSwitch2	KEYWORD2	
+getdata_Accelerometer_xaxis	KEYWORD2	
+getdata_Accelerometer_yaxis	KEYWORD2	
+getdata_Accelerometer_zaxis	KEYWORD2	
+getdata_Gyroscope_xaxis	KEYWORD2	
+getdata_Gyroscope_yaxis	KEYWORD2	
+getdata_Gyroscope_zaxis	KEYWORD2	
+getdata_Magnetometer_xaxis	KEYWORD2	
+getdata_Magnetometer_yaxis	KEYWORD2	
+getdata_Magnetometer_zaxis	KEYWORD2	
+getdata_Proximity	KEYWORD2	
+getdata_Light	KEYWORD2	
+getdata_Sound	KEYWORD2	
+getdata_Temperature	KEYWORD2	
+getdata_Barometer	KEYWORD2	
+getdata_GPS_longitude	KEYWORD2	
+getdata_GPS_latitude	KEYWORD2	
+getangle_Servo1	KEYWORD2	
+getangle_Servo2	KEYWORD2	
+send_channel_data	KEYWORD2		
+setParameters	KEYWORD2	
+captureImage	KEYWORD2	
+startRecording	KEYWORD2	
+stopRecording	KEYWORD2
+flashMode	KEYWORD2
+setQuality	KEYWORD2
+zoom	KEYWORD2
+flipTo	KEYWORD2	
+getRedColor	KEYWORD2
+getGreenColor	KEYWORD2
+getBlueColor	KEYWORD2
+setCalculationMode	KEYWORD2
+setGridSize	KEYWORD2
+setColorScheme	KEYWORD2
+getGridSize	KEYWORD2
+getColorScheme	KEYWORD2
+getCalculationMode	KEYWORD2
+sendSettings	KEYWORD2
+checkColor	KEYWORD2
+getColorError	KEYWORD2
+getGrayScaleColor	KEYWORD2
+createFile	KEYWORD2
+createColumn	KEYWORD2
+send	KEYWORD2
+stop	KEYWORD2
+sendMessage	KEYWORD2
+setTitle	KEYWORD2
+notifyPhone	KEYWORD2
+clear	KEYWORD2
+setDataSpeed	KEYWORD2
+play	KEYWORD2
+addToQueue	KEYWORD2
+stop	KEYWORD2
+getAccelerometerXaxis	KEYWORD2
+getAccelerometerYaxis	KEYWORD2
+getAccelerometerZaxis	KEYWORD2
+getGyroscopeXaxis	KEYWORD2
+getGyroscopeYaxis	KEYWORD2
+getGyroscopeZaxis	KEYWORD2
+getMagnetometerXaxis	KEYWORD2
+getMagnetometerYaxis	KEYWORD2
+getMagnetometerZaxis	KEYWORD2
+getProximityDistance	KEYWORD2
+getLightIntensity	KEYWORD2
+getSoundDecibels	KEYWORD2
+getTemperature	KEYWORD2
+getBarometerPressure	KEYWORD2
+getGPSlongitude	KEYWORD2
+getGPSlatitude	KEYWORD2
+getXaxisData	KEYWORD2
+getYaxisData	KEYWORD2
+#######################################
+# Constants And Literals (LITERAL1)
+#######################################
+REAR	LITERAL1
+FRONT	LITERAL1
+HIGH_QUALITY	LITERAL1
+LOW_QUALITY	LITERAL1
+AUTO	LITERAL1
+OFF	LITERAL1
+ON	LITERAL1
+RED	LITERAL1
+BLUE	LITERAL1
+GREEN	LITERAL1
+YELLOW	LITERAL1
+VIOLET	LITERAL1
+FROM_DABBLE_FOLDER	LITERAL1	
+INCLUDE_INTERNET_MODULE	LITERAL1	
+INCLUDE_OSCILLOSCOPE_MODULE	LITERAL1	
+INCLUDE_MOTORCONTROL_MODULE	LITERAL1	
+INCLUDE_PINMONITOR_MODULE	LITERAL1	
+INCLUDE_DABBLEINPUTS_MODULE	LITERAL1	
+INCLUDE_GAMEPAD_MODULE	LITERAL1	
+INCLUDE_IOT_MODULE	LITERAL1	
+INCLUDE_SENSOR_MODULE	LITERAL1	
+INCLUDE_TERMINAL_MODULE	LITERAL1	
+INCLUDE_CAMERA_MODULE	LITERAL1	
+INCLUDE_LEDCONTROL_MODULE	LITERAL1	
+INCLUDE_COLORDETECTOR_MODULE	LITERAL1
+INCLUDE_DATALOGGER_MODULE	LITERAL1
+INCLUDE_SMS_MODULE	LITERAL1
+INCLUDE_NOTIFICATION_MODULE	LITERAL1
+INCLUDE_MUSIC_MODULE	LITERAL1
+RGB_3BIT	LITERAL1
+RGB_15BIT	LITERAL1
+RGB_24BIT	LITERAL1
+GRAYSCALE_1BIT	LITERAL1
+GRAYSCALE_4BIT	LITERAL1
+GRAYSCALE_8BIT	LITERAL1
+GRID_3x3	LITERAL1
+GRID_1x1	LITERAL1
+GRID_5x5	LITERAL1
+DOMINANT	LITERAL1
+AVERAGE		LITERAL1
+NORMAL	LITERAL1
+CUSTOM_SETTINGS	LITERAL1	
+               
+
+
+
