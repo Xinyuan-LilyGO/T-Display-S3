@@ -21,7 +21,7 @@ void setup() {
   delay(2000);
 
   ledcSetup(0, 2000, 8);
-  ledcAttachPin(TFT_BL, 0);
+  ledcAttachPin(PIN_LCD_BL, 0);
   ledcWrite(0, 255);
 }
 
