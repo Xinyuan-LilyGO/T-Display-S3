@@ -22,9 +22,9 @@ void ui_begin() {
   dis = lv_tileview_create(lv_scr_act());
   lv_obj_align(dis, LV_ALIGN_TOP_RIGHT, 0, 0);
   lv_obj_set_size(dis, LV_PCT(100), LV_PCT(100));
-  lv_obj_t *tv1 = lv_tileview_add_tile(dis, 0, 0, LV_DIR_HOR);
-  lv_obj_t *tv2 = lv_tileview_add_tile(dis, 0, 1, LV_DIR_HOR);
-  lv_obj_t *tv3 = lv_tileview_add_tile(dis, 0, 2, LV_DIR_HOR);
+  lv_obj_t *tv1 = lv_tileview_add_tile(dis, 0, 0, LV_DIR_VER);
+  lv_obj_t *tv2 = lv_tileview_add_tile(dis, 0, 1, LV_DIR_VER);
+  lv_obj_t *tv3 = lv_tileview_add_tile(dis, 0, 2, LV_DIR_VER);
   /* page 1 */
   lv_obj_t *main_cout = lv_obj_create(tv1);
   lv_obj_set_size(main_cout, LV_PCT(100), LV_PCT(100));
