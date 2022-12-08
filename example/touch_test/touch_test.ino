@@ -1,4 +1,6 @@
-#define TOUCH_MODULES_CST_MUTUAL
+/* Please make sure your touch IC model. */
+// #define TOUCH_MODULES_CST_MUTUAL
+#define TOUCH_MODULES_CST_SELF
 
 #include "Arduino.h"
 #include "OneButton.h"
@@ -9,7 +11,11 @@
 #include "pin_config.h"
 
 #warning Please confirm that you have purchased a display screen with a touch chip, otherwise the touch routine cannot be implemented.
-TouchLib touch(Wire, PIN_IIC_SDA, PIN_IIC_SCL, CTS328_SLAVE_ADDRESS);
+#if defined(TOUCH_MODULES_CST_MUTUAL)
+TouchLib touch(Wire, PIN_IIC_SDA, PIN_IIC_SCL, CTS328_SLAVE_ADDRESS, PIN_TOUCH_RES);
+#elif defined(TOUCH_MODULES_CST_SELF)
+TouchLib touch(Wire, PIN_IIC_SDA, PIN_IIC_SCL, CTS820_SLAVE_ADDRESS, PIN_TOUCH_RES);
+#endif
 
 #define TOUCH_GET_FORM_INT 0
 

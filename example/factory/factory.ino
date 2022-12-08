@@ -1,6 +1,8 @@
+/* Please make sure your touch IC model. */
 #define TOUCH_MODULES_CST_MUTUAL
+// #define TOUCH_MODULES_CST_SELF
 #include "TouchLib.h"
-#define TOUCH_READ_FROM_INTERRNUPT
+// #define TOUCH_READ_FROM_INTERRNUPT
 
 #include "OneButton.h" /* https://github.com/mathertel/OneButton.git */
 #include "lvgl.h"      /* https://github.com/lvgl/lvgl.git */
@@ -24,7 +26,13 @@ static bool is_initialized_lvgl = false;
 OneButton button1(PIN_BUTTON_1, true);
 OneButton button2(PIN_BUTTON_2, true);
 
+
+
+#if defined(TOUCH_MODULES_CST_MUTUAL)
 TouchLib touch(Wire, PIN_IIC_SDA, PIN_IIC_SCL, CTS328_SLAVE_ADDRESS, PIN_TOUCH_RES);
+#elif defined(TOUCH_MODULES_CST_SELF)
+TouchLib touch(Wire, PIN_IIC_SDA, PIN_IIC_SCL, CTS820_SLAVE_ADDRESS, PIN_TOUCH_RES);
+#endif
 
 bool inited_touch = false;
 #if defined(TOUCH_READ_FROM_INTERRNUPT)
@@ -166,7 +174,7 @@ void setup() {
   lv_disp_drv_register(&disp_drv);
 
   /* Register touch brush with LVGL */
-  //Wire.begin(PIN_IIC_SDA, PIN_IIC_SCL, 800000);
+  // Wire.begin(PIN_IIC_SDA, PIN_IIC_SCL, 800000);
   inited_touch = touch.init();
   if (inited_touch) {
     touch.setRotation(1);
