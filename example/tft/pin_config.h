@@ -1,12 +1,5 @@
 #pragma once
 
-#define WIFI_SSID                    "xinyuandianzi"
-#define WIFI_PASSWORLD               "AA15994823428"
-
-// #define WIFI_SSID                    "ChinaNet-A179"
-// #define WIFI_PASSWORLD               "88888888"
-
-
 
 /*ESP32S3*/
 #define PIN_LCD_BL                   38

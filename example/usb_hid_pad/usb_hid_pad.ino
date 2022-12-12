@@ -1,4 +1,8 @@
+/* Please make sure your touch IC model. */
 #define TOUCH_MODULES_CST_MUTUAL
+// #define TOUCH_MODULES_CST_SELF
+#include "TouchLib.h"
+
 #if ARDUINO_USB_MODE
 #warning This sketch should be used when USB is in OTG mode
 void setup() {}
@@ -8,7 +12,6 @@ void loop() {}
 #include "Arduino.h"
 #include "OneButton.h"
 #include "TFT_eSPI.h" /* Please use the TFT library provided in the library. */
-#include "TouchLib.h"
 #include "Wire.h"
 #include "img_logo.h"
 #include "pin_config.h"

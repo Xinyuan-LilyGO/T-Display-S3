@@ -1,6 +1,6 @@
 /* Please make sure your touch IC model. */
-// #define TOUCH_MODULES_CST_MUTUAL
-#define TOUCH_MODULES_CST_SELF
+#define TOUCH_MODULES_CST_MUTUAL
+// #define TOUCH_MODULES_CST_SELF
 
 #include "Arduino.h"
 #include "OneButton.h"

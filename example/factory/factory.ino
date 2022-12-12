@@ -268,7 +268,7 @@ void wifi_test(void) {
   text += WIFI_SSID;
   text += "\n";
   Serial.print(WIFI_SSID);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORLD);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   uint32_t last_tick = millis();
   uint32_t i = 0;
   bool is_smartconfig_connect = false;
