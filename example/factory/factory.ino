@@ -1,8 +1,11 @@
 /* Please make sure your touch IC model. */
-#define TOUCH_MODULES_CST_MUTUAL
-// #define TOUCH_MODULES_CST_SELF
+// #define TOUCH_MODULES_CST_MUTUAL
+#define TOUCH_MODULES_CST_SELF
 #include "TouchLib.h"
 // #define TOUCH_READ_FROM_INTERRNUPT
+
+/* The product now has two screens, and the initialization code needs a small change in the new version. The LCD_MODULE_CMD_1 is used to define the switch macro. */
+#define LCD_MODULE_CMD_1
 
 #include "OneButton.h" /* https://github.com/mathertel/OneButton.git */
 #include "lvgl.h"      /* https://github.com/lvgl/lvgl.git */
@@ -25,8 +28,31 @@ static lv_color_t *lv_disp_buf;
 static bool is_initialized_lvgl = false;
 OneButton button1(PIN_BUTTON_1, true);
 OneButton button2(PIN_BUTTON_2, true);
+#if defined(LCD_MODULE_CMD_1)
+typedef struct {
+  uint8_t cmd;
+  uint8_t data[14];
+  uint8_t len;
+} lcd_cmd_t;
 
+lcd_cmd_t lcd_st7789v[] = {
+    {0x11, {0}, 0 | 0x80},
+    // {0x3A, {0X06}, 1},
+    {0xB2, {0X0B, 0X0B, 0X00, 0X33, 0X33}, 5},
+    {0xB7, {0X75}, 1},
+    {0xBB, {0X28}, 1},
+    {0xC0, {0X2C}, 1},
+    {0xC2, {0X01}, 1},
+    {0xC3, {0X1F}, 1},
+    {0xC6, {0X13}, 1},
+    {0xD0, {0XA7}, 1},
+    {0xD0, {0XA4, 0XA1}, 2},
+    {0xD6, {0XA1}, 1},
+    {0xE0, {0XF0, 0X05, 0X0A, 0X06, 0X06, 0X03, 0X2B, 0X32, 0X43, 0X36, 0X11, 0X10, 0X2B, 0X32}, 14},
+    {0xE1, {0XF0, 0X08, 0X0C, 0X0B, 0X09, 0X24, 0X2B, 0X22, 0X43, 0X38, 0X15, 0X16, 0X2F, 0X37}, 14},
 
+};
+#endif
 
 #if defined(TOUCH_MODULES_CST_MUTUAL)
 TouchLib touch(Wire, PIN_IIC_SDA, PIN_IIC_SCL, CTS328_SLAVE_ADDRESS, PIN_TOUCH_RES);
@@ -143,6 +169,7 @@ void setup() {
   esp_lcd_new_panel_st7789(io_handle, &panel_config, &panel_handle);
   esp_lcd_panel_reset(panel_handle);
   esp_lcd_panel_init(panel_handle);
+
   esp_lcd_panel_invert_color(panel_handle, true);
 
   esp_lcd_panel_swap_xy(panel_handle, true);
@@ -150,7 +177,13 @@ void setup() {
   // the gap is LCD panel specific, even panels with the same driver IC, can
   // have different gap value
   esp_lcd_panel_set_gap(panel_handle, 0, 35);
-
+#if defined(LCD_MODULE_CMD_1)
+  for (uint8_t i = 0; i < (sizeof(lcd_st7789v) / sizeof(lcd_cmd_t)); i++) {
+    esp_lcd_panel_io_tx_param(io_handle, lcd_st7789v[i].cmd, lcd_st7789v[i].data, lcd_st7789v[i].len & 0x7f);
+    if (lcd_st7789v[i].len & 0x80)
+      delay(120);
+  }
+#endif
   /* Lighten the screen with gradient */
   ledcSetup(0, 10000, 8);
   ledcAttachPin(PIN_LCD_BL, 0);
