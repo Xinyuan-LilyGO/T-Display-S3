@@ -35,14 +35,14 @@
 //#define STM_PORTB_DATA_BUS
 
 // Tell the library to use parallel mode (otherwise SPI is assumed)
-#define TFT_PARALLEL_8_BIT
+//#define TFT_PARALLEL_8_BIT
 //#defined TFT_PARALLEL_16_BIT // **** 16 bit parallel ONLY for RP2040 processor ****
 
 // Display type -  only define if RPi display
 //#define RPI_DISPLAY_TYPE // 20MHz maximum SPI
 
 // Only define one driver, the other ones must be commented out
-// #define ILI9341_DRIVER       // Generic driver for common displays
+#define ILI9341_DRIVER       // Generic driver for common displays
 //#define ILI9341_2_DRIVER     // Alternative ILI9341 driver, see https://github.com/Bodmer/TFT_eSPI/issues/1172
 //#define ST7735_DRIVER      // Define additional parameters below for this display
 //#define ILI9163_DRIVER     // Define additional parameters below for this display
@@ -52,8 +52,8 @@
 //#define ILI9481_DRIVER
 //#define ILI9486_DRIVER
 //#define ILI9488_DRIVER     // WARNING: Do not connect ILI9488 display SDO to MISO if other devices share the SPI bus (TFT SDO does NOT tristate when CS is high)
-#define ST7789_DRIVER      // Full configuration option, define additional parameters below for this display
-// #define ST7789_2_DRIVER    // Minimal configuration option, define additional parameters below for this display
+//#define ST7789_DRIVER      // Full configuration option, define additional parameters below for this display
+//#define ST7789_2_DRIVER    // Minimal configuration option, define additional parameters below for this display
 //#define R61581_DRIVER
 //#define RM68140_DRIVER
 //#define ST7796_DRIVER
@@ -74,7 +74,7 @@
 // Try ONE option at a time to find the correct colour order for your display
 
 //  #define TFT_RGB_ORDER TFT_RGB  // Colour order Red-Green-Blue
- #define TFT_RGB_ORDER TFT_BGR  // Colour order Blue-Green-Red
+//  #define TFT_RGB_ORDER TFT_BGR  // Colour order Blue-Green-Red
 
 // For M5Stack ESP32 module with integrated ILI9341 display ONLY, remove // in line below
 
@@ -83,12 +83,12 @@
 // For ST7789, ST7735, ILI9163 and GC9A01 ONLY, define the pixel width and height in portrait orientation
 // #define TFT_WIDTH  80
 // #define TFT_WIDTH  128
-#define TFT_WIDTH  172 // ST7789 172 x 320
+// #define TFT_WIDTH  172 // ST7789 172 x 320
 // #define TFT_WIDTH  240 // ST7789 240 x 240 and 240 x 320
 // #define TFT_HEIGHT 160
 // #define TFT_HEIGHT 128
 // #define TFT_HEIGHT 240 // ST7789 240 x 240
-#define TFT_HEIGHT 320 // ST7789 240 x 320
+// #define TFT_HEIGHT 320 // ST7789 240 x 320
 // #define TFT_HEIGHT 240 // GC9A01 240 x 240
 
 // For ST7735 ONLY, define the type of display, originally this was based on the
@@ -104,6 +104,7 @@
 // #define ST7735_GREENTAB3
 // #define ST7735_GREENTAB128    // For 128 x 128 display
 // #define ST7735_GREENTAB160x80 // For 160 x 80 display (BGR, inverted, 26 offset)
+// #define ST7735_ROBOTLCD       // For some RobotLCD arduino shields (128x160, BGR, https://docs.arduino.cc/retired/getting-started-guides/TFT)
 // #define ST7735_REDTAB
 // #define ST7735_BLACKTAB
 // #define ST7735_REDTAB160x80   // For 160 x 80 display with 24 pixel offset
@@ -165,9 +166,9 @@
 // ###### EDIT THE PIN NUMBERS IN THE LINES FOLLOWING TO SUIT YOUR ESP8266 SETUP ######
 
 // For NodeMCU - use pin numbers in the form PIN_Dx where Dx is the NodeMCU pin designation
-// #define TFT_CS   PIN_D8  // Chip select control pin D8
-// #define TFT_DC   PIN_D3  // Data Command control pin
-// #define TFT_RST  PIN_D4  // Reset pin (could connect to NodeMCU RST, see next line)
+#define TFT_CS   PIN_D8  // Chip select control pin D8
+#define TFT_DC   PIN_D3  // Data Command control pin
+#define TFT_RST  PIN_D4  // Reset pin (could connect to NodeMCU RST, see next line)
 //#define TFT_RST  -1    // Set TFT_RST to -1 if the display RESET is connected to NodeMCU RST or 3.3V
 
 //#define TFT_BL PIN_D1  // LED back-light (only for ST7789 with backlight control pin)
@@ -231,7 +232,7 @@
 //#define TFT_CS   14  // Chip select control pin
 //#define TFT_DC   27  // Data Command control pin
 //#define TFT_RST  33  // Reset pin (could connect to Arduino RESET pin)
-#define TFT_BL   38  // LED back-light (required for M5Stack)
+//#define TFT_BL   32  // LED back-light (required for M5Stack)
 
 // ######       EDIT THE PINs BELOW TO SUIT YOUR ESP32 PARALLEL TFT SETUP        ######
 
@@ -244,24 +245,24 @@
 // Example below is for ESP32 Parallel interface with UNO displays
 
 // Tell the library to use 8 bit parallel mode (otherwise SPI is assumed)
-#define TFT_PARALLEL_8_BIT
+//#define TFT_PARALLEL_8_BIT
 
 // The ESP32 and TFT the pins used for testing are:
-#define TFT_CS   6  // Chip select control pin (library pulls permanently low
-#define TFT_DC   7  // Data Command control pin - must use a pin in the range 0-31
-#define TFT_RST  5  // Reset pin, toggles on startup
+//#define TFT_CS   33  // Chip select control pin (library pulls permanently low
+//#define TFT_DC   15  // Data Command control pin - must use a pin in the range 0-31
+//#define TFT_RST  32  // Reset pin, toggles on startup
 
-#define TFT_WR    8  // Write strobe control pin - must use a pin in the range 0-31
-#define TFT_RD    -1  // Read strobe control pin
+//#define TFT_WR    4  // Write strobe control pin - must use a pin in the range 0-31
+//#define TFT_RD    2  // Read strobe control pin
 
-#define TFT_D0   39  // Must use pins in the range 0-31 for the data bus
-#define TFT_D1   40  // so a single register write sets/clears all bits.
-#define TFT_D2   41  // Pins can be randomly assigned, this does not affect
-#define TFT_D3   42  // TFT screen update performance.
-#define TFT_D4   45
-#define TFT_D5   46
-#define TFT_D6   47
-#define TFT_D7   48
+//#define TFT_D0   12  // Must use pins in the range 0-31 for the data bus
+//#define TFT_D1   13  // so a single register write sets/clears all bits.
+//#define TFT_D2   26  // Pins can be randomly assigned, this does not affect
+//#define TFT_D3   25  // TFT screen update performance.
+//#define TFT_D4   17
+//#define TFT_D5   16
+//#define TFT_D6   27
+//#define TFT_D7   14
 
 // ######       EDIT THE PINs BELOW TO SUIT YOUR STM32 SPI TFT SETUP        ######
 
@@ -323,6 +324,20 @@
 // For RP2040 processor and SPI displays, uncomment the following line to use the PIO interface.
 //#define RP2040_PIO_SPI // Leave commented out to use standard RP2040 SPI port interface
 
+// For RP2040 processor and 8 or 16 bit parallel displays:
+// The parallel interface write cycle period is derived from a division of the CPU clock
+// speed so scales with the processor clock. This means that the divider ratio may need
+// to be increased when overclocking. I may also need to be adjusted dependant on the
+// display controller type (ILI94341, HX8357C etc). If RP2040_PIO_CLK_DIV is not defined
+// the library will set default values which may not suit your display.
+// The display controller data sheet will specify the minimum write cycle period. The
+// controllers often work reliably for shorter periods, however if the period is too short
+// the display may not initialise or graphics will become corrupted.
+// PIO write cycle frequency = (CPU clock/(4 * RP2040_PIO_CLK_DIV))
+//#define RP2040_PIO_CLK_DIV 1 // 32ns write cycle at 125MHz CPU clock
+//#define RP2040_PIO_CLK_DIV 2 // 64ns write cycle at 125MHz CPU clock
+//#define RP2040_PIO_CLK_DIV 3 // 96ns write cycle at 125MHz CPU clock
+
 // For the RP2040 processor define the SPI port channel used (default 0 if undefined)
 //#define TFT_SPI_PORT 1 // Set to 0 if SPI0 pins are used, or 1 if spi1 pins used
 
@@ -336,16 +351,16 @@
 // With an ILI9163 display 27 MHz works OK.
 
 // #define SPI_FREQUENCY   1000000
-#define SPI_FREQUENCY   5000000
+// #define SPI_FREQUENCY   5000000
 // #define SPI_FREQUENCY  10000000
 // #define SPI_FREQUENCY  20000000
-// #define SPI_FREQUENCY  27000000
+#define SPI_FREQUENCY  27000000
 // #define SPI_FREQUENCY  40000000
 // #define SPI_FREQUENCY  55000000 // STM32 SPI1 only (SPI2 maximum is 27MHz)
 // #define SPI_FREQUENCY  80000000
 
 // Optional reduced SPI frequency for reading TFT
-#define SPI_READ_FREQUENCY  2000000
+#define SPI_READ_FREQUENCY  20000000
 
 // The XPT2046 requires a lower SPI clock rate of 2.5MHz so we define that here:
 #define SPI_TOUCH_FREQUENCY  2500000

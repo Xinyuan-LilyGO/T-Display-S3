@@ -13,7 +13,6 @@
   Last update by Bodmer 20/03/20
  ****************************************************/
 
-
 #include "TFT_eSPI.h"
 
 #if defined (ESP32)
@@ -24,7 +23,7 @@
   #else
     #include "Processors/TFT_eSPI_ESP32.c"
   #endif
-#elif defined (ESP8266)
+#elif defined (ARDUINO_ARCH_ESP8266)
   #include "Processors/TFT_eSPI_ESP8266.c"
 #elif defined (STM32) // (_VARIANT_ARDUINO_STM32_) stm32_def.h
   #include "Processors/TFT_eSPI_STM32.c"
@@ -625,7 +624,7 @@ void TFT_eSPI::init(uint8_t tc)
     sclkpinmask = (uint32_t) digitalPinToBitMask(TFT_SCLK);
   #endif
 
-  #if defined (TFT_SPI_OVERLAP) && defined (ESP8266)
+  #if defined (TFT_SPI_OVERLAP) && defined (ARDUINO_ARCH_ESP8266)
     // Overlap mode SD0=MISO, SD1=MOSI, CLK=SCLK must use D3 as CS
     //    pins(int8_t sck, int8_t miso, int8_t mosi, int8_t ss);
     //spi.pins(        6,          7,           8,          0);
@@ -654,7 +653,7 @@ void TFT_eSPI::init(uint8_t tc)
   // Set to output once again in case MISO is used for CS
   pinMode(TFT_CS, OUTPUT);
   digitalWrite(TFT_CS, HIGH); // Chip select high (inactive)
-#elif defined (ESP8266) && !defined (TFT_PARALLEL_8_BIT) && !defined (RP2040_PIO_SPI)
+#elif defined (ARDUINO_ARCH_ESP8266) && !defined (TFT_PARALLEL_8_BIT) && !defined (RP2040_PIO_SPI)
   spi.setHwCs(1); // Use hardware SS toggling
 #endif
 
@@ -676,6 +675,7 @@ void TFT_eSPI::init(uint8_t tc)
     pinMode(TFT_RST, OUTPUT);
   #endif
   if (TFT_RST >= 0) {
+    writecommand(0x00); // Put SPI bus in known state for TFT with CS tied low
     digitalWrite(TFT_RST, HIGH);
     delay(5);
     digitalWrite(TFT_RST, LOW);
@@ -990,14 +990,14 @@ uint8_t TFT_eSPI::readcommand8(uint8_t cmd_function, uint8_t index)
 
   writecommand(cmd_function); // Sets DC and CS high
 
-  busDir(dir_mask, INPUT);
+  busDir(GPIO_DIR_MASK, INPUT);
 
   CS_L;
 
   // Read nth parameter (assumes caller discards 1st parameter or points index to 2nd)
   while(index--) reg = readByte();
 
-  busDir(dir_mask, OUTPUT);
+  busDir(GPIO_DIR_MASK, OUTPUT);
 
   CS_H;
 
@@ -1070,12 +1070,12 @@ uint16_t TFT_eSPI::readPixel(int32_t x0, int32_t y0)
 
 #if defined(TFT_PARALLEL_8_BIT) || defined(RP2040_PIO_INTERFACE)
 
-  CS_L;
+  if (!inTransaction) { CS_L; } // CS_L can be multi-statement
 
   readAddrWindow(x0, y0, 1, 1);
 
   // Set masked pins D0- D7 to input
-  busDir(dir_mask, INPUT);
+  busDir(GPIO_DIR_MASK, INPUT);
 
   #if  !defined (SSD1963_DRIVER)
   // Dummy read to throw away don't care value
@@ -1090,10 +1090,10 @@ uint16_t TFT_eSPI::readPixel(int32_t x0, int32_t y0)
     // Read window pixel 24 bit RGB values and fill in LS bits
     uint16_t rgb = ((readByte() & 0xF8) << 8) | ((readByte() & 0xFC) << 3) | (readByte() >> 3);
 
-    CS_H;
+    if (!inTransaction) { CS_H; } // CS_H can be multi-statement
 
     // Set masked pins D0- D7 to output
-    busDir(dir_mask, OUTPUT);
+    busDir(GPIO_DIR_MASK, OUTPUT);
 
     return rgb;
 
@@ -1102,10 +1102,10 @@ uint16_t TFT_eSPI::readPixel(int32_t x0, int32_t y0)
     // Fetch the 16 bit BRG pixel
     uint16_t bgr = (readByte() << 8) | readByte();
 
-    CS_H;
+    if (!inTransaction) { CS_H; } // CS_H can be multi-statement
 
     // Set masked pins D0- D7 to output
-    busDir(dir_mask, OUTPUT);
+    busDir(GPIO_DIR_MASK, OUTPUT);
 
     #ifdef ILI9486_DRIVER
       return  bgr;
@@ -1201,7 +1201,7 @@ void TFT_eSPI::readRect(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *da
   data += dx + dy * w;
 
   // Set masked pins D0- D7 to input
-  busDir(dir_mask, INPUT);
+  busDir(GPIO_DIR_MASK, INPUT);
 
   #if defined (ILI9341_DRIVER)  || defined(ILI9341_2_DRIVER) || defined (ILI9488_DRIVER) // Read 3 bytes
     // Dummy read to throw away don't care value
@@ -1266,7 +1266,7 @@ void TFT_eSPI::readRect(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *da
   CS_H;
 
   // Set masked pins D0- D7 to output
-  busDir(dir_mask, OUTPUT);
+  busDir(GPIO_DIR_MASK, OUTPUT);
 
 #else // SPI interface
 
@@ -3752,7 +3752,7 @@ constexpr float LoAlphaTheshold  = 1.0/32.0;
 constexpr float HiAlphaTheshold  = 1.0 - LoAlphaTheshold;
 
 /***************************************************************************************
-** Function name:           drawPixel (aplha blended)
+** Function name:           drawPixel (alpha blended)
 ** Description:             Draw a pixel blended with the screen or bg pixel colour
 ***************************************************************************************/
 uint16_t TFT_eSPI::drawPixel(int32_t x, int32_t y, uint32_t color, uint8_t alpha, uint32_t bg_color)
@@ -3827,6 +3827,7 @@ void TFT_eSPI::fillSmoothRoundRect(int32_t x, int32_t y, int32_t w, int32_t h, i
   int32_t cx = 0;
 
   // Limit radius to half width or height
+  if (r < 0) r = 0;
   if (r > w/2) r = w/2;
   if (r > h/2) r = h/2;
 
@@ -3886,11 +3887,12 @@ void TFT_eSPI::drawWideLine(float ax, float ay, float bx, float by, float wd, ui
 }
 
 /***************************************************************************************
-** Function name:           drawWedgeLine
+** Function name:           drawWedgeLine - background colour specified or pixel read
 ** Description:             draw an anti-aliased line with different width radiused ends
 ***************************************************************************************/
 void TFT_eSPI::drawWedgeLine(float ax, float ay, float bx, float by, float ar, float br, uint32_t fg_color, uint32_t bg_color)
 {
+  if ( (ar < 0.0) || (br < 0.0) )return;
   if ( (abs(ax - bx) < 0.01f) && (abs(ay - by) < 0.01f) ) bx += 0.01f;  // Avoid divide by zero
 
   // Find line bounding box
@@ -4110,21 +4112,19 @@ void TFT_eSPI::fillRectVGradient(int16_t x, int16_t y, int16_t w, int16_t h, uin
 
   if ((w < 1) || (h < 1)) return;
 
-  begin_tft_write();
-
-  setWindow(x, y, x + w - 1, y + h - 1);
+  begin_nin_write();
 
   float delta = -255.0/h;
   float alpha = 255.0;
   uint32_t color = color1;
 
   while (h--) {
-    pushBlock(color, w);
+    drawFastHLine(x, y++, w, color);
     alpha += delta;
     color = alphaBlend((uint8_t)alpha, color1, color2);
   }
 
-  end_tft_write();
+  end_nin_write();
 }
 
 
@@ -4150,7 +4150,7 @@ void TFT_eSPI::fillRectHGradient(int16_t x, int16_t y, int16_t w, int16_t h, uin
 
   if ((w < 1) || (h < 1)) return;
 
-  begin_tft_write();
+  begin_nin_write();
 
   float delta = -255.0/w;
   float alpha = 255.0;
@@ -4162,7 +4162,7 @@ void TFT_eSPI::fillRectHGradient(int16_t x, int16_t y, int16_t w, int16_t h, uin
     color = alphaBlend((uint8_t)alpha, color1, color2);
   }
 
-  end_tft_write();
+  end_nin_write();
 }
 
 
@@ -4450,7 +4450,7 @@ uint32_t TFT_eSPI::alphaBlend24(uint8_t alpha, uint32_t fgc, uint32_t bgc, uint8
 ** Description:             draw characters piped through serial stream
 ***************************************************************************************/
 /* // Not all processors support buffered write
-#ifndef ESP8266 // Avoid ESP8266 board package bug
+#ifndef ARDUINO_ARCH_ESP8266 // Avoid ESP8266 board package bug
 size_t TFT_eSPI::write(const uint8_t *buf, size_t len)
 {
   inTransaction = true;
