@@ -47,3 +47,8 @@
 
 #define PIN_TOUCH_INT                16
 #define PIN_TOUCH_RES                21
+
+/* External expansion */
+#define PIN_SD_CMD                   13
+#define PIN_SD_CLK                   11
+#define PIN_SD_D0                    12

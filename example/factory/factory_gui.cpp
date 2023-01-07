@@ -1,5 +1,6 @@
 #include "factory_gui.h"
 #include "Arduino.h"
+#include "SD_MMC.h"
 #include "lvgl.h"
 
 LV_FONT_DECLARE(font_Alibaba);
@@ -97,6 +98,16 @@ void ui_begin() {
   text += "flash size : ";
   text += ESP.getFlashChipSize() / 1024;
   text += " KB\n";
+
+  extern bool inited_sd;
+  if (inited_sd) {
+    text += "SD card found\r\nSize : ";
+    text += SD_MMC.cardSize() / 1024;
+    text += " kb";
+  } else {
+    text += "SD card not found";
+  }
+
   lv_label_set_text(debug_label, text.c_str());
   lv_obj_align(debug_label, LV_ALIGN_TOP_LEFT, 0, 0);
 
@@ -108,6 +119,7 @@ void ui_begin() {
   lv_obj_t *touch_label = lv_label_create(tv3);
   lv_obj_align_to(touch_label, bat_label, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
   lv_obj_add_event_cb(touch_label, update_touch_point_subscriber_cb, LV_EVENT_MSG_RECEIVED, NULL);
+  lv_label_set_text_fmt(touch_label, "");
   lv_msg_subsribe_obj(MSG_NEW_TOUCH_POINT, touch_label, (void *)"%s");
 
   lv_timer_t *timer = lv_timer_create(timer_task, 500, seg_text);

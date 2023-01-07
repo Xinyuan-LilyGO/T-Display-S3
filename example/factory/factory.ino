@@ -4,13 +4,15 @@
 #include "TouchLib.h"
 // #define TOUCH_READ_FROM_INTERRNUPT
 
-/* The product now has two screens, and the initialization code needs a small change in the new version. The LCD_MODULE_CMD_1 is used to define the switch macro. */
+/* The product now has two screens, and the initialization code needs a small change in the new version. The LCD_MODULE_CMD_1 is used to define the
+ * switch macro. */
 #define LCD_MODULE_CMD_1
 
 #include "OneButton.h" /* https://github.com/mathertel/OneButton.git */
 #include "lvgl.h"      /* https://github.com/lvgl/lvgl.git */
 
 #include "Arduino.h"
+#include "SD_MMC.h"
 #include "WiFi.h"
 #include "Wire.h"
 #include "esp_lcd_panel_io.h"
@@ -61,6 +63,7 @@ TouchLib touch(Wire, PIN_IIC_SDA, PIN_IIC_SCL, CTS820_SLAVE_ADDRESS, PIN_TOUCH_R
 #endif
 
 bool inited_touch = false;
+bool inited_sd = false;
 #if defined(TOUCH_READ_FROM_INTERRNUPT)
 bool get_int_signal = false;
 #endif
@@ -222,6 +225,10 @@ void setup() {
   attachInterrupt(
       PIN_TOUCH_INT, [] { get_int_signal = true; }, FALLING);
 #endif
+
+  SD_MMC.setPins(PIN_SD_CLK, PIN_SD_CMD, PIN_SD_D0);
+  inited_sd = SD_MMC.begin("/sdcard", true, true);
+
   wifi_test();
 
   button1.attachClick([]() {
@@ -268,9 +275,10 @@ void wifi_test(void) {
   lv_obj_t *log_label = lv_label_create(lv_scr_act());
   lv_obj_align(log_label, LV_ALIGN_TOP_LEFT, 0, 0);
   lv_obj_set_width(log_label, LV_PCT(100));
-  lv_label_set_text(log_label, "Scan WiFi");
   lv_label_set_long_mode(log_label, LV_LABEL_LONG_SCROLL);
   lv_label_set_recolor(log_label, true);
+
+  lv_label_set_text(log_label, "Scan WiFi");
   LV_DELAY(1);
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();
