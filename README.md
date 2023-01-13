@@ -38,7 +38,7 @@ T-Display-S3 is a development board whose main control chip is ESP32-S3. It is e
 ![](image/Arduino_Config.png)
 
 
-> PlatfromIO:
+> PlatformIO:
 > - PlatformIO plug-in installation: Click on the extension on the left column -> search platformIO -> install the first plug-in
 > - Click Platforms -> Embedded -> search Espressif 32 in the input box -> select the corresponding firmware installation
 
