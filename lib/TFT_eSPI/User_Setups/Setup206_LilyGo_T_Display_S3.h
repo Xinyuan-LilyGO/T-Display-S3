@@ -3,6 +3,7 @@
 #define USER_SETUP_ID 206
 
 #define ST7789_DRIVER
+// #define INIT_SEQUENCE_3 // Using this initialisation sequence improves the display image
 
 #define CGRAM_OFFSET
 // #define TFT_RGB_ORDER TFT_RGB  // Colour order Red-Green-Blue
@@ -12,10 +13,6 @@
 // #define TFT_INVERSION_OFF
 
 #define TFT_PARALLEL_8_BIT
-
-#define TFT_DATA_PIN_OFFSET_EN /* The ESP32S3 controller is controlled by two registers.      \
-                                Select data pin numbers higher than 32 to enable this option, \
-                                this macro definition added by Micky -20220701 */
 
 #define TFT_WIDTH 170
 #define TFT_HEIGHT 320
