@@ -1,14 +1,20 @@
 #pragma once
 
-#define WIFI_SSID                    "Your-ssid"
-#define WIFI_PASSWORD                "Your-password"
+// #define WIFI_SSID                    "Your-ssid"
+// #define WIFI_PASSWORD                "Your-password"
+
+#define WIFI_SSID                    "GL-MT1300-44e"
+#define WIFI_PASSWORD                "88888888"
 
 #define WIFI_CONNECT_WAIT_MAX        (30 * 1000)
 
 #define NTP_SERVER1                  "pool.ntp.org"
 #define NTP_SERVER2                  "time.nist.gov"
-#define GMT_OFFSET_SEC               (3600 * 8)
+#define GMT_OFFSET_SEC               0
 #define DAY_LIGHT_OFFSET_SEC         0
+
+/* Automatically update local time */
+#define GET_TIMEZONE_API             "https://ipapi.co/timezone/"
 
 /* LCD CONFIG */
 #define EXAMPLE_LCD_PIXEL_CLOCK_HZ   (20 * 1000 * 1000)
