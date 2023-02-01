@@ -384,6 +384,9 @@ void timeavailable(struct timeval *t) {
 }
 
 void setTimezone() {
+  #ifdef CUSTOM_TIMEZONE
+  String timezone = CUSTOM_TIMEZONE;
+  #else
   const char *rootCACertificate = "-----BEGIN CERTIFICATE-----\n"
                                   "MIIDzTCCArWgAwIBAgIQCjeHZF5ftIwiTv0b7RQMPDANBgkqhkiG9w0BAQsFADBa\n"
                                   "MQswCQYDVQQGEwJJRTESMBAGA1UEChMJQmFsdGltb3JlMRMwEQYDVQQLEwpDeWJl\n"
@@ -431,7 +434,7 @@ void setTimezone() {
     }
     delete client;
   }
-
+#endif
   for (uint32_t i = 0; i < sizeof(zones); i++) {
     if (timezone == "none") {
       timezone = "CST-8";
