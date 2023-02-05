@@ -8,17 +8,11 @@ T-Display-S3 is a ESP32-S3 development board. It is equipped with a color 1.9" L
 
 ![](image/T-DISPLAY-S3.jpg)
 
-## Product 📷
+## Where to buy
 
-|  Product |  Product Link |
-| :--------: | :---------: |
-| T-Display-S3 |  [Website](https://www.lilygo.cc/products/t-display-s3)   |
-| T-Display-S3 |  [Amazon](https://www.amazon.com/dp/B0B7X5RVTH?ref=myi_title_dp)   |
-| T-Display-S3 |  [Aliexpress](https://www.aliexpress.com/item/3256804310228562.html)   |
+T-Display-S3 is available from: [LILYGO](https://www.lilygo.cc/products/t-display-s3), [Amazon](https://www.amazon.com/dp/B0B7X5RVTH?ref=myi_title_dp) and [Aliexpress](https://www.aliexpress.com/item/3256804310228562.html).
 
 ## Quick Start
-
-### Notice
 
 The board uses USB as the JTAG upload port. When printing serial port information on USB, CDC_ON_BOOT configuration needs to be turned on. 
 If the port cannot be found when uploading the program or the USB has been used for other functions, the port does not appear. 
