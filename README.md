@@ -52,7 +52,7 @@ Please enter the upload mode manually.
 
 ### ESP-IDF
 
-The installation method varies depending on the system, it is recommended to refer to the [official manual](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html) for installation.
+The installation method varies depending on the system, refer to the [official manual](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html) for installation.
 
 ## Q&A
 
