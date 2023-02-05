@@ -47,12 +47,12 @@ Please enter the upload mode manually.
 
 ### PlatformIO
 
-- PlatformIO plug-in installation: Click on the extension on the left column -> search platformIO -> install the first plug-in
-- Click Platforms -> Embedded -> search Espressif 32 in the input box -> select the corresponding firmware installation
+1. PlatformIO plug-in installation: click on the extension on the left column → search platformIO → install the first plug-in
+2. Click Platforms → Embedded → search Espressif 32 in the input box → select the corresponding firmware installation
 
 ### ESP-IDF
 
-- The installation method varies depending on the system, it is recommended to refer to the [official manual](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html) for installation.
+The installation method varies depending on the system, it is recommended to refer to the [official manual](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html) for installation.
 
 ## Q&A
 
