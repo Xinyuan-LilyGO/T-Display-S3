@@ -12,6 +12,8 @@
 #define NTP_SERVER2                  "time.nist.gov"
 #define GMT_OFFSET_SEC               0
 #define DAY_LIGHT_OFFSET_SEC         0
+// if CUSTOM_TIMEZONE is not defined then TIMEZONE API used based on IP, check zones.h
+// #define CUSTOM_TIMEZONE             "Europe/London" 
 
 /* Automatically update local time */
 #define GET_TIMEZONE_API             "https://ipapi.co/timezone/"
