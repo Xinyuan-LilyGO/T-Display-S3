@@ -13,13 +13,14 @@
 #define GMT_OFFSET_SEC               0
 #define DAY_LIGHT_OFFSET_SEC         0
 // if CUSTOM_TIMEZONE is not defined then TIMEZONE API used based on IP, check zones.h
-// #define CUSTOM_TIMEZONE             "Europe/London" 
+// #define CUSTOM_TIMEZONE             "Europe/London"
 
 /* Automatically update local time */
 #define GET_TIMEZONE_API             "https://ipapi.co/timezone/"
 
 /* LCD CONFIG */
-#define EXAMPLE_LCD_PIXEL_CLOCK_HZ   (20 * 1000 * 1000)
+// Too low or too high pixel clock may cause screen mosaic
+#define EXAMPLE_LCD_PIXEL_CLOCK_HZ   (16 * 1000 * 1000)
 // The pixel number in horizontal and vertical
 #define EXAMPLE_LCD_H_RES            320
 #define EXAMPLE_LCD_V_RES            170
