@@ -58,12 +58,17 @@ Please enter the upload mode manually.
 
 The installation method varies depending on the system, refer to the [official manual](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html) for installation.
 
+
+### Micropython
+
+See [Micropython](https://github.com/Xinyuan-LilyGO/lilygo-micropython)
+
 ## Libraries
 
-| Library | Minimum version | Description | 
-| ------: | :-------------- | :---------- |
-| [Arduino-ESP32](https://github.com/espressif/arduino-esp32) | 2.0.3 | ESP32 Arduino core |
-| [TFT_eSPI](https://github.com/Bodmer/TFT_eSPI) | 2.5.0 | graphics and fonts library |
+|                                                     Library | Minimum version | Description                |
+| ----------------------------------------------------------: | :-------------- | :------------------------- |
+| [Arduino-ESP32](https://github.com/espressif/arduino-esp32) | 2.0.3           | ESP32 Arduino core         |
+|              [TFT_eSPI](https://github.com/Bodmer/TFT_eSPI) | 2.5.0           | graphics and fonts library |
 
 ## Tips
 
