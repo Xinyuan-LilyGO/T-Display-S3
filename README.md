@@ -4,9 +4,14 @@
 
 T-Display-S3 is a ESP32-S3 development board. It is equipped with a color 1.9" LCD screen and two programmable buttons. Communication using I8080 interface. Retains the same layout design as T-Display. You can directly use ESP32S3 for USB communication or programming.
 
-## Pinout
+## T-Display-S3 Pinout
 
 ![](image/T-DISPLAY-S3.jpg)
+
+## T-Display-S3 TOUCH Pinout
+
+![](image/T-DISPLAY-S3-TOUCH.png)
+
 
 ## Where to buy
 
