@@ -29,8 +29,7 @@ Please enter the upload mode manually.
 
 1. In Arduino Preferences, on the Settings tab, enter the `https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json` URL in the `Additional boards manager URLs` input box. 
 2. Click OK and the software will install. 
-3. Search for ESP32 in Tools → Board Manager and install ESP32-Arduino SDK (version 2.0.3 or above)
-![](image/Arduino_board.png)
+3. Search for ESP32 in Tools → Board Manager and install `esp32` (Arduino-ESP32)
 4. Copy everything from this repository lib folder to [Arduino library folder](https://docs.arduino.cc/software/ide-v1/tutorials/installing-libraries#manual-installation) (e.g. `C:\Users\YourName\Documents\Arduino\libraries`)
 5. Select the correct settings in the Tools menu as shown below.
 
@@ -59,13 +58,12 @@ Please enter the upload mode manually.
 
 The installation method varies depending on the system, refer to the [official manual](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html) for installation.
 
-## Q&A
+## Libraries
 
-- Why doesn't the [TFT_eSPI](https://github.com/Bodmer/TFT_eSPI) library display properly?
-
-    > Some settings, withing the TFT_eSPI library, need to be modified. A modified library is provided in this repository in the lib folder. Copy it to your [Arduino library folder](https://docs.arduino.cc/software/ide-v1/tutorials/installing-libraries#manual-installation). 
-    >
-    > Alternatively you must patch your clone of a TFT_eSPI library with `Micky_commit.patch`. 
+| Library | Minimum version | Description | 
+| ------: | :-------------- | :---------- |
+| [Arduino-ESP32](https://github.com/espressif/arduino-esp32) | 2.0.3 | ESP32 Arduino core |
+| [TFT_eSPI](https://github.com/Bodmer/TFT_eSPI) | 2.5.0 | graphics and fonts library |
 
 ## Tips
 
