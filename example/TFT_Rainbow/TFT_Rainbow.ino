@@ -25,9 +25,12 @@ byte green = 0;
 byte blue = 0;
 byte state = 0;
 unsigned int colour = red << 11;
+uint32_t runing = 0;
 
 void setup(void)
 {
+    Serial.begin(115200);
+    
     pinMode(PIN_POWER_ON, OUTPUT);
     digitalWrite(PIN_POWER_ON, HIGH);
 
@@ -46,6 +49,12 @@ void setup(void)
 void loop()
 {
 
+    if (millis() > runing) {
+        Serial.print("Current running ");
+        Serial.print(millis());
+        Serial.println(" millis");
+        runing = millis() + 1000;
+    }
     if (targetTime < millis()) {
         targetTime = millis() + 10000;
 
