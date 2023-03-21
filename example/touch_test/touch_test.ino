@@ -2,8 +2,8 @@
 
 //!!!If you are unsure about the drive model, please switch the definition to try to see if the touch is normal
 
-#define TOUCH_MODULES_CST_MUTUAL
-// #define TOUCH_MODULES_CST_SELF
+// #define TOUCH_MODULES_CST_MUTUAL    //Early use of CST328
+#define TOUCH_MODULES_CST_SELF        //Use CST816 by default
 
 #include "Arduino.h"
 #include "OneButton.h"
@@ -15,7 +15,7 @@
 
 /* The product now has two screens, and the initialization code needs a small change in the new version. The LCD_MODULE_CMD_1 is used to define the
  * switch macro. */
-#define LCD_MODULE_CMD_1
+// #define LCD_MODULE_CMD_1
 
 #warning Please confirm that you have purchased a display screen with a touch chip, otherwise the touch routine cannot be implemented.
 #if defined(TOUCH_MODULES_CST_MUTUAL)
