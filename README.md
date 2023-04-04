@@ -87,3 +87,8 @@ computer is not needed again.
 
 New code can be loaded to the board by going to step 1 or 2. Both will
 still work.
+
+3. The program can be written normally, but there is still no display after writing
+   1. There are factory test files in the firmware folder, which can be flashed into the board to check whether the board is normal. If there is still no display, then it can be judged that there is a problem with the board or the screen
+   2. Delete the <TFT_eSPI> in the libraries, and replace the <TFT_eSPI> in the <lib> folder of the main page to the libraries directory
+   3. When opening the Arduino IDE, it prompts whether to upgrade the library, please choose not to upgrade, otherwise it will overwrite the configuration of the <TFT_eSPI> display
