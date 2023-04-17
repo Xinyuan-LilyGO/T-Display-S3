@@ -3,8 +3,8 @@
 // #define WIFI_SSID                    "Your-ssid"
 // #define WIFI_PASSWORD                "Your-password"
 
-#define WIFI_SSID                    "GL-MT1300-44e"
-#define WIFI_PASSWORD                "88888888"
+#define WIFI_SSID                    "xinyuandianzi"
+#define WIFI_PASSWORD                "AA15994823428"
 
 #define WIFI_CONNECT_WAIT_MAX        (30 * 1000)
 

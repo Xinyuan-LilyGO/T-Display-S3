@@ -6,7 +6,7 @@
 
 /* The product now has two screens, and the initialization code needs a small change in the new version. The LCD_MODULE_CMD_1 is used to define the
  * switch macro. */
-// #define LCD_MODULE_CMD_1
+#define LCD_MODULE_CMD_1
 
 #include "OneButton.h" /* https://github.com/mathertel/OneButton.git */
 #include "lvgl.h"      /* https://github.com/lvgl/lvgl.git */
@@ -33,6 +33,7 @@
 // Please pay attention to check the validity of the certificate.
 // The current configuration certificate is valid until April 16, 2024
 #define CUSTOM_TIMEZONE         "CST-8"
+
 
 esp_lcd_panel_io_handle_t io_handle = NULL;
 static lv_disp_draw_buf_t disp_buf; // contains internal graphic buffer(s) called draw buffer(s)
