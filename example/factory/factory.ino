@@ -1,6 +1,7 @@
 /* Please make sure your touch IC model. */
 // #define TOUCH_MODULES_CST_MUTUAL
-#define TOUCH_MODULES_CST_SELF
+// #define TOUCH_MODULES_CST_SELF
+
 #include "TouchLib.h"
 // #define TOUCH_READ_FROM_INTERRNUPT
 
@@ -72,6 +73,8 @@ lcd_cmd_t lcd_st7789v[] = {
 TouchLib touch(Wire, PIN_IIC_SDA, PIN_IIC_SCL, CTS328_SLAVE_ADDRESS, PIN_TOUCH_RES);
 #elif defined(TOUCH_MODULES_CST_SELF)
 TouchLib touch(Wire, PIN_IIC_SDA, PIN_IIC_SCL, CTS820_SLAVE_ADDRESS, PIN_TOUCH_RES);
+#else
+#error "Please choose the correct touch driver model!"
 #endif
 
 bool inited_touch = false;

@@ -2,13 +2,17 @@
 #error "This example can only be run on platformIO"
 #endif
 
-#define TOUCH_MODULES_CST_MUTUAL
+/* Please make sure your touch IC model. */
+// #define TOUCH_MODULES_CST_MUTUAL
+// #define TOUCH_MODULES_CST_SELF
+
+
 #include "TouchLib.h"
 // #define TOUCH_READ_FROM_INTERRNUPT
 
 /* The product now has two screens, and the initialization code needs a small change in the new version. The LCD_MODULE_CMD_1 is used to define the
  * switch macro. */
-// #define LCD_MODULE_CMD_1
+#define LCD_MODULE_CMD_1
 
 /*
 This example can only be run on platformIO.
@@ -216,7 +220,7 @@ void setup()
     lv_demo_stress();
 #elif LV_USE_DEMO_KEYPAD_AND_ENCODER
     lv_demo_keypad_encoder();
-#else LV_USE_DEMO_MUSIC
+#elif LV_USE_DEMO_MUSIC
     lv_demo_music();
 #endif
 }

@@ -2,7 +2,7 @@
 
 //!!!If you are unsure about the drive model, please switch the definition to try to see if the touch is normal
 
- #define TOUCH_MODULES_CST_MUTUAL    //Early use of CST328
+// #define TOUCH_MODULES_CST_MUTUAL    //Early use of CST328
 //#define TOUCH_MODULES_CST_SELF        //Use CST816 by default
 
 #include "Arduino.h"
@@ -22,6 +22,8 @@
 TouchLib touch(Wire, PIN_IIC_SDA, PIN_IIC_SCL, CTS328_SLAVE_ADDRESS, PIN_TOUCH_RES);
 #elif defined(TOUCH_MODULES_CST_SELF)
 TouchLib touch(Wire, PIN_IIC_SDA, PIN_IIC_SCL, CTS820_SLAVE_ADDRESS, PIN_TOUCH_RES);
+#else
+#error "Please choose the correct touch driver model!"
 #endif
 
 #define TOUCH_GET_FORM_INT 0

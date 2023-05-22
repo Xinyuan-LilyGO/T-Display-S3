@@ -5,7 +5,7 @@
 
 /* The product now has two screens, and the initialization code needs a small change in the new version. The LCD_MODULE_CMD_1 is used to define the
  * switch macro. */
-// #define LCD_MODULE_CMD_1
+#define LCD_MODULE_CMD_1
 
 TFT_eSPI tft = TFT_eSPI();
 #define WAIT 1000
