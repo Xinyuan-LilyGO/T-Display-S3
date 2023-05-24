@@ -1,12 +1,12 @@
 #pragma once
 
-// #define WIFI_SSID                    "Your-ssid"
-// #define WIFI_PASSWORD                "Your-password"
+ #define WIFI_SSID                    "Your-ssid"
+ #define WIFI_PASSWORD                "Your-password"
 
-#define WIFI_SSID                    "xinyuandianzi"
-#define WIFI_PASSWORD                "AA15994823428"
+// #define WIFI_SSID                    "xinyuandianzi"
+// #define WIFI_PASSWORD                "AA15994823428"
 
-#define WIFI_CONNECT_WAIT_MAX        (30 * 1000)
+#define WIFI_CONNECT_WAIT_MAX        (5 * 1000)
 
 #define NTP_SERVER1                  "pool.ntp.org"
 #define NTP_SERVER2                  "time.nist.gov"
@@ -14,6 +14,7 @@
 #define DAY_LIGHT_OFFSET_SEC         0
 // if CUSTOM_TIMEZONE is not defined then TIMEZONE API used based on IP, check zones.h
 // #define CUSTOM_TIMEZONE             "Europe/London"
+// #define CUSTOM_TIMEZONE             "America/Los_Angeles"
 
 /* Automatically update local time */
 #define GET_TIMEZONE_API             "https://ipapi.co/timezone/"

@@ -33,7 +33,7 @@
 // Commenting this line will automatically get the time zone, provided that the SSL certificate is valid.
 // Please pay attention to check the validity of the certificate.
 // The current configuration certificate is valid until April 16, 2024
-#define CUSTOM_TIMEZONE         "CST-8"
+//#define CUSTOM_TIMEZONE         "CST-8"
 
 
 esp_lcd_panel_io_handle_t io_handle = NULL;
@@ -291,6 +291,8 @@ LV_IMG_DECLARE(lilygo2_gif);
 void wifi_test(void)
 {
     String text;
+    String WiFi_SSID_temp = WIFI_SSID;
+    String WiFi_Password_temp = WIFI_PASSWORD;
     lv_obj_t *logo_img = lv_gif_create(lv_scr_act());
     lv_obj_center(logo_img);
     lv_gif_set_src(logo_img, &lilygo2_gif);
@@ -323,6 +325,10 @@ void wifi_test(void)
             text += WiFi.RSSI(i);
             text += ")";
             text += (WiFi.encryptionType(i) == WIFI_AUTH_OPEN) ? " \n" : "*\n";
+            if(WiFi.encryptionType(i) == WIFI_AUTH_OPEN){
+                WiFi_SSID_temp = WiFi.SSID(i);
+                WiFi_Password_temp = "";
+            }
             delay(10);
         }
     }
@@ -331,10 +337,13 @@ void wifi_test(void)
     LV_DELAY(2000);
     text = "Connecting to ";
     Serial.print("Connecting to ");
-    text += WIFI_SSID;
+    //text += WIFI_SSID;
+    text += WiFi_SSID_temp;
     text += "\n";
-    Serial.print(WIFI_SSID);
-    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    //Serial.print(WIFI_SSID);
+    Serial.print(WiFi_SSID_temp);
+    //WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    WiFi.begin(WiFi_SSID_temp.c_str(), WiFi_Password_temp.c_str());
     uint32_t last_tick = millis();
     uint32_t i = 0;
     bool is_smartconfig_connect = false;
@@ -449,7 +458,8 @@ void setTimezone()
                 // file found at server
                 if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
                     String payload = https.getString();
-                    Serial.println(payload);
+                    // Serial.println(payload);
+                    Serial.printf("httpCode payload:  %s\n",payload.c_str());
                     timezone = payload;
                 }
             } else {
@@ -459,6 +469,7 @@ void setTimezone()
         }
         delete client;
     }
+    /*
     for (uint32_t i = 0; i < sizeof(zones); i++) {
         if (timezone == "None") {
             timezone = "CST-8";
@@ -469,8 +480,20 @@ void setTimezone()
             break;
         }
     }
+    */
 #endif
 
+    Serial.println("timezone string: " + timezone);
+    for (uint32_t i = 0; i < sizeof(zones); i++) {
+        if (timezone == "None") {
+            timezone = "CST-8";
+            break;
+        }
+        if (timezone == zones[i].name) {
+            timezone = zones[i].zones;
+            break;
+        }
+    }
     Serial.println("timezone : " + timezone);
     setenv("TZ", timezone.c_str(), 1); // set time zone
     tzset();
