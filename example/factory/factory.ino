@@ -197,7 +197,13 @@ void setup()
     esp_lcd_panel_invert_color(panel_handle, true);
 
     esp_lcd_panel_swap_xy(panel_handle, true);
+
+    //The screen faces you, and the USB is on the left
     esp_lcd_panel_mirror(panel_handle, false, true);
+
+    //The screen faces you, the USB is to the right
+    // esp_lcd_panel_mirror(panel_handle, true, false);
+
     // the gap is LCD panel specific, even panels with the same driver IC, can
     // have different gap value
     esp_lcd_panel_set_gap(panel_handle, 0, 35);
