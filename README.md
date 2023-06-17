@@ -65,7 +65,9 @@ The installation method varies depending on the system, refer to the [official m
 
 ### Micropython
 
-See [Micropython](https://github.com/Xinyuan-LilyGO/lilygo-micropython)
+- [russhughes/st7789s3_mpy](https://github.com/russhughes/st7789s3_mpy)
+- [Micropython](https://github.com/Xinyuan-LilyGO/lilygo-micropython)
+
 
 ## Libraries
 
