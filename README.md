@@ -19,16 +19,6 @@ T-Display-S3 is available from: [LILYGO](https://www.lilygo.cc/products/t-displa
 
 ## Quick Start
 
-The board uses USB as the JTAG upload port. When printing serial port information on USB, CDC_ON_BOOT configuration needs to be turned on. 
-If the port cannot be found when uploading the program or the USB has been used for other functions, the port does not appear. 
-Please enter the upload mode manually. 
-
-1. Connect the board via the USB cable
-2. Press and hold the BOOT button , While still pressing the BOOT button, press RST
-3. Release the RST
-4. Release the BOOT button
-5. Upload sketch
-
 ### Arduino
 
 1. In Arduino Preferences, on the Settings tab, enter the `https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json` URL in the `Additional boards manager URLs` input box. 
@@ -55,8 +45,17 @@ Please enter the upload mode manually.
 
 ### PlatformIO
 
-1. PlatformIO plug-in installation: click on the extension on the left column → search platformIO → install the first plug-in
-2. Click Platforms → Embedded → search Espressif 32 in the input box → select the corresponding firmware installation
+1. Install [VisualStudioCode](https://code.visualstudio.com/) and [Python](https://www.python.org/)
+2. Search for the `PlatformIO` plugin in the `VisualStudioCode` extension and install it.
+3. After the installation is complete, you need to restart `VisualStudioCode`
+4. After restarting `VisualStudioCode`, select `File` in the upper left corner of `VisualStudioCode` -> `Open Folder` -> select the `T-Display-S3` directory
+5. Click on the `platformio.ini` file, and in the `platformio` column, cancel the sample line that needs to be used, please make sure that only one line is valid
+6. Click the (✔) symbol in the lower left corner to compile
+7. Connect the board to the computer USB
+8. Click (→) to upload firmware
+9. Click (plug symbol) to monitor serial output
+
+
 
 ### ESP-IDF
 
@@ -69,32 +68,18 @@ The installation method varies depending on the system, refer to the [official m
 - [Micropython](https://github.com/Xinyuan-LilyGO/lilygo-micropython)
 
 
-## Libraries
+## FAQ
 
-|                                                     Library | Minimum version | Description                |
-| ----------------------------------------------------------: | :-------------- | :------------------------- |
-| [Arduino-ESP32](https://github.com/espressif/arduino-esp32) | 2.0.3           | ESP32 Arduino core         |
-|              [TFT_eSPI](https://github.com/Bodmer/TFT_eSPI) | 2.5.0           | graphics and fonts library |
-
-## Tips
-
-1. Use board as delivered. Connect board to usb to computer without
-touching anything else. Upload the code. The code will start right after
-download and run. Unplug the board and connect to usb again. The board
-will not do anything.
-
-2. Use board as delivered. Push down boot button. While boot button is
-pushed, connect usb to computer. Release boot button. Upload the code.
-The code will not start right after download. Nothing will happen.
-Unplug the board and connect to usb again.The board will now boot the
-code. Unplug the board from USB to computer and connect to other power
-source like LiPO battery. Again the board will start the code. The
-computer is not needed again.
-
-New code can be loaded to the board by going to step 1 or 2. Both will
-still work.
-
-3. The program can be written normally, but there is still no display after writing
+1. The program can be written normally, but there is still no display after writing
    1. There are factory test files in the firmware folder, which can be flashed into the board to check whether the board is normal. If there is still no display, then it can be judged that there is a problem with the board or the screen
    2. Delete the <TFT_eSPI> in the libraries, and replace the <TFT_eSPI> in the <lib> folder of the main page to the libraries directory
    3. When opening the Arduino IDE, it prompts whether to upgrade the library, please choose not to upgrade, otherwise it will overwrite the configuration of the <TFT_eSPI> display
+
+2. The board uses USB as the JTAG upload port. When printing serial port information on USB_CDC_ON_BOOT configuration needs to be turned on. 
+If the port cannot be found when uploading the program or the USB has been used for other functions, the port does not appear. 
+Please enter the upload mode manually. 
+   1. Connect the board via the USB cable
+   2. Press and hold the BOOT button , While still pressing the BOOT button, press RST
+   3. Release the RST
+   4. Release the BOOT button
+   5. Upload sketch
