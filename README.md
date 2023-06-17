@@ -22,8 +22,12 @@ T-Display-S3 is available from: [LILYGO](https://www.lilygo.cc/products/t-displa
 The board uses USB as the JTAG upload port. When printing serial port information on USB, CDC_ON_BOOT configuration needs to be turned on. 
 If the port cannot be found when uploading the program or the USB has been used for other functions, the port does not appear. 
 Please enter the upload mode manually. 
--  Press and hold the BOOT button when the power is off, the button is located behind the RST button.
--  When the USB is connected, first press and hold the BOOT button, then click reset and then release the BOOT button
+
+1. Connect the board via the USB cable
+2. Press and hold the BOOT button , While still pressing the BOOT button, press RST
+3. Release the RST
+4. Release the BOOT button
+5. Upload sketch
 
 ### Arduino
 
