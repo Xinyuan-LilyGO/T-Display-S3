@@ -85,4 +85,4 @@ Please enter the upload mode manually.
    5. Upload sketch
 
 3. If the above is invalid, burn the [binary file](./firmware/README.MD)  to check whether the hardware is normal
-   - [Video](https://youtu.be/Ynjliho43Kk)
+   - [Video](https://youtu.be/L-W3dCMtEdo)
