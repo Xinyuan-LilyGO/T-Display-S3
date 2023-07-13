@@ -4,7 +4,7 @@
  * @Author: LILYGO_L
  * @Date: 2023-07-10 11:24:19
  * @LastEditors: LILYGO_L
- * @LastEditTime: 2023-07-13 19:14:34
+ * @LastEditTime: 2023-07-13 19:23:28
  * @License: GPL 3.0
 -->
 # T-Display-S3-MIDI Test instructions
@@ -25,14 +25,14 @@
 ## 4. The SD card fails test picture
 ![](example/T-Display-S3-MIDI/04.jpg)
 
-## 5. Rendering 1 picture
+## 5. PCB Rendering 1 picture
 ![](example/T-Display-S3-MIDI/05.png)
 
-## 6. Rendering 2 picture
+## 6. PCB Rendering 2 picture
 ![](example/T-Display-S3-MIDI/06.png)
 
-## 7. Rendering 3 picture
+## 7. PCB Rendering 3 picture
 ![](example/T-Display-S3-MIDI/07.png)
 
-## 8. Rendering 4 picture
+## 8. PCB Rendering 4 picture
 ![](example/T-Display-S3-MIDI/08.png)
