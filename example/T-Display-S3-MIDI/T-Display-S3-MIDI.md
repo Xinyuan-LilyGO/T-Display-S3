@@ -14,25 +14,25 @@
 * When touching the 11th pin of TOUCH1, the system can be switched to test PCM5102A mode. If an SD card is present, it will scan all files inside and display them on the T-Display-S3 screen. It will then proceed to play the ".mp3" file. Otherwise, the screen will display "Failed to open directory" (requiring a mode switch to attempt playback again). Any other situation will be considered a test failure.
 
 ## 1. Programming test picture
-![](example/T-Display-S3-MIDI/01.jpg)
+![](01.jpg)
 
 ## 2. MPR121&PCF8575 test picture
-![](example/T-Display-S3-MIDI/02.jpg)
+![](02.jpg)
 
 ## 3. PCM5102A test picture
-![](example/T-Display-S3-MIDI/03.jpg)
+![](03.jpg)
 
 ## 4. The SD card fails test picture
-![](example/T-Display-S3-MIDI/04.jpg)
+![](04.jpg)
 
 ## 5. PCB Rendering 1 picture
-![](example/T-Display-S3-MIDI/05.png)
+![](05.png)
 
 ## 6. PCB Rendering 2 picture
-![](example/T-Display-S3-MIDI/06.png)
+![](06.png)
 
 ## 7. PCB Rendering 3 picture
-![](example/T-Display-S3-MIDI/07.png)
+![](07.png)
 
 ## 8. PCB Rendering 4 picture
-![](example/T-Display-S3-MIDI/08.png)
+![](08.png)
