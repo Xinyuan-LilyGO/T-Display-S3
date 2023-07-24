@@ -1,0 +1,20 @@
+{
+    "name": "PCA95x5",
+    "keywords": "i2c,mux,io expander,pca9535,pca9555",
+    "description": "Arduino library for PCA9535 and PCA9555 (Remote 16-bit I2C and SMBus I/O Expander with Interrupt Output and Configuration Registers)",
+    "repository":
+    {
+        "type": "git",
+        "url": "https://github.com/hideakitai/PCA95x5.git"
+    },
+    "authors":
+    {
+        "name": "Hideaki Tai",
+        "url": "https://github.com/hideakitai",
+        "maintainer": true
+    },
+    "version": "0.1.1",
+    "license": "MIT",
+    "frameworks": "arduino",
+    "platforms": "*"
+}
