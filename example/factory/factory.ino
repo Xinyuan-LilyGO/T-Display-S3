@@ -1,8 +1,11 @@
 /* Please make sure your touch IC model. */
+// If you don't have a touch panel, you don't need to define a touch model
 // #define TOUCH_MODULES_CST_MUTUAL
 // #define TOUCH_MODULES_CST_SELF
 
+#if defined(TOUCH_MODULES_CST_MUTUAL) ||defined(TOUCH_MODULES_CST_SELF)
 #include "TouchLib.h"
+#endif
 // #define TOUCH_READ_FROM_INTERRNUPT
 
 /* The product now has two screens, and the initialization code needs a small change in the new version. The LCD_MODULE_CMD_1 is used to define the
@@ -27,7 +30,7 @@
 #include "zones.h"
 #include <HTTPClient.h>
 #include <WiFiClientSecure.h>
-
+#include <esp_wifi.h>
 
 // The factory program uses the Chinese time zone by default.
 // Commenting this line will automatically get the time zone, provided that the SSL certificate is valid.
@@ -74,7 +77,7 @@ TouchLib touch(Wire, PIN_IIC_SDA, PIN_IIC_SCL, CTS328_SLAVE_ADDRESS, PIN_TOUCH_R
 #elif defined(TOUCH_MODULES_CST_SELF)
 TouchLib touch(Wire, PIN_IIC_SDA, PIN_IIC_SCL, CTS820_SLAVE_ADDRESS, PIN_TOUCH_RES);
 #else
-#error "Please choose the correct touch driver model!"
+#warning "Touch models are not currently configured, use the sketch without touch panel"
 #endif
 
 bool inited_touch = false;
@@ -109,6 +112,7 @@ static void example_lvgl_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_
     esp_lcd_panel_draw_bitmap(panel_handle, offsetx1, offsety1, offsetx2 + 1, offsety2 + 1, color_map);
 }
 
+#if defined(TOUCH_MODULES_CST_MUTUAL) ||defined(TOUCH_MODULES_CST_SELF)
 static void lv_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
 {
 #if defined(TOUCH_READ_FROM_INTERRNUPT)
@@ -133,6 +137,8 @@ static void lv_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data
     } else
         data->state = LV_INDEV_STATE_REL;
 }
+#endif
+
 
 void setup()
 {
@@ -236,6 +242,7 @@ void setup()
     disp_drv.user_data = panel_handle;
     lv_disp_drv_register(&disp_drv);
 
+#if defined(TOUCH_MODULES_CST_MUTUAL) || defined(TOUCH_MODULES_CST_SELF)
     /* Register touch brush with LVGL */
     // Wire.begin(PIN_IIC_SDA, PIN_IIC_SCL, 800000);
     inited_touch = touch.init();
@@ -247,11 +254,14 @@ void setup()
         indev_drv.read_cb = lv_touchpad_read;
         lv_indev_drv_register(&indev_drv);
     }
-    is_initialized_lvgl = true;
 #if defined(TOUCH_READ_FROM_INTERRNUPT)
     attachInterrupt(
         PIN_TOUCH_INT, [] { get_int_signal = true; }, FALLING);
 #endif
+#endif
+
+    is_initialized_lvgl = true;
+
 
     SD_MMC.setPins(PIN_SD_CLK, PIN_SD_CMD, PIN_SD_D0);
     inited_sd = SD_MMC.begin("/sdcard", true, true);
@@ -332,15 +342,30 @@ void wifi_test(void)
             delay(10);
         }
     }
+
+    wifi_config_t current_conf = {0};
+    esp_wifi_get_config(WIFI_IF_STA, &current_conf);
+    if (strlen((const char *)current_conf.sta.ssid) == 0) {
+        // Just for testing.
+        Serial.println("Use default WiFi SSID & PASSWORD!!");
+        strncpy((char *)(current_conf.sta.ssid), WIFI_SSID, strlen(WIFI_SSID));
+        strncpy((char *)(current_conf.sta.password), WIFI_PASSWORD, strlen(WIFI_PASSWORD));
+        WiFi.begin((char *)(current_conf.sta.ssid), (char *)(current_conf.sta.password));
+    } else {
+        Serial.println("Begin WiFi");
+        WiFi.begin();
+    }
+
     lv_label_set_text(log_label, text.c_str());
     Serial.println(text);
     LV_DELAY(2000);
     text = "Connecting to ";
     Serial.print("Connecting to ");
-    text += WIFI_SSID;
+    text += (char *)(current_conf.sta.ssid);
     text += "\n";
-    Serial.print(WIFI_SSID);
-    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    Serial.print((char *)(current_conf.sta.ssid));
+    // WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+
     uint32_t last_tick = millis();
     uint32_t i = 0;
     bool is_smartconfig_connect = false;
