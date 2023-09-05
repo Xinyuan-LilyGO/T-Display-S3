@@ -3,8 +3,8 @@
  * @version: None
  * @Author: None
  * @Date: 2023-06-05 13:01:59
- * @LastEditors: None
- * @LastEditTime: 2023-07-01 13:36:19
+ * @LastEditors: LILYGO_L
+ * @LastEditTime: 2023-07-26 16:14:43
  */
 #pragma once
 
@@ -39,7 +39,7 @@
 #define PIN_TOUCH_RES 21
 
 /* External expansion */
-//SD
+// SD
 #define PIN_SD_CS 16
 #define PIN_SD_CLK 21
 #define PIN_SD_MISO 3
@@ -60,12 +60,34 @@
 #define T_DISPLAY_PCF8575_INTERRUPTPIN 2
 
 // PCM5102A_PIN
-#define PCM5102A_LRCK 13
+#define PCM5102A_BCLK 11
+#define PCM5102A_LRCLK 13
 #define PCM5102A_DIN 12
-#define PCM5102A_BCK 11
 
 // XL95x5_PIN
 #define T_DISPLAY_XL95x5_IIC_ADDRESS 0X20
 #define T_DISPLAY_XL95x5_SDA 18 // Default configuration
 #define T_DISPLAY_XL95x5_SCL 17
 #define T_DISPLAY_XL95x5_INTERRUPTPIN 2
+
+// N085-1212TBWIG06-C08
+#define N085_CS1 13
+#define N085_CS2 12
+#define N085_CS3 14
+#define N085_CS4 21
+#define N085_DC 9
+#define N085_SCK 11
+#define N085_MOSI 10
+#define N085_MISO -1
+#define N085_RST 46
+#define N085_BL 3
+
+enum
+{
+    N085_Initialize = 0,
+    N085_Screen_1,
+    N085_Screen_2,
+    N085_Screen_3,
+    N085_Screen_4,
+    N085_Screen_ALL,
+};
