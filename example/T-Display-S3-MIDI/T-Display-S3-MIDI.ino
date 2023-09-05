@@ -2,11 +2,11 @@
  * @Description: This program is used to test the T-Display-S3-MIDI program and consists
 of 3 parts, 1.PCA9535_Test, 2.MPR121_Test, 3.PCM5102A_Test
 
- * @version: V1.0.0
+ * @version: V1.0.1
  * @Author: LILYGO_L
  * @Date: 2023-06-12 16:16:37
  * @LastEditors: LILYGO_L
- * @LastEditTime: 2023-07-24 15:46:32
+ * @LastEditTime: 2023-09-05 13:44:30
  */
 
 #include "Arduino.h"
@@ -355,10 +355,10 @@ void playNextAudio()
 
 void setup()
 {
-    Serial.begin(115200);
-    Serial.println("Hello T-Display-S3");
     pinMode(PIN_POWER_ON, OUTPUT);
     digitalWrite(PIN_POWER_ON, HIGH);
+    Serial.begin(115200);
+    Serial.println("Ciallo T-Display-S3");
 
     tft.begin();
     tft.setRotation(3);
@@ -366,7 +366,7 @@ void setup()
     tft.fillScreen(TFT_BLACK);
 
     ledcAttachPin(TFT_BL, 1); // assign TFT_BL pin to channel 1
-    ledcSetup(1, 2000, 8);   // 2 kHz PWM, 8-bit resolution
+    ledcSetup(1, 2000, 8);    // 2 kHz PWM, 8-bit resolution
     ledcWrite(1, 255);        // brightness 0 - 255
     attachInterrupt(2, PCA9535_MPR121_External_Interrupt, FALLING);
 
@@ -382,11 +382,12 @@ void setup()
     // SD SPI
     SPI.begin(PIN_SD_CLK, PIN_SD_MISO, PIN_SD_MOSI, PIN_SD_CS); // SPI boots
 
-    Touch_Sensor1.begin(MPR121_ADDR1); // MPR121 address 1
-    Touch_Sensor2.begin(MPR121_ADDR2); // MPR121 address 2
+    Wire.begin(MPR121_SDA, MPR121_SCL);
+
+    Touch_Sensor1.begin(MPR121_ADDR1, &Wire); // MPR121 address 1
+    Touch_Sensor2.begin(MPR121_ADDR2, &Wire); // MPR121 address 2
     delay(50);
 
-    Wire.begin(MPR121_SDA, MPR121_SCL);
     PCA9535_Class.attach(Wire);
     PCA9535_Class.polarity(PCA95x5::Polarity::ORIGINAL_ALL);
     PCA9535_Class.direction(PCA95x5::Direction::OUT_ALL);
@@ -398,7 +399,7 @@ void setup()
     delay(50);
 
     // PCM5102A IIS
-    audio.setPinout(PCM5102A_BCK, PCM5102A_LRCK, PCM5102A_DIN);
+    audio.setPinout(PCM5102A_BCLK, PCM5102A_LRCLK, PCM5102A_DIN);
     audio.setVolume(10); // 0...21,Volume setting
 }
 
