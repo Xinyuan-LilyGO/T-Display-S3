@@ -17,6 +17,10 @@
  * switch macro. */
 // #define LCD_MODULE_CMD_1
 
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5,0,0)
+#error  "The current version is not supported for the time being, please use a version below Arduino ESP32 3.0"
+#endif
+
 #warning Please confirm that you have purchased a display screen with a touch chip, otherwise the touch routine cannot be implemented.
 #if defined(TOUCH_MODULES_CST_MUTUAL)
 TouchLib touch(Wire, PIN_IIC_SDA, PIN_IIC_SCL, CTS328_SLAVE_ADDRESS, PIN_TOUCH_RES);

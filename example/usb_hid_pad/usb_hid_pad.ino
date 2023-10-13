@@ -3,6 +3,10 @@
 // #define TOUCH_MODULES_CST_SELF
 #include "TouchLib.h"
 
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5,0,0)
+#error  "The current version is not supported for the time being, please use a version below Arduino ESP32 3.0"
+#endif
+
 #if ARDUINO_USB_MODE
 #warning This sketch should be used when USB is in OTG mode
 void setup() {}
@@ -37,9 +41,9 @@ bool get_int = false;
 #endif
 #if defined(LCD_MODULE_CMD_1)
 typedef struct {
-  uint8_t cmd;
-  uint8_t data[14];
-  uint8_t len;
+    uint8_t cmd;
+    uint8_t data[14];
+    uint8_t len;
 } lcd_cmd_t;
 
 lcd_cmd_t lcd_st7789v[] = {
@@ -61,93 +65,95 @@ lcd_cmd_t lcd_st7789v[] = {
 #endif
 OneButton left_button(PIN_BUTTON_1, true);
 OneButton right_button(PIN_BUTTON_2, true);
-void setup() {
-  pinMode(PIN_POWER_ON, OUTPUT);
-  digitalWrite(PIN_POWER_ON, HIGH);
+void setup()
+{
+    pinMode(PIN_POWER_ON, OUTPUT);
+    digitalWrite(PIN_POWER_ON, HIGH);
 
-  pinMode(PIN_TOUCH_RES, OUTPUT);
-  digitalWrite(PIN_TOUCH_RES, LOW);
-  delay(500);
-  digitalWrite(PIN_TOUCH_RES, HIGH);
+    pinMode(PIN_TOUCH_RES, OUTPUT);
+    digitalWrite(PIN_TOUCH_RES, LOW);
+    delay(500);
+    digitalWrite(PIN_TOUCH_RES, HIGH);
 
-  Serial.begin(115200);
-  Serial.println("Hello T-Display-S3");
+    Serial.begin(115200);
+    Serial.println("Hello T-Display-S3");
 
-  tft.begin();
+    tft.begin();
 
 #if defined(LCD_MODULE_CMD_1)
-  for (uint8_t i = 0; i < (sizeof(lcd_st7789v) / sizeof(lcd_cmd_t)); i++) {
-    tft.writecommand(lcd_st7789v[i].cmd);
-    for (int j = 0; j < lcd_st7789v[i].len & 0x7f; j++) {
-      tft.writedata(lcd_st7789v[i].data[j]);
-    }
+    for (uint8_t i = 0; i < (sizeof(lcd_st7789v) / sizeof(lcd_cmd_t)); i++) {
+        tft.writecommand(lcd_st7789v[i].cmd);
+        for (int j = 0; j < lcd_st7789v[i].len & 0x7f; j++) {
+            tft.writedata(lcd_st7789v[i].data[j]);
+        }
 
-    if (lcd_st7789v[i].len & 0x80) {
-      delay(120);
+        if (lcd_st7789v[i].len & 0x80) {
+            delay(120);
+        }
     }
-  }
 #endif
-  tft.setRotation(3);
-  tft.pushImage(0, 0, 320, 170, (uint16_t *)img_logo);
+    tft.setRotation(3);
+    tft.pushImage(0, 0, 320, 170, (uint16_t *)img_logo);
 
-  ledcSetup(0, 2000, 8);
-  ledcAttachPin(PIN_LCD_BL, 0);
-  ledcWrite(0, 255);
+    ledcSetup(0, 2000, 8);
+    ledcAttachPin(PIN_LCD_BL, 0);
+    ledcWrite(0, 255);
 
-  delay(2000);
+    delay(2000);
 
-  tft.setTextSize(2);
-  tft.fillScreen(TFT_BLACK);
-  tft.setTextColor(TFT_GREEN, TFT_BLACK);
+    tft.setTextSize(2);
+    tft.fillScreen(TFT_BLACK);
+    tft.setTextColor(TFT_GREEN, TFT_BLACK);
 
-  Wire.begin(PIN_IIC_SDA, PIN_IIC_SCL);
-  if (!touch.init()) {
-    Serial.println("Touch IC not found");
-  }
-  touch.setRotation(1);
+    Wire.begin(PIN_IIC_SDA, PIN_IIC_SCL);
+    if (!touch.init()) {
+        Serial.println("Touch IC not found");
+    }
+    touch.setRotation(1);
 
-  left_button.attachClick([] { Mouse.click(MOUSE_LEFT); });
-  right_button.attachClick([] { Mouse.click(MOUSE_RIGHT); });
-  tft.drawString("Please touch the screen to ", 0, 15);
-  tft.drawString("simulate mouse sliding.", 0, 40);
+    left_button.attachClick([] { Mouse.click(MOUSE_LEFT); });
+    right_button.attachClick([] { Mouse.click(MOUSE_RIGHT); });
+    tft.drawString("Please touch the screen to ", 0, 15);
+    tft.drawString("simulate mouse sliding.", 0, 40);
 #if TOUCH_GET_FORM_INT
-  attachInterrupt(
-      PIN_TOUCH_INT, [] { get_int = true; }, FALLING);
+    attachInterrupt(
+        PIN_TOUCH_INT, [] { get_int = true; }, FALLING);
 #endif
 
-  Mouse.begin();
-  USB.begin();
+    Mouse.begin();
+    USB.begin();
 }
 
-void loop() {
-  char str_buf[50];
-  static bool first_touch;
-  static uint16_t last_x, last_y;
-  static uint32_t Mill;
+void loop()
+{
+    char str_buf[50];
+    static bool first_touch;
+    static uint16_t last_x, last_y;
+    static uint32_t Mill;
 #if TOUCH_GET_FORM_INT
-  if (get_int) {
-    get_int = 0;
-    touch.read();
+    if (get_int) {
+        get_int = 0;
+        touch.read();
 #else
-  if (touch.read()) {
+    if (touch.read()) {
 #endif
-    uint8_t n = touch.getPointNum();
-    TP_Point t = touch.getPoint(0);
-    if (!first_touch) {
-      Mouse.move(int(t.x - last_x), int(t.y - last_y));
+        uint8_t n = touch.getPointNum();
+        TP_Point t = touch.getPoint(0);
+        if (!first_touch) {
+            Mouse.move(int(t.x - last_x), int(t.y - last_y));
+        }
+        last_x = t.x;
+        last_y = t.y;
+        first_touch = 0;
+        Mill = millis();
+    } else {
+        if (millis() - Mill > 50)
+            first_touch = 1;
     }
-    last_x = t.x;
-    last_y = t.y;
-    first_touch = 0;
-    Mill = millis();
-  } else {
-    if (millis() - Mill > 50)
-      first_touch = 1;
-  }
 
-  left_button.tick();
-  right_button.tick();
-  delay(5);
+    left_button.tick();
+    right_button.tick();
+    delay(5);
 }
 
 #endif

@@ -3,6 +3,10 @@
 #include "img_logo.h"
 #include "pin_config.h"
 
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5,0,0)
+#error  "The current version is not supported for the time being, please use a version below Arduino ESP32 3.0"
+#endif
+
 /* The product now has two screens, and the initialization code needs a small change in the new version. The LCD_MODULE_CMD_1 is used to define the
  * switch macro. */
 #define LCD_MODULE_CMD_1
@@ -49,7 +53,7 @@ void setup()
 #if defined(LCD_MODULE_CMD_1)
     for (uint8_t i = 0; i < (sizeof(lcd_st7789v) / sizeof(lcd_cmd_t)); i++) {
         tft.writecommand(lcd_st7789v[i].cmd);
-        for (int j = 0; j < lcd_st7789v[i].len & 0x7f; j++) {
+        for (int j = 0; j < (lcd_st7789v[i].len & 0x7f); j++) {
             tft.writedata(lcd_st7789v[i].data[j]);
         }
 
@@ -59,14 +63,20 @@ void setup()
     }
 #endif
 
+
     tft.setRotation(3);
     tft.setSwapBytes(true);
     tft.pushImage(0, 0, 320, 170, (uint16_t *)img_logo);
     delay(2000);
 
+#if ESP_IDF_VERSION < ESP_IDF_VERSION_VAL(5,0,0)
     ledcSetup(0, 2000, 8);
     ledcAttachPin(PIN_LCD_BL, 0);
     ledcWrite(0, 255);
+#else
+    ledcAttach(PIN_LCD_BL, 200, 8);
+    ledcWrite(PIN_LCD_BL, 255);
+#endif
 }
 
 void loop()

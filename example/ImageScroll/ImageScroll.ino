@@ -6,6 +6,9 @@
  * @date      2023-08-17
  * @note      Sketch Adaptation for T-Display S3
 */
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5,0,0)
+#error  "The current version is not supported for the time being, please use a version below Arduino ESP32 3.0"
+#endif
 
 #include "TFT_eSPI.h"
 //#include "World_Time_Zones.h"

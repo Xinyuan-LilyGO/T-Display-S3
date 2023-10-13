@@ -1,7 +1,9 @@
 /* The product now has two screens, and the initialization code needs a small change in the new version. The LCD_MODULE_CMD_1 is used to define the
  * switch macro. */
 // #define LCD_MODULE_CMD_1
-
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5,0,0)
+#error  "The current version is not supported for the time being, please use a version below Arduino ESP32 3.0"
+#endif
 #include <esp_task_wdt.h>
 #include <esp_wifi.h>
 

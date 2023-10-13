@@ -21,6 +21,8 @@ T-Display-S3 is available from: [LILYGO](https://www.lilygo.cc/products/t-displa
 
 ### Arduino
 
+**Please use Arduino ESP32 version below 3.0. There are too many changes in version 3.0 and it has not been updated yet.**
+
 1. In Arduino Preferences, on the Settings tab, enter the `https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json` URL in the `Additional boards manager URLs` input box. 
 2. Click OK and the software will install. 
 3. Search for ESP32 in Tools → Board Manager and install `esp32` (Arduino-ESP32)
@@ -61,6 +63,7 @@ T-Display-S3 is available from: [LILYGO](https://www.lilygo.cc/products/t-displa
 
 The installation method varies depending on the system, refer to the [official manual](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html) for installation.
 
+- Using IDF version 4.4
 
 ### Micropython
 

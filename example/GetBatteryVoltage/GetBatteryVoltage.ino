@@ -2,6 +2,10 @@
 #include "TFT_eSPI.h" /* Please use the TFT library provided in the library. */
 #include <esp_adc_cal.h>
 
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5,0,0)
+#error  "The current version is not supported for the time being, please use a version below Arduino ESP32 3.0"
+#endif
+
 /* The product now has two screens, and the initialization code needs a small change in the new version. The LCD_MODULE_CMD_1 is used to define the
  * switch macro. */
 #define LCD_MODULE_CMD_1

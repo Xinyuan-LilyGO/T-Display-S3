@@ -19,6 +19,10 @@ of 3 parts, 1.PCA9535_Test, 2.MPR121_Test, 3.PCM5102A_Test
 #include "Audio.h"
 #include "PCA95x5.h"
 
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5,0,0)
+#error  "The current version is not supported for the time being, please use a version below Arduino ESP32 3.0"
+#endif
+
 #define MPR121_PCA95x5_Count 1
 
 TFT_eSPI tft;
@@ -54,21 +58,17 @@ void deviceScan(TwoWire *_port, Stream *stream)
 {
     uint8_t err, addr;
     int nDevices = 0;
-    for (addr = 1; addr < 127; addr++)
-    {
+    for (addr = 1; addr < 127; addr++) {
         _port->beginTransmission(addr);
         err = _port->endTransmission();
-        if (err == 0)
-        {
+        if (err == 0) {
             stream->print("I2C device found at address 0x");
             if (addr < 16)
                 stream->print("0");
             stream->print(addr, HEX);
             stream->println(" !");
             nDevices++;
-        }
-        else if (err == 4)
-        {
+        } else if (err == 4) {
             stream->print("Unknow error at address 0x");
             if (addr < 16)
                 stream->print("0");
@@ -83,12 +83,9 @@ void deviceScan(TwoWire *_port, Stream *stream)
 
 const char *PCA95x5_TFT_Show(uint8_t Num)
 {
-    if (Num == 0)
-    {
+    if (Num == 0) {
         return "LOW";
-    }
-    else
-    {
+    } else {
         return "HIGH";
     }
 }
@@ -266,18 +263,14 @@ void MPR121_Test(void)
     // touched1 = Touch_Sensor1.touched(); // Get touch data
     // touched2 = Touch_Sensor2.touched();
 
-    for (uint8_t i = 0; i < 12; i++)
-    {
-        if (touched1 & (1 << i))
-        {
+    for (uint8_t i = 0; i < 12; i++) {
+        if (touched1 & (1 << i)) {
             PCA9535_Class.direction(PCA95x5::Direction::OUT_ALL);
 
             PCA9535_Class.write(PCA95x5::Level::H_ALL);
 
             PCA9535_Class.direction(PCA95x5::Direction::IN_ALL);
-        }
-        else if (touched2 & (1 << i))
-        {
+        } else if (touched2 & (1 << i)) {
             PCA9535_Class.direction(PCA95x5::Direction::OUT_ALL);
 
             PCA9535_Class.write(PCA95x5::Level::H_ALL);
@@ -295,12 +288,10 @@ void MPR121_Test(void)
 void getNextFile()
 {
     String fileName;
-    if (File_Scan_Flag)
-    {
+    if (File_Scan_Flag) {
         File_Scan_Flag = false;
         File_Root = SD.open("/");
-        if (!File_Root)
-        {
+        if (!File_Root) {
             tft.println("Failed to open directory");
             tft.setCursor(0, 0);
             return;
@@ -308,27 +299,20 @@ void getNextFile()
     }
 
     File_CurrentFile = File_Root.openNextFile();
-    if (File_CurrentFile)
-    {
-        if (File_CurrentFile.isDirectory())
-        {
+    if (File_CurrentFile) {
+        if (File_CurrentFile.isDirectory()) {
             tft.print("DIR: ");
             tft.println(File_CurrentFile.name());
             getNextFile(); // Recursively call to print all file names under the directory
-        }
-        else
-        {
+        } else {
             fileName = File_CurrentFile.name();
             fileName.toLowerCase();
             tft.println("Filename: " + String(fileName));
-            if (fileName.indexOf(".mp3") < 0)
-            {
+            if (fileName.indexOf(".mp3") < 0) {
                 getNextFile(); // If the .mp3 file is less than 3, continue looking for .mp3 file
             }
         }
-    }
-    else
-    {
+    } else {
         File_Scan_Flag = true;
         getNextFile(); // Returns to the previous root directory until all file searches are complete
     }
@@ -343,8 +327,7 @@ void playNextAudio()
 {
     String sdfile;
     getNextFile();
-    if (File_CurrentFile)
-    {
+    if (File_CurrentFile) {
         sdfile = File_CurrentFile.name();
         audio.connecttoSD(sdfile.c_str());
         delay(50);
@@ -408,17 +391,14 @@ void loop()
     // deviceScan(&Wire, &Serial);
     // delay(50);
 
-    if (Windows == 0)
-    {
+    if (Windows == 0) {
         touched1 = Touch_Sensor1.touched(); // Get touch data
         touched2 = Touch_Sensor2.touched();
-        if (MPR121_External_Interrupt_Flag == true)
-        {
+        if (MPR121_External_Interrupt_Flag == true) {
             MPR121_External_Interrupt_Flag = false;
             delay(100); // Anti-jamming machine delay
 
-            if (touched2 & (1 << 11))
-            {
+            if (touched2 & (1 << 11)) {
                 delay(200); // Anti-jamming machine delay
                 tft.fillScreen(TFT_BLACK);
                 SD.end();
@@ -431,16 +411,14 @@ void loop()
             }
         }
 
-        if (PCA95x5_External_Interrupt_Flag == true && Windows == 0)
-        {
+        if (PCA95x5_External_Interrupt_Flag == true && Windows == 0) {
             PCA95x5_External_Interrupt_Flag = false;
             MPR121_Test();
             PCA95x5_Test();
         }
     }
 
-    if (Windows == 1)
-    {
+    if (Windows == 1) {
         audio.loop();
     }
 }

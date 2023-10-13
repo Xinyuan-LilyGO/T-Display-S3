@@ -4,6 +4,10 @@
 #include <ArduinoOTA.h>
 #include <TFT_eSPI.h>
 
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5,0,0)
+#error  "The current version is not supported for the time being, please use a version below Arduino ESP32 3.0"
+#endif
+
 #define PIN_POWER_ON                 15
 
 TFT_eSPI tft = TFT_eSPI();

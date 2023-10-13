@@ -17,6 +17,10 @@
 #include <SPI.h>
 #include "pin_config.h"
 
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5,0,0)
+#error  "The current version is not supported for the time being, please use a version below Arduino ESP32 3.0"
+#endif
+
 TFT_eSPI tft = TFT_eSPI();  // Invoke library, pins defined in User_Setup.h
 
 unsigned long targetTime = 0;
@@ -30,7 +34,7 @@ uint32_t runing = 0;
 void setup(void)
 {
     Serial.begin(115200);
-    
+
     pinMode(PIN_POWER_ON, OUTPUT);
     digitalWrite(PIN_POWER_ON, HIGH);
 
