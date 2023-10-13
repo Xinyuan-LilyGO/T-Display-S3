@@ -24,7 +24,7 @@
 #include "esp_lcd_panel_vendor.h"
 #include "factory_gui.h"
 #include "pin_config.h"
-#include "sntp.h"
+#include "esp_sntp.h"
 #include "time.h"
 
 #include "zones.h"
@@ -170,6 +170,8 @@ void setup()
         },
         .bus_width = 8,
         .max_transfer_bytes = LVGL_LCD_BUF_SIZE * sizeof(uint16_t),
+        .psram_trans_align = 0,
+        .sram_trans_align = 0
     };
     esp_lcd_new_i80_bus(&bus_config, &i80_bus);
 
@@ -195,6 +197,7 @@ void setup()
         .reset_gpio_num = PIN_LCD_RES,
         .color_space = ESP_LCD_COLOR_SPACE_RGB,
         .bits_per_pixel = 16,
+        .vendor_config = NULL
     };
     esp_lcd_new_panel_st7789(io_handle, &panel_config, &panel_handle);
     esp_lcd_panel_reset(panel_handle);
@@ -343,14 +346,12 @@ void wifi_test(void)
         }
     }
 
-    wifi_config_t current_conf = {0};
+    wifi_config_t current_conf;
     esp_wifi_get_config(WIFI_IF_STA, &current_conf);
     if (strlen((const char *)current_conf.sta.ssid) == 0) {
         // Just for testing.
         Serial.println("Use default WiFi SSID & PASSWORD!!");
-        strncpy((char *)(current_conf.sta.ssid), WIFI_SSID, strlen(WIFI_SSID));
-        strncpy((char *)(current_conf.sta.password), WIFI_PASSWORD, strlen(WIFI_PASSWORD));
-        WiFi.begin((char *)(current_conf.sta.ssid), (char *)(current_conf.sta.password));
+        WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
     } else {
         Serial.println("Begin WiFi");
         WiFi.begin();
@@ -367,7 +368,6 @@ void wifi_test(void)
     // WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
     uint32_t last_tick = millis();
-    uint32_t i = 0;
     bool is_smartconfig_connect = false;
     lv_label_set_long_mode(log_label, LV_LABEL_LONG_WRAP);
     while (WiFi.status() != WL_CONNECTED) {
