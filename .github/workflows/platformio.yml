@@ -1,6 +1,11 @@
 name: PlatformIO CI
 
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+    paths:
+      - "examples/**"
+      - "src/**"
 
 jobs:
   build:
