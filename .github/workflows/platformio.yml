@@ -1,15 +1,28 @@
 name: PlatformIO CI
 
-on: [push,pull_request]
+on: [push, pull_request]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        example: [example/SerialExample,example/TFT_Rainbow,example/arduino_gfx_demo,example/factory,example/lv_demos,example/nes,example/nes/data,example/ota,example/sd,example/tft,example/touch_test,example/usb_hid_pad]
-   
+        example:
+          [
+            SerialExample,
+            TFT_Rainbow,
+            arduino_gfx_demo,
+            factory,
+            lv_demos,
+            nes,
+            ota,
+            sd,
+            tft,
+            touch_test,
+            usb_hid_pad,
+            T-Display-S3-MIDI,
+          ]
+
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
@@ -20,11 +33,9 @@ jobs:
           key: ${{ runner.os }}-pio
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: "3.9"
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
 
       - name: Run PlatformIO
-        run: pio ci --board=esp32-c3-devkitm-1
-        env:
-          PLATFORMIO_CI_SRC: ${{ matrix.example }}
+        run: pio run -e  ${{ matrix.example }}
