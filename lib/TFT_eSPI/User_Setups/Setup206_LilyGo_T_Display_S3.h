@@ -19,6 +19,7 @@
 
 #define TFT_DC 7
 #define TFT_RST 5
+#define TFT_CS  6
 
 #define TFT_WR 8
 #define TFT_RD 9
