@@ -1,7 +1,8 @@
 # 1. Firmware note
 
-1. `firmware.bin` Factory Test 
-2. `tft_espi_test.bin`  TFT_eSPI Test
+1. `firmware_no_touch.bin` Factory Test  no touch
+2. `firmware_touch.bin` Factory Test with touch
+3. `tft_espi_test.bin`  TFT_eSPI Test
 
 
 
