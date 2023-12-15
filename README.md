@@ -8,12 +8,11 @@ T-Display-S3 is a ESP32-S3 development board. It is equipped with a color 1.9" L
 
 ## T-Display-S3 Pinout
 
-![](image/T-DISPLAY-S3.jpg)
+![DISPLAY](image/T-DISPLAY-S3.jpg)
 
 ## T-Display-S3 TOUCH Pinout
 
-![](image/T-DISPLAY-S3-TOUCH.png)
-
+![TOUCH](image/T-DISPLAY-S3-TOUCH.png)
 
 ## Where to buy
 
@@ -30,28 +29,12 @@ T-Display-S3 is available from: [LILYGO](https://www.lilygo.cc/products/t-displa
 3. Search for ESP32 in Tools → Board Manager and install `esp32` (Arduino-ESP32)
 4. Copy everything from this repository lib folder to [Arduino library folder](https://docs.arduino.cc/software/ide-v1/tutorials/installing-libraries#manual-installation) (e.g. `C:\Users\YourName\Documents\Arduino\libraries`)
 5. Select the correct settings in the Tools menu as shown below.
+   ![Arduino](./image/Arduino.png)
 
-| Setting                  | Value                            |
-| :----------------------- | :------------------------------- |
-| USB CDC On Boot          | Enabled                          |
-| CPU Frequency            | 240MHz (WiFi)                    |
-| Core Debug Level         | None                             |
-| USB DFU On Boot          | Enabled                          |
-| Events Run On            | Core 1                           |
-| Flash Mode               | QIO 80MHz                        |
-| Flash Size               | 16MB (128Mb)                     |
-| JTAG Adapter             | Integrated USB JTAG              |
-| Arduino Runs On          | Core 1                           |
-| USB Firmware MSC On Boot | Disabled                         |
-| Partition Scheme         | Huge APP (3MB No OTA/1MB SPIFFS) |
-| PSRAM                    | OPI PSRAM                        |
-| USB Mode                 | Hardware CDC and JTAG            |
-
-##### Writing as a beginner: 
+#### Writing as a beginner
 
 - When opening the Arduino IDE, you will be prompted that there are new libraries that can be updated. Please do not click update. There is no guarantee that it can be compiled, run, etc. after the update. Make sure that the board is running normally before deciding whether to update. You have to Know that problems may occur after updating due to library differences, or the default configuration (such as TFT_eSPI) will be overwritten.
 - If it runs abnormally after the update, please follow Article 4 of the Arduino Quick Start to delete the directory in libraries, and drag the folder in lib into the libraries directory again.
-
 
 ### PlatformIO
 
