@@ -23,9 +23,11 @@ T-Display-S3 is available from: [LILYGO](https://www.lilygo.cc/products/t-displa
 ### Arduino
 
 **Please use Arduino ESP32 version below 3.0. There are too many changes in version 3.0 and it has not been updated yet.**
+* [T-Display-S3 Arduino IDE Record](https://www.youtube.com/watch?v=PgtxisFvMcc)
 
-1. In Arduino Preferences, on the Settings tab, enter the `https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json` URL in the `Additional boards manager URLs` input box. 
-2. Click OK and the software will install. 
+
+1. In Arduino Preferences, on the Settings tab, enter the `https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json` URL in the `Additional boards manager URLs` input box.
+2. Click OK and the software will install.
 3. Search for ESP32 in Tools → Board Manager and install `esp32` (Arduino-ESP32)
 4. Copy everything from this repository lib folder to [Arduino library folder](https://docs.arduino.cc/software/ide-v1/tutorials/installing-libraries#manual-installation) (e.g. `C:\Users\YourName\Documents\Arduino\libraries`)
 5. Select the correct settings in the Tools menu as shown below.
