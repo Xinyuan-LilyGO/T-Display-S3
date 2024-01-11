@@ -1,5 +1,6 @@
 /* Please make sure your touch IC model. */
-
+// 定义一个触摸型号，如果不清楚你使用的触摸型号，可以任意定义一个触摸型号，将下面两行中的一个取消掉，如果触摸不正常，那就换另一个试试
+// 如果不定义,则禁用触摸功能
 //!!!If you are unsure about the drive model, please switch the definition to try to see if the touch is normal
 
 // #define TOUCH_MODULES_CST_MUTUAL    //Early use of CST328
