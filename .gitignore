@@ -8,7 +8,7 @@ example/arduino/CST328touch
 *.ko
 *.obj
 *.elf
-
+.pio
 # Linker output
 *.ilk
 *.map
