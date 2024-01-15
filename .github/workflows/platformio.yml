@@ -14,9 +14,10 @@ jobs:
       matrix:
         example:
           [
+            Arduino_GFX_PDQgraphicstest,
+            Arduino_GFXDemo,
             SerialExample,
             TFT_Rainbow,
-            arduino_gfx_demo,
             factory,
             lv_demos,
             nes,
