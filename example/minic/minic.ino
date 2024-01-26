@@ -40,14 +40,12 @@ Because Arduino cannot index into the demos directory.
 #define DHT22_PIN 1
 #define DHT22_PIN_ROOM 2
 #define CURR_INPUT 3
+#define VOLT_INPUT 10
 
 #define rele1 12
 #define rele2 13
 #define rele_fan 43
-#define PWM 10
 
-#define PIN_GPIO_11 11
-#define PIN_GPIO_12 12
 
 DHT dht(DHT22_PIN, DHT22);
 DHT dht_room(DHT22_PIN_ROOM, DHT22); // pass oneWire to DallasTemperature library
@@ -360,8 +358,8 @@ static void setup_pin()
     pinMode(rele_fan, OUTPUT);
     digitalWrite(rele_fan, HIGH);
 
-    pinMode(PWM, OUTPUT);
-    analogWrite(PWM, 0);
+    // pinMode(PWM, OUTPUT);
+    // analogWrite(PWM, 0);
 
     Setpoint = target_temperature;
     myPID.SetMode(AUTOMATIC);
@@ -531,6 +529,9 @@ Ticker picTaskTicker;
 
 void pid_control_task(void *pvParameters);
 
+#define R1 30000.0
+#define R2 7500.0
+
 void thTask(void *pvParameters)
 {
     Serial.println("tempTask loop started");
@@ -570,6 +571,9 @@ void thTask(void *pvParameters)
             }
 
             int adc = analogRead(CURR_INPUT);
+            int vadc = analogRead(VOLT_INPUT);
+
+
             // Serial.print("adc : ");
             // Serial.println(adc);
 
@@ -578,8 +582,9 @@ void thTask(void *pvParameters)
             if (- 0.2 < current_input && current_input < 0.2) {
                 current_input = 0;
             }
-            // Serial.print("Current : ");
-            // Serial.println(current_input);
+
+            voltage_input = ((vadc * 3.3) / 4095)* ((R1+R2)/R2);
+
 
             lv_label_set_text_fmt(th_label, "Chamber T / H: %.1f / %.1f", temperature, humidity);
             lv_label_set_text_fmt(label_room_t, "Room T / H: %.1f / %.1f", temperature_room, humidity_room);
@@ -652,7 +657,7 @@ void pid_control_task(void *pvParameters)
     {
         analogWrite(rele1, 0);
         analogWrite(rele2, 0);
-        analogWrite(PWM, 0);
+        // analogWrite(PWM, 0);
         return;
     }
 
@@ -678,7 +683,7 @@ void pid_control_task(void *pvParameters)
     }
 
     // apply PID processed command
-    analogWrite(PWM, Output);
+    // analogWrite(PWM, Output);
 }
 
 static void create_pic_task()
