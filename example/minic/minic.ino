@@ -37,14 +37,17 @@ Because Arduino cannot index into the demos directory.
 #include <WiFi.h>
 #include <PID_v1.h>
 
+// PIN definition
 #define DHT22_PIN 1
 #define DHT22_PIN_ROOM 2
 #define CURR_INPUT 3
 #define VOLT_INPUT 10
-
 #define rele1 12
 #define rele2 13
 #define rele_fan 43
+
+#define PID_RELAXATION_DELAY    15000  // msec
+#define PID_TASK_DELAY          1000   // msec. Minimal 1000 msec is required for the PWM to work
 
 
 DHT dht(DHT22_PIN, DHT22);
@@ -135,8 +138,9 @@ static void lv_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data
 
 static void create_UI();
 static void create_th_task();
-static void create_pic_task();
+
 static void setup_pin();
+static void setup_PID();
 
 bool ip_ready = false;
 static void connect_wifi()
@@ -283,22 +287,10 @@ void setup()
 #endif
 
     create_th_task();
-    // create_pic_task();
     create_UI();
-
     setup_pin();
+    setup_PID();
 
-    // #if LV_USE_DEMO_WIDGETS
-    //     lv_demo_widgets();
-    // #elif LV_USE_DEMO_BENCHMARK
-    //     lv_demo_benchmark();
-    // #elif LV_USE_DEMO_STRESS
-    //     lv_demo_stress();
-    // #elif LV_USE_DEMO_KEYPAD_AND_ENCODER
-    //     lv_demo_keypad_encoder();
-    // #elif LV_USE_DEMO_MUSIC
-    //     lv_demo_music();
-    // #endif
 }
 
 // PID parameters defaults
@@ -334,7 +326,7 @@ lv_obj_t *label_room_t;
 lv_obj_t *chamber_status_label;
 lv_obj_t *t_target_label;
 lv_obj_t *label_enable_t_target;
-lv_obj_t *label_current_input;
+lv_obj_t *label_cv_input;
 
 lv_obj_t *btn_add_t_target;
 lv_obj_t *btn_minus_t_target;
@@ -350,17 +342,26 @@ double getTemp()
 
 static void setup_pin()
 {
+
+    pinMode(DHT22_PIN, INPUT);
+    pinMode(DHT22_PIN_ROOM, INPUT);
+    pinMode(CURR_INPUT, INPUT);
+    pinMode(VOLT_INPUT, INPUT);
+
     pinMode(rele1, OUTPUT);
     digitalWrite(rele1, LOW);
+
     pinMode(rele2, OUTPUT);
     digitalWrite(rele2, LOW);
 
     pinMode(rele_fan, OUTPUT);
     digitalWrite(rele_fan, HIGH);
 
-    // pinMode(PWM, OUTPUT);
-    // analogWrite(PWM, 0);
 
+}
+
+static void setup_PID()
+{
     Setpoint = target_temperature;
     myPID.SetMode(AUTOMATIC);
 }
@@ -393,19 +394,13 @@ void lvgl_label_test()
         lv_label_set_text(label_room_t, "Room T / H: ");
         lv_obj_align(label_room_t, LV_ALIGN_TOP_LEFT, 0, 40);
     }
-    label_current_input = lv_label_create(lv_scr_act());
-    if (NULL != label_current_input)
+    label_cv_input = lv_label_create(lv_scr_act());
+    if (NULL != label_cv_input)
     {
-        lv_label_set_text(label_current_input, "Current: ");
-        lv_obj_align(label_current_input, LV_ALIGN_TOP_LEFT, 0, 60);
+        lv_label_set_text(label_cv_input, "Current / Voltage: ");
+        lv_obj_align(label_cv_input, LV_ALIGN_TOP_LEFT, 0, 60);
     }
 
-    // t_target_label = lv_label_create(lv_scr_act());
-    // if (NULL != t_target_label)
-    // {
-    //     lv_label_set_text(t_target_label, "Target Temperature: ");
-    //     lv_obj_align(t_target_label, LV_ALIGN_TOP_LEFT, 0, 40);
-    // }
 }
 
 static void update_enable_t_target_label()
@@ -422,7 +417,7 @@ static void update_enable_t_target_label()
 }
 
 
-unsigned long last_enabled_millis = 0; 
+unsigned long pid_last_enabled_millis = 0; 
 
 static void btn_event_callback(lv_event_t *event)
 {
@@ -450,11 +445,10 @@ static void btn_event_callback(lv_event_t *event)
         {
             if (!enable_t_target)
             {
-                unsigned long milli = millis();
-                milli = milli - last_enabled_millis;
-                if (milli <= 15000)
+                unsigned long milli = (millis() - pid_last_enabled_millis);
+                if (milli <= PID_RELAXATION_DELAY)
                 {
-                    Serial.printf("Unable to enable due to relaxing, wait for %d ms \n", (15000 - milli));
+                    Serial.printf("Unable to enable due to relaxing, wait for %d ms \n", (PID_RELAXATION_DELAY - milli));
                     return;
                 }
 
@@ -519,15 +513,7 @@ static void create_UI()
 
 bool thTasksEnabled = false;
 TaskHandle_t thTaskHandle = NULL;
-
-/** Ticker for temperature reading */
 Ticker thTaskTicker;
-
-bool picTasksEnabled = false;
-TaskHandle_t picTaskHandle = NULL;
-Ticker picTaskTicker;
-
-void pid_control_task(void *pvParameters);
 
 #define R1 30000.0
 #define R2 7500.0
@@ -588,7 +574,7 @@ void thTask(void *pvParameters)
 
             lv_label_set_text_fmt(th_label, "Chamber T / H: %.1f / %.1f", temperature, humidity);
             lv_label_set_text_fmt(label_room_t, "Room T / H: %.1f / %.1f", temperature_room, humidity_room);
-            lv_label_set_text_fmt(label_current_input, "Current: %.1f", current_input);
+            lv_label_set_text_fmt(label_cv_input, "Current / Voltage: %.1f / %.1f", current_input, voltage_input);
             Serial.printf("Current: %.1f, Voltage: %.1f TC: %.1f, HC: %.1f, TR: %.1f, HR: %.1f\n", current_input, voltage_input, temperature, humidity, temperature_room, humidity_room);
             if (enable_t_target)
             {
@@ -614,13 +600,13 @@ void triggerGetTemp()
     }
 }
 
-void triggerPidControl()
-{
-    if (picTaskHandle != NULL)
-    {
-        xTaskResumeFromISR(picTaskHandle);
-    }
-}
+// void triggerPidControl()
+// {
+//     if (picTaskHandle != NULL)
+//     {
+//         xTaskResumeFromISR(picTaskHandle);
+//     }
+// }
 
 static void create_th_task()
 {
@@ -653,15 +639,20 @@ static void create_th_task()
 void pid_control_task(void *pvParameters)
 {
 
+    unsigned long current_task_millis = millis();
     if (!enable_t_target)
     {
         analogWrite(rele1, 0);
         analogWrite(rele2, 0);
-        // analogWrite(PWM, 0);
         return;
     }
 
-    last_enabled_millis = millis();
+    if (current_task_millis <= (pid_last_enabled_millis + PID_TASK_DELAY))
+    {
+        return;
+    }
+    
+    pid_last_enabled_millis = millis();
     Input = getTemp();
     // process PID
 
@@ -669,6 +660,7 @@ void pid_control_task(void *pvParameters)
     {
         myPID.SetControllerDirection(DIRECT);
         myPID.Compute();
+
         analogWrite(rele1, 0);
         analogWrite(rele2, Output);
         
@@ -677,45 +669,16 @@ void pid_control_task(void *pvParameters)
     {
         myPID.SetControllerDirection(REVERSE);
         myPID.Compute();
+
         analogWrite(rele1, Output);
         analogWrite(rele2, 0);
         
     }
 
-    // apply PID processed command
-    // analogWrite(PWM, Output);
-}
-
-static void create_pic_task()
-{
-    // Start task to get temperature
-    xTaskCreatePinnedToCore(
-        pid_control_task,        /* Function to implement the task */
-        "pid_control_task ",     /* Name of the task */
-        4000,          /* Stack size in words */
-        NULL,          /* Task input parameter */
-        5,             /* Priority of the task */
-        &picTaskHandle, /* Task handle. */
-        1);            /* Core where the task should run */
-
-    if (picTaskHandle == NULL)
-    {
-        Serial.println("[ERROR] Failed to start task for PID control");
-    }
-    else
-    {
-        // Start update of environment data every 30 seconds
-        picTaskTicker.attach(1, triggerPidControl);
-    }
-
-    // Signal end of setup() to tasks
-    // picTasksEnabled = false;
 }
 
 void loop()
 {
     lv_timer_handler();
     pid_control_task(NULL);
-    // run_pid_control();
-    delay(1);
 }
