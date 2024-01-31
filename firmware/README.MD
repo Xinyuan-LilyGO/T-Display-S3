@@ -16,6 +16,9 @@
 
 ### Use ESP Download Tool
 
+- Download [Flash_download_tool](https://www.espressif.com.cn/sites/default/files/tools/flash_download_tool_3.9.5_0.zip)
+
+
 | Steps  |                                     |
 | ------ | ----------------------------------- |
 | Step 1 | ![esp32s3dev](images/esp32s3-1.png) |
@@ -24,7 +27,7 @@
 
 ### Use Web Flasher
 
-[ESP Web Flasher Online](https://espressif.github.io/esptool-js/)
+- [ESP Web Flasher Online](https://espressif.github.io/esptool-js/)
 
 ![web_flasher](./images/web_flasher.gif)
 
