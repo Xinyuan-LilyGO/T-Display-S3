@@ -18,11 +18,10 @@
 
 - Download [Flash_download_tool](https://www.espressif.com.cn/sites/default/files/tools/flash_download_tool_3.9.5_0.zip)
 
+![web_flasher](./images/esp_downloader.gif)
 
-| Steps  |                                     |
-| ------ | ----------------------------------- |
-| Step 1 | ![esp32s3dev](images/esp32s3-1.png) |
-| Step 2 | ![esp32s3dev](images/esp32s3-2.png) |
+* Note that after writing is completed, you need to press RST to reset.
+
 | Step 3 | **Press RST Button**                |
 
 ### Use Web Flasher
@@ -30,6 +29,8 @@
 - [ESP Web Flasher Online](https://espressif.github.io/esptool-js/)
 
 ![web_flasher](./images/web_flasher.gif)
+
+* Note that after writing is completed, you need to press RST to reset.
 
 ### Use command line
 
