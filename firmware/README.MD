@@ -22,7 +22,6 @@
 
 * Note that after writing is completed, you need to press RST to reset.
 
-| Step 3 | **Press RST Button**                |
 
 ### Use Web Flasher
 
