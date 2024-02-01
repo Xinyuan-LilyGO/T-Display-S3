@@ -1,7 +1,5 @@
-#ifndef USEPLATFORMIO
-#error "This example can only be run on platformIO"
-#endif
 
+#include <Arduino.h>
 #if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5,0,0)
 #error  "The current version is not supported for the time being, please use a version below Arduino ESP32 3.0"
 #endif
@@ -10,28 +8,24 @@
 // #define TOUCH_MODULES_CST_MUTUAL
 // #define TOUCH_MODULES_CST_SELF
 
-
+#if defined(TOUCH_MODULES_CST_SELF) || defined(TOUCH_MODULES_CST_SELF)
 #include "TouchLib.h"
 // #define TOUCH_READ_FROM_INTERRNUPT
+#endif
 
 /* The product now has two screens, and the initialization code needs a small change in the new version. The LCD_MODULE_CMD_1 is used to define the
  * switch macro. */
 #define LCD_MODULE_CMD_1
 
-/*
-This example can only be run on platformIO.
-Because Arduino cannot index into the demos directory.
-*/
-#include "demos/lv_demos.h"
 #include "lv_conf.h"
 #include "lvgl.h" /* https://github.com/lvgl/lvgl.git */
-
 #include "Arduino.h"
 #include "Wire.h"
 #include "esp_lcd_panel_io.h"
 #include "esp_lcd_panel_ops.h"
 #include "esp_lcd_panel_vendor.h"
 #include "pin_config.h"
+#include "lv_demo_widgets.h"
 
 esp_lcd_panel_io_handle_t io_handle = NULL;
 static lv_disp_draw_buf_t disp_buf; // contains internal graphic buffer(s) called draw buffer(s)
@@ -64,12 +58,14 @@ lcd_cmd_t lcd_st7789v[] = {
 };
 #endif
 
+#if defined(TOUCH_MODULES_CST_SELF) || defined(TOUCH_MODULES_CST_SELF)
 TouchLib touch(Wire, PIN_IIC_SDA, PIN_IIC_SCL, CTS328_SLAVE_ADDRESS, PIN_TOUCH_RES);
-
 bool inited_touch = false;
 #if defined(TOUCH_READ_FROM_INTERRNUPT)
 bool get_int_signal = false;
 #endif
+#endif
+
 
 static bool example_notify_lvgl_flush_ready(esp_lcd_panel_io_handle_t panel_io, esp_lcd_panel_io_event_data_t *edata, void *user_ctx)
 {
@@ -91,6 +87,7 @@ static void example_lvgl_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_
     esp_lcd_panel_draw_bitmap(panel_handle, offsetx1, offsety1, offsetx2 + 1, offsety2 + 1, color_map);
 }
 
+#if defined(TOUCH_MODULES_CST_SELF) || defined(TOUCH_MODULES_CST_SELF)
 static void lv_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
 {
 #if defined(TOUCH_READ_FROM_INTERRNUPT)
@@ -107,12 +104,18 @@ static void lv_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data
     } else
         data->state = LV_INDEV_STATE_REL;
 }
+#endif
 
 void setup()
 {
+    Serial.begin(115200);
+
+
+    //Turn on display power
     pinMode(PIN_POWER_ON, OUTPUT);
     digitalWrite(PIN_POWER_ON, HIGH);
-    Serial.begin(115200);
+
+
 
     pinMode(PIN_LCD_RD, OUTPUT);
     digitalWrite(PIN_LCD_RD, HIGH);
@@ -199,6 +202,7 @@ void setup()
     disp_drv.user_data = panel_handle;
     lv_disp_drv_register(&disp_drv);
 
+#if defined(TOUCH_MODULES_CST_SELF) || defined(TOUCH_MODULES_CST_SELF)
     /* Register touch brush with LVGL */
     Wire.begin(PIN_IIC_SDA, PIN_IIC_SCL, 800000);
     inited_touch = touch.init();
@@ -215,18 +219,9 @@ void setup()
     attachInterrupt(
         PIN_TOUCH_INT, [] { get_int_signal = true; }, FALLING);
 #endif
-
-#if LV_USE_DEMO_WIDGETS
-    lv_demo_widgets();
-#elif LV_USE_DEMO_BENCHMARK
-    lv_demo_benchmark();
-#elif LV_USE_DEMO_STRESS
-    lv_demo_stress();
-#elif LV_USE_DEMO_KEYPAD_AND_ENCODER
-    lv_demo_keypad_encoder();
-#elif LV_USE_DEMO_MUSIC
-    lv_demo_music();
 #endif
+
+    lv_demo_widgets();
 }
 
 void loop()

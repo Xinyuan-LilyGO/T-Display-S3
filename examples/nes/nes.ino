@@ -1,23 +1,18 @@
 /* The product now has two screens, and the initialization code needs a small change in the new version. The LCD_MODULE_CMD_1 is used to define the
  * switch macro. */
-// #define LCD_MODULE_CMD_1
-#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5,0,0)
-#error  "The current version is not supported for the time being, please use a version below Arduino ESP32 3.0"
-#endif
-#include <esp_task_wdt.h>
-#include <esp_wifi.h>
+#define LCD_MODULE_CMD_1
 
 #include "Arduino.h"
+#include <esp_task_wdt.h>
+#include <esp_wifi.h>
 #include "img_logo.h"
 #include "pin_config.h"
-
 #include "Arduino_GFX_Library.h" /* https://github.com/moononournation/Arduino_GFX */
-
 #include <FS.h>
 #include <SPIFFS.h>
 
 extern "C" {
-#include <nes/nes.h> /* https://github.com/moononournation/arduino-nofrendo */
+// #include <nes/nes.h> /* https://github.com/moononournation/arduino-nofrendo */
 #include <nofrendo.h>
 }
 
@@ -165,3 +160,7 @@ extern "C" void display_clear()
 {
     gfx->fillScreen(bg_color);
 }
+
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5,0,0)
+#error  "The current version is not supported for the time being, please use a version below Arduino ESP32 3.0"
+#endif

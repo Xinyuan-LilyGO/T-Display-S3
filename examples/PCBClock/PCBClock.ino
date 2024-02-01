@@ -40,8 +40,9 @@ int period = 900;
 
 void setup()
 {
+    //Turn on display power
     pinMode(15, OUTPUT);
-    digitalWrite(15, 1);
+    digitalWrite(15, HIGH);
 
     pinMode(0, INPUT_PULLUP);
     pinMode(14, INPUT_PULLUP);

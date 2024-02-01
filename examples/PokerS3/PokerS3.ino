@@ -207,10 +207,12 @@ void Click()
 
 void setup()
 {
+    //Turn on display power
+    pinMode(15, OUTPUT);
+    digitalWrite(15, HIGH);
+
     pinMode(up, INPUT_PULLUP);
     pinMode(down, INPUT_PULLUP);
-    pinMode(15, OUTPUT);
-    digitalWrite(15, 1);
 
     tft.init();  // amoled lcd initialization
     tft.setRotation(1);

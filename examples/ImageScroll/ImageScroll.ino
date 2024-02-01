@@ -31,6 +31,10 @@ unsigned short imageS[54400] = {0}; // edit this screenW * screen H
 
 void setup()
 {
+    //Turn on display power
+    pinMode(15, OUTPUT);
+    digitalWrite(15, HIGH);
+
     tft.init();
     tft.setRotation(1);
 

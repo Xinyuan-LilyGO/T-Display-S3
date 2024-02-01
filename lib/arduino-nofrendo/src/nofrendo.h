@@ -3,14 +3,14 @@
 **
 **
 ** This program is free software; you can redistribute it and/or
-** modify it under the terms of version 2 of the GNU Library General 
+** modify it under the terms of version 2 of the GNU Library General
 ** Public License as published by the Free Software Foundation.
 **
-** This program is distributed in the hope that it will be useful, 
+** This program is distributed in the hope that it will be useful,
 ** but WITHOUT ANY WARRANTY; without even the implied warranty of
-** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-** Library General Public License for more details.  To obtain a 
-** copy of the GNU Library General Public License, write to the Free 
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+** Library General Public License for more details.  To obtain a
+** copy of the GNU Library General Public License, write to the Free
 ** Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 **
 ** Any permitted reproduction of these routines, in whole or in part,
@@ -28,12 +28,12 @@
 #ifndef _NOFRENDO_H_
 #define _NOFRENDO_H_
 
-typedef enum
-{
-   system_unknown,
-   system_autodetect,
-   system_nes,
-   NUM_SUPPORTED_SYSTEMS
+#include "nes/nes.h"
+typedef enum {
+    system_unknown,
+    system_autodetect,
+    system_nes,
+    NUM_SUPPORTED_SYSTEMS
 } system_t;
 
 int nofrendo_main(int argc, char *argv[]);
@@ -41,7 +41,7 @@ int nofrendo_main(int argc, char *argv[]);
 extern volatile int nofrendo_ticks; /* system timer ticks */
 
 /* osd_main should end with a call to main_loop().
-** Pass filename = NULL if you want to start with the demo rom 
+** Pass filename = NULL if you want to start with the demo rom
 */
 extern int main_loop(const char *filename, system_t type);
 
