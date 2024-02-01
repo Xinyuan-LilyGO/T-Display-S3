@@ -13,21 +13,19 @@ jobs:
     strategy:
       matrix:
         example:
-          [
-            Arduino_GFX_PDQgraphicstest,
-            Arduino_GFXDemo,
-            SerialExample,
-            TFT_Rainbow,
-            factory,
-            lv_demos,
-            nes,
-            ota,
-            sd,
-            tft,
-            touch_test,
-            usb_hid_pad,
-            T-Display-S3-MIDI,
-          ]
+          - Arduino_GFX_PDQgraphicstest
+          - Arduino_GFXDemo
+          - SerialExample
+          - TFT_Rainbow
+          - factory
+          - lv_demos
+          - nes
+          - ota
+          - sd
+          - tft
+          - touch_test
+          - usb_hid_pad
+          - T-Display-S3-MIDI
 
     steps:
       - uses: actions/checkout@v3
