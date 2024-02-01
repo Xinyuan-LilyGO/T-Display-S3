@@ -1,6 +1,7 @@
 <h1 align = "center"> 🌟T-Display-S3🌟</h1>
 
 [![PlatformIO CI](https://github.com/Xinyuan-LilyGO/T-Display-S3/actions/workflows/platformio.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/T-Display-S3/actions/workflows/platformio.yml)
+[![Arduino_CI](https://github.com/Xinyuan-LilyGO/T-Display-S3/actions/workflows/arduino_ci.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/T-Display-S3/actions/workflows/arduino_ci.yml)
 
 ## 1️⃣Support Product
 
@@ -18,25 +19,25 @@
 
 ```
 ./examples/
-├── Arduino_GFXDemo
-├── Arduino_GFX_PDQgraphicstest
-├── GetBatteryVoltage
-├── I2CScan
-├── ImageScroll
-├── MPR121TouchSensor
-├── PCBClock
-├── PokerS3
-├── SerialExample
-├── T-Display-S3-MIDI
-├── TFT_Rainbow
-├── factory
-├── lv_demos
-├── nes
-├── ota
-├── sd
-├── tft
-├── touch_test
-└── usb_hid_pad
+├── Arduino_GFXDemo              #  Arduino_GFX example
+├── Arduino_GFX_PDQgraphicstest  #  Arduino_GFX example
+├── GetBatteryVoltage            #  Get battery voltage example
+├── I2CScan                      #  Scan for external devices using I2C
+├── ImageScroll                  #  Image scrolling example by @Rudi Ackermann
+├── MPR121TouchSensor            #  Example of using MPR121 capacitive touch
+├── PCBClock                     #  TFT_eSPI PCBClock example by @VolosR
+├── PokerS3                      #  TFT_eSPI PokerS3  example by @VolosR
+├── SerialExample                #  Example of using serial communication
+├── T-Display-S3-MIDI            #  T-Display-S3-MIDI Shield example
+├── TFT_Rainbow                  #  TFT_eSPI example
+├── factory                      #  factory example
+├── lv_demos                     #  lvgl demo                        
+├── nes                          #  NES game emulator
+├── ota                          #  Over-the-air upgrade example
+├── sd                           #  T-Display-TF Shield example
+├── tft                          #  TFT_eSPI example
+├── touch_test                   #  Capacitive touch test example
+└── usb_hid_pad                  #  Capacitive Touch Screen Simulation USB HID Example
 ```
 
 ## 3️⃣ PlatformIO Quick Start (Recommended)
