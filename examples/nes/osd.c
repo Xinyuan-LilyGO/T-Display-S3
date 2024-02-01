@@ -17,7 +17,7 @@
 #include <nes/nesinput.h>
 #include <nofconfig.h>
 #include <osd.h>
-
+#include <string.h>
 
 TimerHandle_t timer;
 
