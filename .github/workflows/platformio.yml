@@ -16,9 +16,16 @@ jobs:
     strategy:
       matrix:
         example:
-          - Arduino_GFX_PDQgraphicstest
           - Arduino_GFXDemo
+          - Arduino_GFX_PDQgraphicstest
+          - GetBatteryVoltage
+          - I2CScan
+          - ImageScroll
+          - MPR121TouchSensor
+          - PCBClock
+          - PokerS3
           - SerialExample
+          - T-Display-S3-MIDI
           - TFT_Rainbow
           - factory
           - lv_demos
@@ -28,7 +35,6 @@ jobs:
           - tft
           - touch_test
           - usb_hid_pad
-          - T-Display-S3-MIDI
 
     steps:
       - uses: actions/checkout@v3
