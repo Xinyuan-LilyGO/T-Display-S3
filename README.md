@@ -121,18 +121,29 @@
 
 ## 9️⃣ FAQ
 
-1. The program can be written normally, but there is still no display after writing
+1. **The screen does not light up when using battery?**
+   * When T-Display-S3 is powered by battery, GPIO15 must be set to HIGH to turn on the backlight.
+   * Please add the following two lines at the beginning of the setup
+   ```C++
+   void setup(){
+      //Turn on display power
+      pinMode(15, OUTPUT);
+      digitalWrite(15, HIGH);
+   }
+   
+   ```
+2.  **The program can be written normally, but there is still no display after writing**
    * If you are using **TFT_eSPI**, then you can try running `Arduino_GFXDemo` first. If nothing is displayed after writing, you can determine that there is a problem with the hardware.
    * If `Arduino_GFXDemo` is written normally, but **TFT_eSPI** is not displayed, then it can be judged that `User_Setup_Select` has been overwritten, then please read the third article of **FAQ** to reconfigure **TFT_eSPI**
-2. How to update **TFT_eSPI**, or confirm whether the **TFT_eSPI** pin configuration is correct?
+3. **How to update **TFT_eSPI**, or confirm whether the **TFT_eSPI** pin configuration is correct?**
    * Search for **TFT_eSPI** in the ArduinoIDE library manager and click Update.
    * Enter the default library manager installation location and open the **TFT_eSPI** folder. The default installation location is:(e.g. C:\Users\YourName\Documents\Arduino\libraries)
    * Open User_Setup_Select.h, comment out #include <User_Setup.h> which is enabled by default, or delete it
    * Search **Setup206_LilyGo_T_Display_S3**, find it, cancel the previous comment, then save it, and finally close it, so that TFT_eSPI uses the pin definition of T-Display-S3 by default
-   ```c
+   ```c++
    #include <User_Setups/Setup206_LilyGo_T_Display_S3.h>     // For the LilyGo T-Display S3 based ESP32S3 with ST7789 170 x 320 TFT
    ```
-3. Can't upload any sketch，Please enter the upload mode manually.
+4. **Can't upload any sketch，Please enter the upload mode manually.**
    * Connect the board via the USB cable
    * Press and hold the **BOOT** button , While still pressing the **BOOT** button
    * Press **RST** button
@@ -141,7 +152,7 @@
    * Upload sketch
    * Press the **RST** button to exit download mode
 
-4. If you use external power supply instead of USB-C, please turn off the CDC option. This is because the board will wait for USB access when it starts.
+5. **If you use external power supply instead of USB-C, please turn off the CDC option. This is because the board will wait for USB access when it starts.**
 
    * For Arduino IDE users, it can be turned off in the options , Please note that turning off USB CDC will turn off Serial redirection to USBC. At this time, you will not see any Serial message output when opening the port from USB-C, but output from GPIO43 and GPIO44.
 
@@ -160,7 +171,7 @@
        -UARDUINO_USB_CDC_ON_BOOT
    ```
 
-5. If all the above are invalid, please flash the factory firmware for quick verification, please check [here](./firmware/README.MD)
-6. Can I use an external 5V pin for power? Please see here [issues/205](https://github.com/Xinyuan-LilyGO/T-Display-S3/issues/205)
+6. **If all the above are invalid, please flash the factory firmware for quick verification, please check [here](./firmware/README.MD)**
+7. **Can I use an external 5V pin for power? Please see here [issues/205](https://github.com/Xinyuan-LilyGO/T-Display-S3/issues/205)**
 
 
