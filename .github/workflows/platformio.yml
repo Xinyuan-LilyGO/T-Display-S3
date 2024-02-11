@@ -1,33 +1,40 @@
 name: PlatformIO CI
 
 on:
+  workflow_dispatch:
   pull_request:
   push:
     paths:
       - "examples/**"
       - "src/**"
-
+      - "lib/**"
+      - "platformio.ini"
+      - ".github/workflows/platformio.yml"
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         example:
-          [
-            Arduino_GFX_PDQgraphicstest,
-            Arduino_GFXDemo,
-            SerialExample,
-            TFT_Rainbow,
-            factory,
-            lv_demos,
-            nes,
-            ota,
-            sd,
-            tft,
-            touch_test,
-            usb_hid_pad,
-            T-Display-S3-MIDI,
-          ]
+          - Arduino_GFXDemo
+          - Arduino_GFX_PDQgraphicstest
+          - GetBatteryVoltage
+          - I2CScan
+          - ImageScroll
+          - MPR121TouchSensor
+          - PCBClock
+          - PokerS3
+          - SerialExample
+          - T-Display-S3-MIDI
+          - TFT_Rainbow
+          - factory
+          - lv_demos
+          - nes
+          - ota
+          - sd
+          - tft
+          - touch_test
+          - usb_hid_pad
 
     steps:
       - uses: actions/checkout@v3
@@ -44,4 +51,6 @@ jobs:
         run: pip install --upgrade platformio
 
       - name: Run PlatformIO
-        run: pio run -e  ${{ matrix.example }}
+        run: |
+          export PLATFORMIO_SRC_DIR="examples/${{ matrix.example }}"
+          pio run -e  ${{ matrix.example }}

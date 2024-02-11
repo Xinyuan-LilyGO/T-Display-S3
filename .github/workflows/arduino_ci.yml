@@ -1,0 +1,61 @@
+name: Arduino_CI
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    paths:
+      - "examples/**"
+      - "src/**"
+      - "lib/**"
+      - "platformio.ini"
+      - ".github/workflows/arduino_ci.yml"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        examples:
+          - examples/Arduino_GFXDemo/Arduino_GFXDemo.ino
+          - examples/Arduino_GFX_PDQgraphicstest/Arduino_GFX_PDQgraphicstest.ino
+          - examples/factory/factory.ino
+          - examples/GetBatteryVoltage/GetBatteryVoltage.ino
+          - examples/I2CScan/I2CScan.ino
+          - examples/ImageScroll/ImageScroll.ino
+          - examples/lv_demos/lv_demos.ino
+          - examples/MPR121TouchSensor/MPR121TouchSensor.ino
+          - examples/nes/nes.ino
+          - examples/ota/ota.ino
+          - examples/PCBClock/PCBClock.ino
+          - examples/PokerS3/PokerS3.ino
+          - examples/sd/sd.ino
+          - examples/SerialExample/SerialExample.ino
+          - examples/T-Display-S3-MIDI/T-Display-S3-MIDI.ino
+          - examples/tft/tft.ino
+          - examples/TFT_Rainbow/TFT_Rainbow.ino
+          - examples/touch_test/touch_test.ino
+          - examples/usb_hid_pad/usb_hid_pad.ino
+
+    env:
+      EXAMPLES: ${{matrix.examples}}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Arduino Ci
+        run: |
+          wget https://downloads.arduino.cc/arduino-cli/arduino-cli_latest_Linux_64bit.tar.gz -O arduino-cli.tar.gz ;
+          sudo tar xf arduino-cli.tar.gz -C /usr/local/bin arduino-cli ;
+          arduino-cli config init ;
+          arduino-cli config add board_manager.additional_urls https://espressif.github.io/arduino-esp32/package_esp32_index.json ;
+          arduino-cli core update-index ;
+          arduino-cli core install esp32:esp32@2.0.14 ;
+
+      - name: Build examples
+        run: |
+          mkdir -p $HOME/Arduino/libraries ;
+          cp  -r $PWD/lib/* $HOME/Arduino/libraries
+
+          cd $GITHUB_WORKSPACE ;
+          arduino-cli compile -b esp32:esp32:feathers3 $PWD/$EXAMPLES ;

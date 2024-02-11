@@ -1,1 +1,0 @@
-Lilygo_T-DisplayS3_Touch_from Stuttgart.zip from https://www.thingiverse.com/thing:5933982/files , Provided by  @369Martin369 
