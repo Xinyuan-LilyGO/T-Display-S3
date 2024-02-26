@@ -175,8 +175,8 @@
 6. **If all the above are invalid, please flash the factory firmware for quick verification, please check [here](./firmware/README.MD)**
 7. **Can I use an external 5V pin for power? Please see here [issues/205](https://github.com/Xinyuan-LilyGO/T-Display-S3/issues/205)**
 
-## 10 Battery Model
-Q: **What to choose the battery model？**
+## 10. Battery Model
+Q: **What battery model to choose？**
 
 A: **Please choose the size of the 3.7V Li-Po battery which is**
 
