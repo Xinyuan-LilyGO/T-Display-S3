@@ -3,8 +3,8 @@
 // 如果不定义,则禁用触摸功能
 //!!!If you are unsure about the drive model, please switch the definition to try to see if the touch is normal
 
-// #define TOUCH_MODULES_CST_MUTUAL    //Early use of CST328
-#define TOUCH_MODULES_CST_SELF        //Use CST816 by default
+#define TOUCH_MODULES_CST_MUTUAL    //Early use of CST328
+// #define TOUCH_MODULES_CST_SELF        //Use CST816 by default
 
 #include "Arduino.h"
 #include "OneButton.h"
