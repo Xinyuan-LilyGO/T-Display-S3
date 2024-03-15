@@ -6,13 +6,19 @@
 
 | Product                 | Firmware Name                             |
 | ----------------------- | ----------------------------------------- |
-| [T-Display-S3][1]       | [firmware](./firmware_no_touch.bin)       |
-| [T-Display-S3-Touch][2] | [firmware](./firmware_touch.bin)          |
+| [T-Display-S3][1]       | [ScreenDetection](./ScreenDetection.bin)  |
+| [T-Display-S3][1]       | [Factory](./firmware_no_touch.bin)        |
+| [T-Display-S3-Touch][2] | [Factory](./firmware_touch.bin)           |
 | [T-Display-S3-MIDI][3]  | [firmware](./T-Display-S3-MIDI_firmware/) |
 
 [1]: https://www.lilygo.cc/products/t-display-s3?variant=42589373268149
 [2]: https://www.lilygo.cc/products/t-display-s3?variant=42351558590645
 [3]: https://www.lilygo.cc/products/t-display-s3?variant=43164741632181
+
+**ScreenDetection**
+After ScreenDetection is written, open the ArduinoIDE or PlatformIO serial monitor, and then press RST (the button on the side of T-Display-S3). The serial monitor should automatically reconnect and print out the relevant screen information. .If all the information is normal but the screen still does not display, you can determine that the screen is damaged.
+![](./images/log.png)
+
 
 ### Use ESP Download Tool
 
