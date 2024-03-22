@@ -26,7 +26,7 @@
     "bluetooth"
   ],
   "debug": {
-    "openocd_target": "esp32s3-builtin.cfg"
+    "openocd_board": "esp32s3-builtin.cfg"
   },
   "frameworks": [
     "arduino",
