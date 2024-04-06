@@ -45,7 +45,7 @@
 1. Install [Visual Studio Code](https://code.visualstudio.com/) and [Python](https://www.python.org/)
 2. Search for the `PlatformIO` plugin in the `VisualStudioCode` extension and install it.
 3. After the installation is complete, you need to restart `VisualStudioCode`
-4. After restarting `VisualStudioCode`, select `File` in the upper left corner of `VisualStudioCode` -> `Open Folder` -> select the `LilyGO AMOLED Series` directory
+4. After restarting `VisualStudioCode`, select `File` in the upper left corner of `VisualStudioCode` -> `Open Folder` -> select the `T-Display-S3` directory
 5. Wait for the installation of third-party dependent libraries to complete
 6. Click on the `platformio.ini` file, and in the `platformio` column
 7. Uncomment one of the lines `default_envs = xxxx` to make sure only one line works
