@@ -1,0 +1,177 @@
+#######################################
+# Syntax Coloring Map For SensorLib By lewis He
+# github:https://github.com/lewisxhe
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+ExtensionIOXL9555	KEYWORD1
+RTC_DateTime	KEYWORD1
+RTC_Alarm	KEYWORD1
+SensorPCF8563	KEYWORD1
+SensorQMC6310	KEYWORD1
+MagRange	KEYWORD1
+OutputRate	KEYWORD1
+CtrlReg	KEYWORD1
+OverSampleRatio	KEYWORD1
+DownSampleRatio	KEYWORD1
+
+SensorQMI8658	KEYWORD1
+AccelRange	KEYWORD1
+GyroRange	KEYWORD1
+AccelODR	KEYWORD1
+GyroODR	KEYWORD1
+LpfMode	KEYWORD1
+MotionEvent	KEYWORD1
+IntPin	KEYWORD1
+Fifo_Samples	KEYWORD1
+FIFO_Mode	KEYWORD1
+SampleMode	KEYWORD1
+CommandTable	KEYWORD1
+StatusReg	KEYWORD1
+TagPriority	KEYWORD1
+SensorStatus	KEYWORD1
+
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+# XL9555 Coloring Map 
+
+init	KEYWORD2
+deinit	KEYWORD2
+pinMode	KEYWORD2
+digitalRead	KEYWORD2
+digitalWrite	KEYWORD2
+digitalToggle	KEYWORD2
+readPort	KEYWORD2
+writePort	KEYWORD2
+readConfig	KEYWORD2
+configPort	KEYWORD2
+
+
+# PCF8563 Coloring Map 
+setDateTime	KEYWORD2
+getDateTime	KEYWORD2
+getAlarm	KEYWORD2
+enableAlarm	KEYWORD2
+disableAlarm	KEYWORD2
+resetAlarm	KEYWORD2
+isAlarmActive	KEYWORD2
+setAlarm	KEYWORD2
+setAlarmByMinutes	KEYWORD2
+setAlarmByDays	KEYWORD2
+setAlarmByHours	KEYWORD2
+setAlarmByWeekDay	KEYWORD2
+isCountdownTimerEnable	KEYWORD2
+isCountdownTimerActive	KEYWORD2
+enableCountdownTimer	KEYWORD2
+disableCountdownTimer	KEYWORD2
+setCountdownTimer	KEYWORD2
+clearCountdownTimer	KEYWORD2
+enableCLK	KEYWORD2
+strftime	KEYWORD2
+conversionUnixTime	KEYWORD2
+hwClockRead	KEYWORD2
+hwClockWrite	KEYWORD2
+getDayOfWeek	KEYWORD2
+getNextMonth	KEYWORD2
+getNextYear	KEYWORD2
+getLeapYear	KEYWORD2
+getDaysInMonth	KEYWORD2
+
+# SensorQMC6310 Coloring Map 
+reset	KEYWORD2
+getChipID	KEYWORD2
+getStatus	KEYWORD2
+isDataReady	KEYWORD2
+isDataOverflow	KEYWORD2
+setSelfTest	KEYWORD2
+setMode	KEYWORD2
+setCtrlRegister	KEYWORD2
+setDataOutputRate	KEYWORD2
+setOverSampleRate	KEYWORD2
+setDownSampleRate	KEYWORD2
+setSign	KEYWORD2
+configMagnetometer	KEYWORD2
+setMagRange	KEYWORD2
+setOffset	KEYWORD2
+readData	KEYWORD2
+setDeclination	KEYWORD2
+readPolar	KEYWORD2
+getRawX	KEYWORD2
+getRawY	KEYWORD2
+getRawZ	KEYWORD2
+getX	KEYWORD2
+getY	KEYWORD2
+getZ	KEYWORD2
+getMag	KEYWORD2
+dumpCtrlRegister	KEYWORD2
+
+# SensorQMI8658 Coloring Map 
+whoAmI	KEYWORD2
+getTimestamp	KEYWORD2
+getTemperature_C	KEYWORD2
+enableINT	KEYWORD2
+getIrqStatus	KEYWORD2
+enableDataReadyINT	KEYWORD2
+configAccelerometer	KEYWORD2
+configGyroscope	KEYWORD2
+configFIFO	KEYWORD2
+getFifoNeedBytes	KEYWORD2
+readFromFifo	KEYWORD2
+enableAccelerometer	KEYWORD2
+disableAccelerometer	KEYWORD2
+isEnableAccelerometer	KEYWORD2
+isEnableGyroscope	KEYWORD2
+enableGyroscope	KEYWORD2
+disableGyroscope	KEYWORD2
+getAccelRaw	KEYWORD2
+getAccelerometer	KEYWORD2
+getAccelerometerScales	KEYWORD2
+getGyroscopeScales	KEYWORD2
+getGyroRaw	KEYWORD2
+getGyroscope	KEYWORD2
+getDataReady	KEYWORD2
+enableSyncSampleMode	KEYWORD2
+disableSyncSampleMode	KEYWORD2
+enableLockingMechanism	KEYWORD2
+disableLockingMechanism	KEYWORD2
+powerDown	KEYWORD2
+powerOn	KEYWORD2
+getStatusRegister	KEYWORD2
+configActivityInterruptMap	KEYWORD2
+configPedometer	KEYWORD2
+getPedometerCounter	KEYWORD2
+clearPedometerCounter	KEYWORD2
+enablePedometer	KEYWORD2
+disablePedometer	KEYWORD2
+configTap	KEYWORD2
+enableTap	KEYWORD2
+disableTap	KEYWORD2
+getTapStatus	KEYWORD2
+configMotion	KEYWORD2
+enableMotionDetect	KEYWORD2
+disableMotionDetect	KEYWORD2
+configWakeOnMotion	KEYWORD2
+getChipUsid	KEYWORD2
+getChipFirmwareVersion	KEYWORD2
+readSensorStatus	KEYWORD2
+setWakeupMotionEventCallBack	KEYWORD2
+setTapEventCallBack	KEYWORD2
+setPedometerEventCallBack	KEYWORD2
+setNoMotionEventCallBack	KEYWORD2
+setAnyMotionEventCallBack	KEYWORD2
+setSignificantMotionEventCallBack	KEYWORD2
+setGyroDataReadyCallBack	KEYWORD2
+setAccelDataReadyEventCallBack	KEYWORD2
+setDataLockingEvevntCallBack	KEYWORD2
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+
