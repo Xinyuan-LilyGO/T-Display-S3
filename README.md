@@ -38,8 +38,8 @@
 ├── tft                          #  TFT_eSPI example
 ├── touch_test                   #  Capacitive touch test example
 ├── usb_hid_pad                  #  Capacitive Touch Screen Simulation USB HID Example
-├── ULP_ADC                   #  Example of ADC detection for ULP-FSM(arduino_esp32 version: 3.0.0-rc3)
-└── ULP_Count                  #  Example of register counting for ULP-FSM(arduino_esp32 version: 3.0.0-rc3)
+├── ULP_ADC                      #  Example of ADC detection for ULP-FSM(arduino_esp32 version: 3.0.0-rc3)
+└── ULP_Count                    #  Example of register counting for ULP-FSM(arduino_esp32 version: 3.0.0-rc3)
 ```
 
 ## 3️⃣ PlatformIO Quick Start (Recommended)
