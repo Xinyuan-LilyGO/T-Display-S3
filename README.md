@@ -117,8 +117,8 @@
 
 | Product(PinMap)         | schematic                                               | Dimensions                  | PCB 3D                                    | PinMap                                   |
 | ----------------------- | ------------------------------------------------------- | --------------------------- | ----------------------------------------- | ---------------------------------------- |
-| [T-Display-S3][1]       | [schematic](./schematic/T_Display_S3.pdf)               | [DWG](./dimensions/PCB.dwg) | [STP](./dimensions/t-display-s3-full.stp) | [PinMap](./image/T-DISPLAY-S3.png)       |
-| [T-Display-S3 Touch][1] | [schematic](./schematic/T_Display_S3.pdf)               | [DWG](./dimensions/PCB.dwg) | [STP](./dimensions/t-display-s3-full.stp) | [PinMap](./image/T-DISPLAY-S3-TOUCH.jpg) |
+| [T-Display-S3][1]       | [schematic](./schematic/T_Display_S3.pdf)               | [DWG](./dimensions/PCB.dwg) | [STP](./dimensions/t-display-s3-full.stp) | [PinMap](./image/T-DISPLAY-S3.jpg)       |
+| [T-Display-S3 Touch][1] | [schematic](./schematic/T_Display_S3.pdf)               | [DWG](./dimensions/PCB.dwg) | [STP](./dimensions/t-display-s3-full.stp) | [PinMap](./image/T-DISPLAY-S3-TOUCH.png) |
 | [T-Display-S3-MIDI][1]  | [schematic](./schematic/SCH_T-Display-S3-MIDI_V1.1.pdf) | DWG                         | STP                                       |                                          |
 
 
