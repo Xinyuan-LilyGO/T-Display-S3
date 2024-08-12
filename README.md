@@ -9,10 +9,10 @@
 | ----------------------- | ---------- | ----- | -------- | ---------- | -------- |
 | [T-Display-S3][1]       | ESP32-S3R8 | 16MB  | 8MB(OPI) | 170x320    | 1.9 Inch |
 | [T-Display-S3-Touch][2] | ESP32-S3R8 | 16MB  | 8MB(OPI) | 170x320    | 1.9 Inch |
-| [T-Display-S3-MIDI][3]  |            |       |          |            |          |
+| [T-Display-S3-MIDI][3]  | -          | -     | -        | -          | -        |
 
-[1]: https://www.lilygo.cc/products/t-display-s3?variant=42589373268149
-[2]: https://www.lilygo.cc/products/t-display-s3?variant=42351558590645
+[1]: https://www.lilygo.cc/products/t-display-s3?variant=42351558590645
+[2]: https://www.lilygo.cc/products/t-display-s3?variant=42589373268149
 [3]: https://www.lilygo.cc/products/t-display-s3?variant=43164741632181
 
 ## 2️⃣Examples
