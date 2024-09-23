@@ -143,6 +143,33 @@ static void lv_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data
 #endif
 
 
+// LilyGo  T-Display-S3  control backlight chip has 16 levels of adjustment range
+// The adjustable range is 0~16, 0 is the minimum brightness, 16 is the maximum brightness
+void setBrightness(uint8_t value)
+{
+    static uint8_t level = 0;
+    static uint8_t steps = 16;
+    if (value == 0) {
+        digitalWrite(PIN_LCD_BL, 0);
+        delay(3);
+        level = 0;
+        return;
+    }
+    if (level == 0) {
+        digitalWrite(PIN_LCD_BL, 1);
+        level = steps;
+        delayMicroseconds(30);
+    }
+    int from = steps - level;
+    int to = steps - value;
+    int num = (steps + to - from) % steps;
+    for (int i = 0; i < num; i++) {
+        digitalWrite(PIN_LCD_BL, 0);
+        digitalWrite(PIN_LCD_BL, 1);
+    }
+    level = value;
+}
+
 void setup()
 {
     // (POWER ON)IO15 must be set to HIGH before starting, otherwise the screen will not display when using battery
@@ -226,14 +253,6 @@ void setup()
             delay(120);
     }
 #endif
-    /* Lighten the screen with gradient */
-    ledcSetup(0, 10000, 8);
-    ledcAttachPin(PIN_LCD_BL, 0);
-    for (uint8_t i = 0; i < 0xFF; i++) {
-        ledcWrite(0, i);
-        delay(2);
-    }
-
     lv_init();
     lv_disp_buf = (lv_color_t *)heap_caps_malloc(LVGL_LCD_BUF_SIZE * sizeof(lv_color_t), MALLOC_CAP_DMA | MALLOC_CAP_INTERNAL);
 
@@ -267,6 +286,29 @@ void setup()
 #endif
 
     is_initialized_lvgl = true;
+
+    LV_IMG_DECLARE(lilygo2_gif);
+    lv_obj_t *logo_img = lv_gif_create(lv_scr_act());
+    lv_obj_center(logo_img);
+    lv_gif_set_src(logo_img, &lilygo2_gif);
+
+    // Adjust brightness 
+    pinMode(PIN_LCD_BL, OUTPUT);
+    // Brightness range : 0 ~ 16 level
+    for (int i = 0; i <= 16; ++i) {
+        setBrightness(i);
+        lv_timer_handler();
+        delay(50);
+    }
+
+    LV_DELAY(1200);
+    lv_obj_del(logo_img);
+
+    // https://github.com/Xinyuan-LilyGO/T-Display-S3/issues/278
+    Serial.println("tone ...");
+    tone(10, 1000, 5000);
+    delay(5000);
+    Serial.println("tone done .");
 
 
     SD_MMC.setPins(PIN_SD_CLK, PIN_SD_CMD, PIN_SD_D0);
@@ -308,16 +350,10 @@ void loop()
     }
 }
 
-LV_IMG_DECLARE(lilygo2_gif);
 
 void wifi_test(void)
 {
     String text;
-    lv_obj_t *logo_img = lv_gif_create(lv_scr_act());
-    lv_obj_center(logo_img);
-    lv_gif_set_src(logo_img, &lilygo2_gif);
-    LV_DELAY(1200);
-    lv_obj_del(logo_img);
 
     lv_obj_t *log_label = lv_label_create(lv_scr_act());
     lv_obj_align(log_label, LV_ALIGN_TOP_LEFT, 0, 0);
