@@ -292,7 +292,7 @@ void setup()
     lv_obj_center(logo_img);
     lv_gif_set_src(logo_img, &lilygo2_gif);
 
-    // Adjust brightness 
+    // Adjust brightness
     pinMode(PIN_LCD_BL, OUTPUT);
     // Brightness range : 0 ~ 16 level
     for (int i = 0; i <= 16; ++i) {
@@ -317,6 +317,8 @@ void setup()
     wifi_test();
 
     button1.attachClick([]() {
+        // Sleep display
+        esp_lcd_panel_io_tx_param(io_handle, 0x10, NULL, 0);
         pinMode(PIN_POWER_ON, OUTPUT);
         pinMode(PIN_LCD_BL, OUTPUT);
         digitalWrite(PIN_POWER_ON, LOW);
