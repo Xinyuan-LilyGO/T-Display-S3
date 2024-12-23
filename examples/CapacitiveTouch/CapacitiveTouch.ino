@@ -65,7 +65,15 @@ void setup()
             }
         }
     }
+    // Press the circular touch button on the screen to get the coordinate point, 
+    // and set it as the coordinate of the touch button
+    // T-Display-S3 CST816 touch panel, touch button coordinates are is 85 , 160
+    touch.setCenterButtonCoordinate(85, 360);
 
+    // Depending on the touch panel, not all touch panels have touch buttons.
+    touch.setHomeButtonCallback([](void *user_data) {
+        Serial.println("Home key pressed!");
+    }, NULL);
 
     // tft.setSwapBytes(true);
     tft.pushColors((uint16_t *)image, tft.width() * tft.height(), true);
