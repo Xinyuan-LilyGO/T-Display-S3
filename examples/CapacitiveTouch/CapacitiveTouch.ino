@@ -65,7 +65,7 @@ void setup()
             }
         }
     }
-    // Press the circular touch button on the screen to get the coordinate point, 
+    // Press the circular touch button on the screen to get the coordinate point,
     // and set it as the coordinate of the touch button
     // T-Display-S3 CST816 touch panel, touch button coordinates are is 85 , 160
     touch.setCenterButtonCoordinate(85, 360);
@@ -73,7 +73,20 @@ void setup()
     // Depending on the touch panel, not all touch panels have touch buttons.
     touch.setHomeButtonCallback([](void *user_data) {
         Serial.println("Home key pressed!");
+        static uint32_t checkMs = 0;
+        if (millis() > checkMs) {
+            if (digitalRead(TFT_BL)) {
+                digitalWrite(TFT_BL, LOW);
+            } else {
+                digitalWrite(TFT_BL, HIGH);
+            }
+        }
+        checkMs = millis() + 200;
     }, NULL);
+
+    // If you poll the touch, you need to turn off the automatic sleep function, otherwise there will be an I2C access error.
+    // If you use the interrupt method, you don't need to turn it off, saving power consumption
+    touch.disableAutoSleep();
 
     // tft.setSwapBytes(true);
     tft.pushColors((uint16_t *)image, tft.width() * tft.height(), true);
