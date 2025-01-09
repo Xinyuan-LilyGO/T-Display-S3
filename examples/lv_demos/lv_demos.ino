@@ -283,6 +283,26 @@ static void lv_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data
         touch.setMaxCoordinates(320, 170);
         touch.setMirrorXY(true, false);
         touch.setSwapXY(true);
+
+        // Press the circular touch button on the screen to get the coordinate point,
+        // and set it as the coordinate of the touch button
+        // T-Display-S3 CST328 touch panel, touch button coordinates are is 85 , 360
+        touch.setCenterButtonCoordinate(85, 360);
+
+        // Depending on the touch panel, not all touch panels have touch buttons.
+        touch.setHomeButtonCallback([](void *user_data) {
+            Serial.println("Home key pressed!");
+            static uint32_t checkMs = 0;
+            if (millis() > checkMs) {
+                if (digitalRead(PIN_LCD_BL)) {
+                    digitalWrite(PIN_LCD_BL, LOW);
+                } else {
+                    digitalWrite(PIN_LCD_BL, HIGH);
+                }
+            }
+            checkMs = millis() + 200;
+        }, NULL);
+
 #endif
 
         // link
