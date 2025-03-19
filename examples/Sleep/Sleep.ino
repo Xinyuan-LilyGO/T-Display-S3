@@ -9,6 +9,9 @@
  * switch macro. */
 #define LCD_MODULE_CMD_1
 
+#define uS_TO_S_FACTOR 1000000ULL  /* Conversion factor for micro seconds to seconds */
+#define TIME_TO_SLEEP  15        /* Time ESP32 will go to sleep (in seconds) */
+
 TFT_eSPI tft = TFT_eSPI();
 #define WAIT 1000
 unsigned long targetTime = 0; // Used for testing draw times
@@ -44,12 +47,8 @@ void setup()
 {
     pinMode(PIN_POWER_ON, OUTPUT);
     digitalWrite(PIN_POWER_ON, HIGH);
-
-    pinMode(PIN_LCD_BL, OUTPUT);
-    digitalWrite(PIN_LCD_BL, HIGH);
-
-
     Serial.begin(115200);
+
     Serial.println("Hello T-Display-S3");
 
     tft.begin();
@@ -71,6 +70,10 @@ void setup()
     tft.setSwapBytes(true);
     tft.pushImage(0, 0, 320, 170, (uint16_t *)img_logo);
 
+    pinMode(PIN_LCD_BL, OUTPUT);
+    digitalWrite(PIN_LCD_BL, HIGH);
+
+
     button1.attachClick([]() {
         tft.fillScreen(TFT_BLACK);
         tft.drawString("Sleep", 0, 0, 2);
@@ -90,6 +93,27 @@ void setup()
 void loop()
 {
     button1.tick();
+
+    // https://github.com/Xinyuan-LilyGO/T-Display-S3/issues/300
+    delay(1000);
+    tft.fillScreen(TFT_RED);
+    delay(1000);
+    tft.fillScreen(TFT_GREEN);
+    delay(1000);
+    tft.fillScreen(TFT_BLUE);
+    delay(1000);
+    digitalWrite(PIN_POWER_ON, LOW);
+    digitalWrite(PIN_LCD_BL, LOW);
+    tft.writecommand(0x10);
+    /*
+    First we configure the wake up source
+    We set our ESP32 to wake up every 15 seconds
+    */
+    esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
+    Serial.println("Setup ESP32 to sleep for every " + String(TIME_TO_SLEEP) +
+                   " Seconds");
+
+    esp_deep_sleep_start();
 }
 
 
