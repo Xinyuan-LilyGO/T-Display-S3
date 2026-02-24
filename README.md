@@ -29,6 +29,7 @@
 ├── PokerS3                      #  TFT_eSPI PokerS3  example by @VolosR
 ├── SerialExample                #  Example of using serial communication
 ├── T-Display-S3-MIDI            #  T-Display-S3-MIDI Shield example
+├── T-Display-S3-Piano           #  USB MIDI Piano visualizer with chord detection (ESP32_Host_MIDI + Gingoduino)
 ├── TFT_Rainbow                  #  TFT_eSPI example
 ├── factory                      #  factory example
 ├── lv_demos                     #  lvgl demo                        
