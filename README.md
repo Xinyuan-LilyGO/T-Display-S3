@@ -29,7 +29,9 @@
 ├── PokerS3                      #  TFT_eSPI PokerS3  example by @VolosR
 ├── SerialExample                #  Example of using serial communication
 ├── T-Display-S3-MIDI            #  T-Display-S3-MIDI Shield example
+├── T-Display-S3-BLE-Receiver     #  Wireless BLE MIDI receiver with piano display (ESP32_Host_MIDI)
 ├── T-Display-S3-Piano           #  USB MIDI Piano visualizer with chord detection (ESP32_Host_MIDI + Gingoduino)
+├── T-Display-S3-BLE-Receiver     #  Wireless BLE MIDI receiver with piano display (ESP32_Host_MIDI)
 ├── T-Display-S3-Piano-Debug      #  MIDI event monitor with raw packet inspector (ESP32_Host_MIDI)
 ├── T-Display-S3-Gingoduino       #  Real-time chord detection and harmonic analysis (ESP32_Host_MIDI + Gingoduino)
 ├── T-Display-S3-Queue            #  MIDI event queue visualizer for debugging (ESP32_Host_MIDI)
