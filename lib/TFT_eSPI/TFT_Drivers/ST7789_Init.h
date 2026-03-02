@@ -1,12 +1,13 @@
 
 // This is the command sequence that initialises the ST7789 driver
 //
-// This setup information uses simple 8 bit SPI writecommand() and writedata() functions
+// This setup information uses simple 8-bit SPI writecommand() and writedata() functions
 //
 // See ST7735_Setup.h file for an alternative format
 
 #ifndef INIT_SEQUENCE_3
 {
+  fillScreen(TFT_RED);
   writecommand(ST7789_SLPOUT);   // Sleep out
   delay(120);
 
@@ -24,7 +25,7 @@
 
   writecommand(ST7789_RAMCTRL);
   writedata(0x00);
-  writedata(0xE0); // 5 to 6 bit conversion: r0 = r5, b0 = b5
+  writedata(0xE0); // 5 to 6-bit conversion: r0 = r5, b0 = b5
 
   writecommand(ST7789_COLMOD);
   writedata(0x55);
@@ -141,8 +142,14 @@
   writecommand(ST7789_MADCTL);
   writedata(TFT_MAD_COLOR_ORDER);
 
-  writecommand(0x3A);
-  writedata(0x05);
+ // writecommand(ST7789_RAMCTRL);
+ // writedata(0x00);
+ // writedata(0xE0); // 5 to 6-bit conversion: r0 = r5, b0 = b5
+
+  writecommand(ST7789_COLMOD);
+  writedata(0x55);
+  delay(10);
+
   //--------------------------------ST7789V Frame rate setting----------------------------------//
   writecommand(ST7789_PORCTRL);
   writedata(0x0b);

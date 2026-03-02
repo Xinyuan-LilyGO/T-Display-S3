@@ -3,6 +3,10 @@
 // ESP32, ESP8266). It renders a png file that is stored in LittleFS
 // using the PNGdec library (available via library manager).
 
+// Note: The PNGDEC required lots of RAM to work (~40kbytes) so
+// this sketch is will not run on smaller memory processors (e.g.
+// ESP8266, STM32F103 etc.)
+
 // The test image is in the sketch "data" folder (press Ctrl+K to see it).
 // You must upload the image to LittleFS using the Arduino IDE Tools Data
 // Upload menu option (you may need to install extra tools for that).
@@ -17,7 +21,7 @@
 #include <PNGdec.h>
 
 PNG png;
-#define MAX_IMAGE_WDITH 240 // Adjust for your images
+#define MAX_IMAGE_WIDTH 240 // Adjust for your images
 
 int16_t xpos = 0;
 int16_t ypos = 0;
@@ -67,7 +71,7 @@ void loop()
         tft.startWrite();
         Serial.printf("image specs: (%d x %d), %d bpp, pixel type: %d\n", png.getWidth(), png.getHeight(), png.getBpp(), png.getPixelType());
         uint32_t dt = millis();
-        if (png.getWidth() > MAX_IMAGE_WDITH) {
+        if (png.getWidth() > MAX_IMAGE_WIDTH) {
           Serial.println("Image too wide for allocated line buffer size!");
         }
         else {
@@ -93,7 +97,7 @@ void loop()
 // you will need to adapt this function to suit.
 // Callback function to draw pixels to the display
 void pngDraw(PNGDRAW *pDraw) {
-  uint16_t lineBuffer[MAX_IMAGE_WDITH];
+  uint16_t lineBuffer[MAX_IMAGE_WIDTH];
   png.getLineAsRGB565(pDraw, lineBuffer, PNG_RGB565_BIG_ENDIAN, 0xffffffff);
   tft.pushImage(xpos, ypos + pDraw->y, pDraw->iWidth, 1, lineBuffer);
 }

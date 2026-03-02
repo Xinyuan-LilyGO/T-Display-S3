@@ -47,7 +47,7 @@ TFT_eSprite::TFT_eSprite(TFT_eSPI *tft)
 ** Function name:           createSprite
 ** Description:             Create a sprite (bitmap) of defined width and height
 ***************************************************************************************/
-// cast returned value to (uint8_t*) for 8 bit or (uint16_t*) for 16 bit colours
+// cast returned value to (uint8_t*) for 8-bit or (uint16_t*) for 16-bit colours
 void* TFT_eSprite::createSprite(int16_t w, int16_t h, uint8_t frames)
 {
 
@@ -88,8 +88,6 @@ void* TFT_eSprite::createSprite(int16_t w, int16_t h, uint8_t frames)
     _img8_2 = _img8 + (w * h + 1);
   }
 
-  if ( (_bpp == 4) && (_colorMap == nullptr)) createPalette(default_4bit_palette);
-
   // This is to make it clear what pointer size is expected to be used
   // but casting in the user sketch is needed due to the use of void*
   if ( (_bpp == 1) && (frames > 1) )
@@ -101,6 +99,8 @@ void* TFT_eSprite::createSprite(int16_t w, int16_t h, uint8_t frames)
   if (_img8)
   {
     _created = true;
+    if ( (_bpp == 4) && (_colorMap == nullptr)) createPalette(default_4bit_palette);
+
     rotation = 0;
     setViewport(0, 0, _dwidth, _dheight);
     setPivot(_iwidth/2, _iheight/2);
@@ -223,10 +223,7 @@ void* TFT_eSprite::callocSprite(int16_t w, int16_t h, uint8_t frames)
 ***************************************************************************************/
 void TFT_eSprite::createPalette(uint16_t colorMap[], uint8_t colors)
 {
-  if (_colorMap != nullptr)
-  {
-    free(_colorMap);
-  }
+  if (!_created) return;
 
   if (colorMap == nullptr)
   {
@@ -236,7 +233,7 @@ void TFT_eSprite::createPalette(uint16_t colorMap[], uint8_t colors)
   }
 
   // Allocate and clear memory for 16 color map
-  _colorMap = (uint16_t *)calloc(16, sizeof(uint16_t));
+  if (_colorMap == nullptr) _colorMap = (uint16_t *)calloc(16, sizeof(uint16_t));
 
   if (colors > 16) colors = 16;
 
@@ -254,6 +251,8 @@ void TFT_eSprite::createPalette(uint16_t colorMap[], uint8_t colors)
 ***************************************************************************************/
 void TFT_eSprite::createPalette(const uint16_t colorMap[], uint8_t colors)
 {
+  if (!_created) return;
+
   if (colorMap == nullptr)
   {
     // Create a color map using the default FLASH map
@@ -261,7 +260,7 @@ void TFT_eSprite::createPalette(const uint16_t colorMap[], uint8_t colors)
   }
 
   // Allocate and clear memory for 16 color map
-  _colorMap = (uint16_t *)calloc(16, sizeof(uint16_t));
+  if (_colorMap == nullptr) _colorMap = (uint16_t *)calloc(16, sizeof(uint16_t));
 
   if (colors > 16) colors = 16;
 
@@ -310,13 +309,9 @@ void* TFT_eSprite::setColorDepth(int8_t b)
   else if ( b > 1 ) _bpp = 4;
   else _bpp = 1;
 
-  // Can't change an existing sprite's colour depth so delete it
-  if (_created) free(_img8_1);
-
-  // If it existed, re-create the sprite with the new colour depth
-  if (_created)
-  {
-    _created = false;
+  // Can't change an existing sprite's colour depth so delete and create a new one
+  if (_created) {
+    deleteSprite();
     return createSprite(_dwidth, _dheight);
   }
 
@@ -380,7 +375,7 @@ void TFT_eSprite::deleteSprite(void)
   if (_colorMap != nullptr)
   {
     free(_colorMap);
-	_colorMap = nullptr;
+    _colorMap = nullptr;
   }
 
   if (_created)
@@ -1109,7 +1104,7 @@ void  TFT_eSprite::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_
   }
   else if (_bpp == 4)
   {
-    // The image is assumed to be 4 bit, where each byte corresponds to two pixels.
+    // The image is assumed to be 4-bit, where each byte corresponds to two pixels.
     // much faster when aligned to a byte boundary, because the alternative is slower, requiring
     // tedious bit operations.
 
@@ -1360,10 +1355,10 @@ void TFT_eSprite::writeColor(uint16_t color)
 {
   if (!_created ) return;
 
-  // Write 16 bit RGB 565 encoded colour to RAM
+  // Write 16-bit RGB 565 encoded colour to RAM
   if (_bpp == 16) _img [_xptr + _yptr * _iwidth] = color;
 
-  // Write 8 bit RGB 332 encoded colour to RAM
+  // Write 8-bit RGB 332 encoded colour to RAM
   else if (_bpp == 8) _img8[_xptr + _yptr * _iwidth] = (uint8_t) color;
 
   else if (_bpp == 4)
@@ -1990,10 +1985,6 @@ void TFT_eSprite::drawChar(int32_t x, int32_t y, uint16_t c, uint32_t color, uin
 {
   if ( _vpOoB || !_created ) return;
 
-  if ((x >= _vpW - _xDatum) || // Clip right
-      (y >= _vpH - _yDatum))   // Clip bottom
-    return;
-
   if (c < 32) return;
 #ifdef LOAD_GLCD
 //>>>>>>>>>>>>>>>>>>
@@ -2002,9 +1993,16 @@ void TFT_eSprite::drawChar(int32_t x, int32_t y, uint16_t c, uint32_t color, uin
 #endif
 //>>>>>>>>>>>>>>>>>>
 
+  if ((x >= _vpW - _xDatum) || // Clip right
+      (y >= _vpH - _yDatum))   // Clip bottom
+    return;
+
   if (((x + 6 * size - 1) < (_vpX - _xDatum)) || // Clip left
       ((y + 8 * size - 1) < (_vpY - _yDatum)))   // Clip top
     return;
+
+  if (c > 255) return;
+  if (!_cp437 && c > 175) c++;
 
   bool fillbg = (bg != color);
 
@@ -2140,7 +2138,7 @@ void TFT_eSprite::drawChar(int32_t x, int32_t y, uint16_t c, uint32_t color, uin
 
 /***************************************************************************************
 ** Function name:           drawChar
-** Description:             draw a unicode glyph into the sprite
+** Description:             draw a Unicode glyph into the sprite
 ***************************************************************************************/
   // TODO: Rationalise with TFT_eSPI
   // Any UTF-8 decoding must be done before calling drawChar()
@@ -2292,7 +2290,7 @@ int16_t TFT_eSprite::drawChar(uint16_t uniCode, int32_t x, int32_t y, uint8_t fo
 
       uint8_t tnp = 0; // Temporary copy of np for while loop
       uint8_t ts = textsize - 1; // Temporary copy of textsize
-      // 16 bit pixel count so maximum font size is equivalent to 180x180 pixels in area
+      // 16-bit pixel count so maximum font size is equivalent to 180x180 pixels in area
       // w is total number of pixels to plot to fill character block
       while (pc < w) {
         line = pgm_read_byte((uint8_t *)flash_address);
