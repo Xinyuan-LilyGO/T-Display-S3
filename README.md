@@ -37,6 +37,7 @@
 ├── T-Display-S3-Piano-Debug      #  MIDI event monitor with raw packet inspector (ESP32_Host_MIDI)
 ├── T-Display-S3-Gingoduino       #  Real-time chord detection and harmonic analysis (ESP32_Host_MIDI + Gingoduino)
 ├── T-Display-S3-Queue            #  MIDI event queue visualizer for debugging (ESP32_Host_MIDI)
+├── T-Display-S3-USB-Device       #  BLE-to-USB MIDI bridge — T-Display-S3 as USB MIDI interface (ESP32_Host_MIDI)
 ├── TFT_Rainbow                  #  TFT_eSPI example
 ├── factory                      #  factory example
 ├── lv_demos                     #  lvgl demo                        
