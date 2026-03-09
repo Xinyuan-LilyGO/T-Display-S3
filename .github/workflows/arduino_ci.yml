@@ -58,4 +58,4 @@ jobs:
           cp  -r $PWD/lib/* $HOME/Arduino/libraries
 
           cd $GITHUB_WORKSPACE ;
-          arduino-cli compile -b esp32:esp32:feathers3 $PWD/$EXAMPLES ;
+          arduino-cli compile -b esp32:esp32:lilygo_t_display_s3 $PWD/$EXAMPLES ;
