@@ -66,14 +66,8 @@ void setup()
     tft.pushImage(0, 0, 320, 170, (uint16_t *)img_logo);
     delay(2000);
 
-#if ESP_IDF_VERSION < ESP_IDF_VERSION_VAL(5,0,0)
-    ledcSetup(0, 2000, 8);
-    ledcAttachPin(PIN_LCD_BL, 0);
-    ledcWrite(0, 255);
-#else
-    ledcAttach(PIN_LCD_BL, 200, 8);
-    ledcWrite(PIN_LCD_BL, 255);
-#endif
+    pinMode(PIN_LCD_BL, OUTPUT);
+    digitalWrite(PIN_LCD_BL, HIGH);
 }
 
 void loop()

@@ -57,9 +57,8 @@ void setup()
     sprite.setTextColor(TFT_WHITE, 0x014C);
 
     delay(50);
-    ledcSetup(0, 10000, 8);
-    ledcAttachPin(38, 0);
-    ledcWrite(0, brightnesses[bright]);
+    pinMode(PIN_LCD_BL, OUTPUT);
+    digitalWrite(PIN_LCD_BL, HIGH);
 
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
@@ -119,7 +118,7 @@ void loop()
     if (digitalRead(0) == 0) { //if left button pressed , change brightness
         if (deb == 0) {
             deb = 1; bright++; if (bright == 7) bright = 0;
-            ledcWrite(0, brightnesses[bright]);
+            // ledcWrite(0, brightnesses[bright]);
         }
     } else deb = 0;
 

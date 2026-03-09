@@ -43,9 +43,8 @@ void setup()
     tft.setRotation(3);
     tft.fillScreen(TFT_BLACK);
 
-    ledcAttachPin(TFT_BL, 1);
-    ledcSetup(1, 2000, 8);
-    ledcWrite(1, 255);
+    pinMode(PIN_LCD_BL, OUTPUT);
+    digitalWrite(PIN_LCD_BL, HIGH);
 
     WiFi.disconnect();
     WiFi.mode(WIFI_STA);

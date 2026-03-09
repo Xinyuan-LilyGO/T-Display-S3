@@ -56,9 +56,9 @@ void setup()
 {
     pinMode(PIN_POWER_ON, OUTPUT);
     digitalWrite(PIN_POWER_ON, HIGH);
-    ledcSetup(0, 2000, 8);
-    ledcAttachPin(PIN_LCD_BL, 0);
-    ledcWrite(0, 255); /* Screen brightness can be modified by adjusting this parameter. (0-255) */
+
+    pinMode(PIN_LCD_BL, OUTPUT);
+    digitalWrite(PIN_LCD_BL, HIGH);
 
     Serial.begin(115200);
     Serial.println("Hello T-Display-S3 NES DEMO");

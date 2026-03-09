@@ -218,13 +218,8 @@ static void lv_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data
         }
 #endif
         /* Lighten the screen with gradient */
-        ledcSetup(0, 10000, 8);
-        ledcAttachPin(PIN_LCD_BL, 0);
-        for (uint8_t i = 0; i < 0xFF; i++)
-        {
-            ledcWrite(0, i);
-            delay(2);
-        }
+        pinMode(PIN_LCD_BL, OUTPUT);
+        digitalWrite(PIN_LCD_BL, HIGH);
 
         lv_init();
         lv_disp_buf = (lv_color_t *)heap_caps_malloc(LVGL_LCD_BUF_SIZE * sizeof(lv_color_t), MALLOC_CAP_DMA | MALLOC_CAP_INTERNAL);

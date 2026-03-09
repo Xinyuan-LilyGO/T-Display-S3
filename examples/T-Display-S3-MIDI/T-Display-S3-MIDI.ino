@@ -346,8 +346,8 @@ void setup()
     tft.fillScreen(TFT_BLACK);
 
     ledcAttachPin(TFT_BL, 1); // assign TFT_BL pin to channel 1
-    ledcSetup(1, 2000, 8);    // 2 kHz PWM, 8-bit resolution
-    ledcWrite(1, 255);        // brightness 0 - 255
+    pinMode(PIN_LCD_BL, OUTPUT);
+    digitalWrite(PIN_LCD_BL, HIGH);
     attachInterrupt(2, PCA9535_MPR121_External_Interrupt, FALLING);
 
     tft.setTextColor(TFT_RED);

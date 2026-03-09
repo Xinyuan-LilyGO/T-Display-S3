@@ -103,9 +103,8 @@ void setup()
     tft.setRotation(3);
     tft.pushImage(0, 0, 320, 170, (uint16_t *)img_logo);
 
-    ledcSetup(0, 2000, 8);
-    ledcAttachPin(PIN_LCD_BL, 0);
-    ledcWrite(0, 255);
+    pinMode(PIN_LCD_BL, OUTPUT);
+    digitalWrite(PIN_LCD_BL, HIGH);
 
     delay(2000);
 

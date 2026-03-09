@@ -37,9 +37,8 @@ void setup()
 
 #ifdef TFT_BL
     // turn display backlight on
-    ledcAttachPin(TFT_BL, 1);     // assign TFT_BL pin to channel 1
-    ledcSetup(1, 12000, 8);       // 12 kHz PWM, 8-bit resolution
-    ledcWrite(1, TFT_BRIGHTNESS); // brightness 0 - 255
+    pinMode(PIN_LCD_BL, OUTPUT);
+    digitalWrite(PIN_LCD_BL, HIGH);
 #endif
 
     // filesystem defined in hw_config.h

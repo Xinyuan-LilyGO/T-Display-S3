@@ -225,9 +225,8 @@ void setup()
     button.attachDoubleClick(doubleClick);
     button.attachClick(Click);
 
-    ledcSetup(0, 10000, 8);
-    ledcAttachPin(38, 0);
-    ledcWrite(0, 160);
+    pinMode(PIN_LCD_BL, OUTPUT);
+    digitalWrite(PIN_LCD_BL, HIGH);
 }
 
 
