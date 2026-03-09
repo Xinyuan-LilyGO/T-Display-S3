@@ -19,9 +19,6 @@ of 3 parts, 1.PCA9535_Test, 2.MPR121_Test, 3.PCM5102A_Test
 #include "Audio.h"
 #include "PCA95x5.h"
 
-#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5,0,0)
-#error  "The current version is not supported for the time being, please use a version below Arduino ESP32 3.0"
-#endif
 
 #define MPR121_PCA95x5_Count 1
 

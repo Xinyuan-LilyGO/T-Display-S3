@@ -2,9 +2,6 @@
 #include "Arduino_GFX_Library.h"
 #include "img_logo.h"
 
-#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5,0,0)
-#error  "The current version is not supported for the time being, please use a version below Arduino ESP32 3.0"
-#endif
 
 #define GFX_DEV_DEVICE LILYGO_T_DISPLAY_S3
 #define GFX_EXTRA_PRE_INIT()              \
