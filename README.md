@@ -17,7 +17,7 @@
 
 ## 2️⃣Examples
 
-```
+```bash
 ./examples/
 ├── Arduino_GFXDemo              #  Arduino_GFX example
 ├── Arduino_GFX_PDQgraphicstest  #  Arduino_GFX example
@@ -187,4 +187,23 @@
 6. **If all the above are invalid, please flash the factory firmware for quick verification, please check [here](./firmware/README.MD)**
 7. **Can I use an external 5V pin for power? Please see here [issues/205](https://github.com/Xinyuan-LilyGO/T-Display-S3/issues/205)**
 9. The default charging current is set at 500mA per hour. If you need to adjust the charging current, please see this [issue](https://github.com/Xinyuan-LilyGO/T-Display-S3/issues/230)
+
+## LED Description
+
+| FUNCTION      | COLOR |
+| ------------- | ----- |
+| CHARGE LED    | RED   |
+| V3V indicator | GREEN |
+
+### Charging indicator led status
+
+1. Flashes or dimly lights when no battery is connected
+2. Remains on while charging
+3. Turns off when fully charged
+
+### V3V indicator
+
+1. In USB mode, the green indicator light stays on.
+2. In battery power mode, GPIO15 lights up when high and turns off when low.
+3. V3V controls the V3V output of the header pins and provides power to the screen.
 
