@@ -163,10 +163,6 @@ void loop()
     delay(5);
 }
 
-#endif
-
-
-
 // TFT Pin check
 #if PIN_LCD_WR  != TFT_WR || \
     PIN_LCD_RD  != TFT_RD || \
@@ -190,3 +186,9 @@ void loop()
 #error  "Error! Please make sure <User_Setups/Setup206_LilyGo_T_Display_S3.h> is selected in <TFT_eSPI/User_Setup_Select.h>"
 #error  "Error! Please make sure <User_Setups/Setup206_LilyGo_T_Display_S3.h> is selected in <TFT_eSPI/User_Setup_Select.h>"
 #endif
+
+#endif
+
+
+
+
