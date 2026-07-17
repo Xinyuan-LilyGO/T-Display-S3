@@ -58,8 +58,6 @@
 
 下载 [Flash Download Tool](https://docs.espressif.com/projects/esp-test-tools/en/latest/esp32/production_stage/tools/flash_download_tool.html)
 
-> **注意**: 下图演示的是 ESP32-S3 的刷写流程。如果你使用的是 ESP32，请选择 ESP32 而非 ESP32-S3。
-
 ![ESP Download Tool](./images/esp_downloader.gif)
 
 刷写完成后按 **RST** 按钮重置。

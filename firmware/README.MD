@@ -58,8 +58,6 @@ The easiest way - download [LILYGO Spark](https://lilygo.cc/pages/lilygo-spark) 
 
 Download [Flash Download Tool](https://docs.espressif.com/projects/esp-test-tools/en/latest/esp32/production_stage/tools/flash_download_tool.html)
 
-> **Note**: The GIF below demonstrates the flashing process for ESP32-S3. If you are using ESP32, select ESP32 instead of ESP32-S3.
-
 ![ESP Download Tool](./images/esp_downloader.gif)
 
 Press **RST** button to reset after flashing.
