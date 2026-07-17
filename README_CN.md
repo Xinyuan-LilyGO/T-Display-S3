@@ -228,7 +228,7 @@ T-Display-S3 的 ESP-IDF 版本示例，请前往 [LilyGo-Display-IDF](https://g
          -UARDUINO_USB_CDC_ON_BOOT        ; 关闭：启动时不阻塞
      ```
 
-6. **如果以上方法都无效，请刷写出厂固件快速验证。** 参见 [这里](./firmware/README.MD)。
+6. **如果以上方法都无效，请刷写出厂固件快速验证。** 参见 [这里](https://github.com/Xinyuan-LilyGO/T-Display-S3/tree/main/firmware)。
 
 7. **能否使用外部 5V 引脚供电？** 参见 [issues/205](https://github.com/Xinyuan-LilyGO/T-Display-S3/issues/205)。
 

@@ -228,7 +228,7 @@ For the ESP-IDF version of T-Display-S3 examples, see [LilyGo-Display-IDF](https
          -UARDUINO_USB_CDC_ON_BOOT        ; Disable: no blocking on startup
      ```
 
-6. **If none of the above works, flash the factory firmware for quick verification.** See [here](./firmware/README.MD).
+6. **If none of the above works, flash the factory firmware for quick verification.** See [here](https://github.com/Xinyuan-LilyGO/T-Display-S3/tree/main/firmware).
 
 7. **Can I use an external 5V pin for power?** See [issues/205](https://github.com/Xinyuan-LilyGO/T-Display-S3/issues/205).
 
