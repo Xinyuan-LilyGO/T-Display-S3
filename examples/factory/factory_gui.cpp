@@ -1,6 +1,7 @@
 #include "factory_gui.h"
 #include "Arduino.h"
 #include "SD_MMC.h"
+#include "esp_chip_info.h"
 #include "lvgl.h"
 
 LV_FONT_DECLARE(font_Alibaba);
@@ -31,31 +32,31 @@ void ui_begin()
     lv_obj_t *tv2 = lv_tileview_add_tile(dis, 0, 1, LV_DIR_VER);
     lv_obj_t *tv3 = lv_tileview_add_tile(dis, 0, 2, LV_DIR_VER);
     /* page 1 */
-    lv_obj_t *main_cout = lv_obj_create(tv1);
-    lv_obj_set_size(main_cout, LV_PCT(100), LV_PCT(100));
-    lv_obj_clear_flag(main_cout, LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_set_style_border_width(main_cout, 0, 0);
-    lv_obj_set_style_bg_color(main_cout, UI_BG_COLOR, 0);
+    lv_obj_t *main_cont = lv_obj_create(tv1);
+    lv_obj_set_size(main_cont, LV_PCT(100), LV_PCT(100));
+    lv_obj_clear_flag(main_cont, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_style_border_width(main_cont, 0, 0);
+    lv_obj_set_style_bg_color(main_cont, UI_BG_COLOR, 0);
 
-    lv_obj_t *hour_cout = lv_obj_create(main_cout);
-    lv_obj_set_size(hour_cout, 140, 140);
-    lv_obj_align(hour_cout, LV_ALIGN_CENTER, -85, 0);
-    lv_obj_set_style_bg_color(hour_cout, UI_FRAME_COLOR, 0);
-    lv_obj_clear_flag(hour_cout, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_t *hour_cont = lv_obj_create(main_cont);
+    lv_obj_set_size(hour_cont, 140, 140);
+    lv_obj_align(hour_cont, LV_ALIGN_CENTER, -85, 0);
+    lv_obj_set_style_bg_color(hour_cont, UI_FRAME_COLOR, 0);
+    lv_obj_clear_flag(hour_cont, LV_OBJ_FLAG_SCROLLABLE);
 
-    lv_obj_t *min_cout = lv_obj_create(main_cout);
-    lv_obj_set_size(min_cout, 140, 140);
-    lv_obj_align(min_cout, LV_ALIGN_CENTER, 85, 0);
-    lv_obj_set_style_bg_color(min_cout, UI_FRAME_COLOR, 0);
-    lv_obj_clear_flag(min_cout, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_t *min_cont = lv_obj_create(main_cont);
+    lv_obj_set_size(min_cont, 140, 140);
+    lv_obj_align(min_cont, LV_ALIGN_CENTER, 85, 0);
+    lv_obj_set_style_bg_color(min_cont, UI_FRAME_COLOR, 0);
+    lv_obj_clear_flag(min_cont, LV_OBJ_FLAG_SCROLLABLE);
 
-    lv_obj_t *seg_text = lv_label_create(main_cout);
+    lv_obj_t *seg_text = lv_label_create(main_cont);
     lv_obj_align(seg_text, LV_ALIGN_CENTER, 0, -10);
     lv_obj_set_style_text_font(seg_text, &font_Alibaba, 0);
     lv_label_set_text(seg_text, ":");
     lv_obj_set_style_text_color(seg_text, UI_FONT_COLOR, 0);
 
-    lv_obj_t *hour_text = lv_label_create(hour_cout);
+    lv_obj_t *hour_text = lv_label_create(hour_cont);
     lv_obj_center(hour_text);
     lv_obj_set_style_text_font(hour_text, &font_Alibaba, 0);
     lv_label_set_text(hour_text, "12");
@@ -63,7 +64,7 @@ void ui_begin()
     lv_obj_add_event_cb(hour_text, update_text_subscriber_cb, LV_EVENT_MSG_RECEIVED, NULL);
     lv_msg_subsribe_obj(MSG_NEW_HOUR, hour_text, (void *)"%02d");
 
-    lv_obj_t *min_text = lv_label_create(min_cout);
+    lv_obj_t *min_text = lv_label_create(min_cont);
     lv_obj_center(min_text);
     lv_obj_set_style_text_font(min_text, &font_Alibaba, 0);
     lv_label_set_text(min_text, "34");
@@ -78,7 +79,7 @@ void ui_begin()
     lv_style_set_line_rounded(&style_line, true);
 
     lv_obj_t *line;
-    line = lv_line_create(main_cout);
+    line = lv_line_create(main_cont);
     lv_line_set_points(line, line_points, 2);
     lv_obj_add_style(line, &style_line, 0);
     lv_obj_center(line);
@@ -93,21 +94,28 @@ void ui_begin()
     String text;
     esp_chip_info_t t;
     esp_chip_info(&t);
-    text = "chip : ";
+    text = "Chip : ";
     text += ESP.getChipModel();
     text += "\n";
-    text += "psram size : ";
+    text += "PSRAM size : ";
     text += ESP.getPsramSize() / 1024;
     text += " KB\n";
-    text += "flash size : ";
+    text += "Flash size : ";
     text += ESP.getFlashChipSize() / 1024;
     text += " KB\n";
+    text += "Arduino version : ";
+    text += String(ESP_ARDUINO_VERSION_MAJOR);
+    text += ".";
+    text += String(ESP_ARDUINO_VERSION_MINOR);
+    text += ".";
+    text += String(ESP_ARDUINO_VERSION_PATCH);
+    text += "\n";
 
     extern bool inited_sd;
     if (inited_sd) {
         text += "SD card found\r\nSize : ";
         text += SD_MMC.cardSize() / 1024;
-        text += " kb";
+        text += " KB";
     } else {
         text += "SD card not found";
     }
@@ -118,7 +126,7 @@ void ui_begin()
     lv_obj_t *bat_label = lv_label_create(tv3);
     lv_obj_align_to(bat_label, debug_label, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
     lv_obj_add_event_cb(bat_label, update_text_subscriber_cb, LV_EVENT_MSG_RECEIVED, NULL);
-    lv_msg_subsribe_obj(MSG_NEW_VOLT, bat_label, (void *)"VOLT : %d mV");
+    lv_msg_subsribe_obj(MSG_NEW_VOLT, bat_label, (void *)"Voltage : %d mV");
 
     lv_obj_t *touch_label = lv_label_create(tv3);
     lv_obj_align_to(touch_label, bat_label, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);

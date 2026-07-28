@@ -9,7 +9,7 @@
 #if defined(TOUCH_MODULES_CST_MUTUAL) ||defined(TOUCH_MODULES_CST_SELF)
 #include "TouchLib.h"
 #endif
-// #define TOUCH_READ_FROM_INTERRNUPT
+// #define TOUCH_READ_FROM_INTERRUPT
 
 /* The product now has two screens, and the initialization code needs a small change in the new version. The LCD_MODULE_CMD_1 is used to define the
  * switch macro. */
@@ -34,13 +34,15 @@
 #include <HTTPClient.h>
 #include <WiFiClientSecure.h>
 #include <esp_wifi.h>
+#include <esp_netif.h>
+#include <WiFiMulti.h>
 
 // The factory program uses the Chinese time zone by default.
 // Commenting this line will automatically get the time zone, provided that the SSL certificate is valid.
 // Please pay attention to check the validity of the certificate.
 // The current configuration certificate is valid until Mar 29 22:40:08 2025 GMT
 
-// #define CUSTOM_TIMEZONE         "CST-8"
+#define CUSTOM_TIMEZONE         "CST-8"
 
 
 #ifndef CUSTOM_TIMEZONE
@@ -157,11 +159,14 @@ TouchLib touch(Wire, PIN_IIC_SDA, PIN_IIC_SCL, CTS820_SLAVE_ADDRESS, PIN_TOUCH_R
 
 bool inited_touch = false;
 bool inited_sd = false;
-#if defined(TOUCH_READ_FROM_INTERRNUPT)
+#if defined(TOUCH_READ_FROM_INTERRUPT)
 bool get_int_signal = false;
 #endif
 
+WiFiMulti wifiMulti;
+
 void wifi_test(void);
+void init_sntp_time(void);
 void timeavailable(struct timeval *t);
 void printLocalTime();
 void SmartConfig();
@@ -190,7 +195,7 @@ static void example_lvgl_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_
 #if defined(TOUCH_MODULES_CST_MUTUAL) ||defined(TOUCH_MODULES_CST_SELF)
 static void lv_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
 {
-#if defined(TOUCH_READ_FROM_INTERRNUPT)
+#if defined(TOUCH_READ_FROM_INTERRUPT)
     if (get_int_signal) {
         get_int_signal = false;
         touch.read();
@@ -248,9 +253,6 @@ void setup()
     pinMode(PIN_POWER_ON, OUTPUT);
     digitalWrite(PIN_POWER_ON, HIGH);
     Serial.begin(115200);
-
-    sntp_servermode_dhcp(1); // (optional)
-    configTime(GMT_OFFSET_SEC, DAY_LIGHT_OFFSET_SEC, NTP_SERVER1, NTP_SERVER2);
 
     pinMode(PIN_LCD_RD, OUTPUT);
     digitalWrite(PIN_LCD_RD, HIGH);
@@ -318,6 +320,8 @@ void setup()
     // the gap is LCD panel specific, even panels with the same driver IC, can
     // have different gap value
     esp_lcd_panel_set_gap(panel_handle, 0, 35);
+
+    esp_lcd_panel_disp_on_off(panel_handle, true);
 #if defined(LCD_MODULE_CMD_1)
     for (uint8_t i = 0; i < (sizeof(lcd_st7789v) / sizeof(lcd_cmd_t)); i++) {
         esp_lcd_panel_io_tx_param(io_handle, lcd_st7789v[i].cmd, lcd_st7789v[i].data, lcd_st7789v[i].len & 0x7f);
@@ -351,7 +355,7 @@ void setup()
         indev_drv.read_cb = lv_touchpad_read;
         lv_indev_drv_register(&indev_drv);
     }
-#if defined(TOUCH_READ_FROM_INTERRNUPT)
+#if defined(TOUCH_READ_FROM_INTERRUPT)
     attachInterrupt(
         PIN_TOUCH_INT, [] { get_int_signal = true; }, FALLING);
 #endif
@@ -373,7 +377,7 @@ void setup()
         delay(50);
     }
 
-    LV_DELAY(1200);
+    LV_DELAY(800);
     lv_obj_del(logo_img);
 
     // https://github.com/Xinyuan-LilyGO/T-Display-S3/issues/278
@@ -424,123 +428,291 @@ void loop()
     }
 }
 
+static String mask_wifi_ssid_for_display(const String &ssid)
+{
+    const uint8_t WIFI_SSID_MASK_LEN = 2;
+    const uint8_t WIFI_SSID_VISIBLE_MAX = 18;
+
+    if (ssid.length() == 0) {
+        return "<hidden>";
+    }
+    if (ssid.length() <= WIFI_SSID_MASK_LEN) {
+        return "**";
+    }
+
+    uint8_t visible_len = ssid.length() - WIFI_SSID_MASK_LEN;
+    if (visible_len > WIFI_SSID_VISIBLE_MAX) {
+        visible_len = WIFI_SSID_VISIBLE_MAX;
+    }
+
+    String masked = ssid.substring(0, visible_len);
+    masked += "**";
+    return masked;
+}
+
+void init_sntp_time(void)
+{
+    static bool inited = false;
+    if (inited) {
+        return;
+    }
+
+    (void)esp_netif_init();
+    sntp_set_time_sync_notification_cb(timeavailable);
+#if defined(LWIP_DHCP_GET_NTP_SRV) && LWIP_DHCP_GET_NTP_SRV
+#if ESP_ARDUINO_VERSION_MAJOR >= 3
+    esp_sntp_servermode_dhcp(true);
+#else
+    sntp_servermode_dhcp(1);
+#endif
+#endif
+    configTime(GMT_OFFSET_SEC, DAY_LIGHT_OFFSET_SEC, NTP_SERVER1, NTP_SERVER2);
+    inited = true;
+}
 
 void wifi_test(void)
 {
+    const uint8_t WIFI_SCAN_DISPLAY_MAX = 8;
+    const uint32_t SMARTCONFIG_WAIT_MAX = 120 * 1000;
+    const uint32_t CONNECT_POLL_MS = 250;
     String text;
 
     lv_obj_t *log_label = lv_label_create(lv_scr_act());
     lv_obj_align(log_label, LV_ALIGN_TOP_LEFT, 0, 0);
     lv_obj_set_width(log_label, LV_PCT(100));
-    lv_label_set_long_mode(log_label, LV_LABEL_LONG_SCROLL);
+    lv_label_set_long_mode(log_label, LV_LABEL_LONG_WRAP);
     lv_label_set_recolor(log_label, true);
 
-    lv_label_set_text(log_label, "Scan WiFi");
+    lv_label_set_text(log_label, "Scanning WiFi...");
     LV_DELAY(1);
+
     WiFi.mode(WIFI_STA);
+    init_sntp_time();
     WiFi.disconnect();
     delay(100);
-    int n = WiFi.scanNetworks();
+
+    int n = WiFi.scanNetworks(false, true);
     Serial.println("scan done");
-    if (n == 0) {
-        text = "no networks found";
+    if (n < 0) {
+        text = "WiFi scan failed\n";
+    } else if (n == 0) {
+        text = "No WiFi networks found\n";
     } else {
-        text = n;
+        text = String(n);
         text += " networks found\n";
-        for (int i = 0; i < n; ++i) {
+        int display_count = n > WIFI_SCAN_DISPLAY_MAX ? WIFI_SCAN_DISPLAY_MAX : n;
+        for (int i = 0; i < display_count; ++i) {
+            String ssid = mask_wifi_ssid_for_display(WiFi.SSID(i));
             text += (i + 1);
             text += ": ";
-            text += WiFi.SSID(i);
+            text += ssid;
             text += " (";
             text += WiFi.RSSI(i);
-            text += ")";
-            text += (WiFi.encryptionType(i) == WIFI_AUTH_OPEN) ? " \n" : "*\n";
-            delay(10);
+            text += "dBm) ";
+            text += (WiFi.encryptionType(i) == WIFI_AUTH_OPEN) ? "open\n" : "lock\n";
+        }
+        if (n > display_count) {
+            text += "... ";
+            text += n - display_count;
+            text += " more\n";
         }
     }
-
-    wifi_config_t current_conf;
-    esp_wifi_get_config(WIFI_IF_STA, &current_conf);
-    if (strlen((const char *)current_conf.sta.ssid) == 0) {
-        // Just for testing.
-        Serial.println("Use default WiFi SSID & PASSWORD!!");
-        WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-    } else {
-        Serial.println("Begin WiFi");
-        WiFi.begin();
-    }
-
+    WiFi.scanDelete();
     lv_label_set_text(log_label, text.c_str());
     Serial.println(text);
-    LV_DELAY(2000);
-    text = "Connecting to ";
-    Serial.print("Connecting to ");
-    text += (char *)(current_conf.sta.ssid);
-    text += "\n";
-    Serial.print((char *)(current_conf.sta.ssid));
-    // WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    LV_DELAY(1000);
 
-    uint32_t last_tick = millis();
-    bool is_smartconfig_connect = false;
-    lv_label_set_long_mode(log_label, LV_LABEL_LONG_WRAP);
-    while (WiFi.status() != WL_CONNECTED) {
-        Serial.print(".");
-        text += ".";
+    wifi_config_t current_conf = {};
+    esp_err_t config_ret = esp_wifi_get_config(WIFI_IF_STA, &current_conf);
+    size_t ssid_len = config_ret == ESP_OK ? strnlen((const char *)current_conf.sta.ssid, sizeof(current_conf.sta.ssid)) : 0;
+    String target_ssid;
+    String display_target_ssid;
+    bool has_factory_wifi = false;
+
+    Serial.println("Use factory WiFi SSID & PASSWORD!!");
+    if (strlen(WIFI_SSID) > 0) {
+        wifiMulti.addAP(WIFI_SSID, WIFI_PASSWORD);
+        target_ssid = WIFI_SSID;
+        display_target_ssid = mask_wifi_ssid_for_display(WIFI_SSID);
+        has_factory_wifi = true;
+    }
+#ifdef WIFI_SSID2
+    if (strlen(WIFI_SSID2) > 0) {
+        wifiMulti.addAP(WIFI_SSID2, WIFI_PASSWORD2);
+        if (target_ssid.length() > 0) {
+            target_ssid += " / ";
+            display_target_ssid += " / ";
+        }
+        target_ssid += WIFI_SSID2;
+        display_target_ssid += mask_wifi_ssid_for_display(WIFI_SSID2);
+        has_factory_wifi = true;
+    }
+#endif
+
+    uint32_t connect_start = millis();
+    uint32_t last_update = connect_start;
+    bool connected = false;
+
+    if (has_factory_wifi) {
+        text = "Connecting to ";
+        Serial.print("Connecting to ");
+        Serial.println(target_ssid);
+        text += display_target_ssid;
+        text += "\n";
         lv_label_set_text(log_label, text.c_str());
-        LV_DELAY(100);
-        if (millis() - last_tick > WIFI_CONNECT_WAIT_MAX) { /* Automatically start smartconfig when connection times out */
-            text += "\nConnection timed out, start smartconfig";
-            lv_label_set_text(log_label, text.c_str());
-            LV_DELAY(100);
-            is_smartconfig_connect = true;
-            WiFi.mode(WIFI_AP_STA);
-            Serial.println("\r\n wait for smartconfig....");
-            text += "\r\n wait for smartconfig....";
-            text += "\nPlease use #ff0000 EspTouch# Apps to connect to the distribution network";
-            lv_label_set_text(log_label, text.c_str());
-            WiFi.beginSmartConfig();
-            while (1) {
-                LV_DELAY(100);
-                if (WiFi.smartConfigDone()) {
-                    Serial.println("\r\nSmartConfig Success\r\n");
-                    Serial.printf("SSID:%s\r\n", WiFi.SSID().c_str());
-                    Serial.printf("PSW:%s\r\n", WiFi.psk().c_str());
-                    text += "\nSmartConfig Success";
-                    text += "\nSSID:";
-                    text += WiFi.SSID().c_str();
-                    text += "\nPSW:";
-                    text += WiFi.psk().c_str();
-                    lv_label_set_text(log_label, text.c_str());
-                    LV_DELAY(1000);
-                    last_tick = millis();
-                    break;
-                }
+
+        while (millis() - connect_start < WIFI_CONNECT_WAIT_MAX) {
+            if (wifiMulti.run(CONNECT_POLL_MS) == WL_CONNECTED) {
+                connected = true;
+                break;
             }
+            Serial.print(".");
+            if (millis() - last_update >= 1000) {
+                text += ".";
+                lv_label_set_text(log_label, text.c_str());
+                last_update = millis();
+            }
+            LV_DELAY(CONNECT_POLL_MS);
+        }
+    } else {
+        text = "Factory WiFi not configured\n";
+        Serial.println(text);
+        lv_label_set_text(log_label, text.c_str());
+    }
+
+    if (!connected && ssid_len > 0) {
+        String saved_ssid = (const char *)current_conf.sta.ssid;
+        Serial.print("\r\nFactory WiFi timed out, try saved WiFi: ");
+        Serial.println(saved_ssid);
+        text += "\nFactory WiFi timeout";
+        text += "\nTry saved WiFi: ";
+        text += mask_wifi_ssid_for_display(saved_ssid);
+        text += "\n";
+        lv_label_set_text(log_label, text.c_str());
+
+        WiFi.disconnect();
+        WiFi.mode(WIFI_STA);
+        WiFi.begin();
+        connect_start = millis();
+        last_update = connect_start;
+        while (millis() - connect_start < WIFI_CONNECT_WAIT_MAX) {
+            if (WiFi.status() == WL_CONNECTED) {
+                connected = true;
+                break;
+            }
+            if (millis() - last_update >= 1000) {
+                Serial.print(".");
+                text += ".";
+                lv_label_set_text(log_label, text.c_str());
+                last_update = millis();
+            }
+            LV_DELAY(100);
         }
     }
-    if (!is_smartconfig_connect) {
-        text += "\nCONNECTED \nTakes ";
-        Serial.print("\n CONNECTED \nTakes ");
-        text += millis() - last_tick;
-        Serial.print(millis() - last_tick);
+
+    if (!connected) {
+        Serial.println("\r\nConnection timed out, start smartconfig");
+        text += "\nTimeout, start SmartConfig";
+        text += "\nUse EspTouch app to configure";
+        lv_label_set_text(log_label, text.c_str());
+        LV_DELAY(500);
+
+        WiFi.disconnect();
+        WiFi.mode(WIFI_AP_STA);
+        WiFi.beginSmartConfig();
+
+        uint32_t smartconfig_start = millis();
+        last_update = smartconfig_start;
+        bool smartconfig_done = false;
+        while (millis() - smartconfig_start < SMARTCONFIG_WAIT_MAX) {
+            if (WiFi.smartConfigDone()) {
+                smartconfig_done = true;
+                break;
+            }
+            if (millis() - last_update >= 1000) {
+                Serial.print("s");
+                text += ".";
+                lv_label_set_text(log_label, text.c_str());
+                last_update = millis();
+            }
+            LV_DELAY(100);
+        }
+
+        if (smartconfig_done) {
+            Serial.println("\r\nSmartConfig Success");
+            Serial.printf("SSID:%s\r\n", WiFi.SSID().c_str());
+            Serial.printf("PSW:%s\r\n", WiFi.psk().c_str());
+            text += "\nSmartConfig Success";
+            text += "\nConnecting to ";
+            text += mask_wifi_ssid_for_display(WiFi.SSID());
+            text += "\n";
+            lv_label_set_text(log_label, text.c_str());
+
+            connect_start = millis();
+            last_update = connect_start;
+            while (millis() - connect_start < WIFI_CONNECT_WAIT_MAX) {
+                if (WiFi.status() == WL_CONNECTED) {
+                    connected = true;
+                    break;
+                }
+                if (millis() - last_update >= 1000) {
+                    Serial.print(".");
+                    text += ".";
+                    lv_label_set_text(log_label, text.c_str());
+                    last_update = millis();
+                }
+                LV_DELAY(100);
+            }
+        } else {
+            Serial.println("\r\nSmartConfig timed out");
+            text += "\nSmartConfig timeout";
+            lv_label_set_text(log_label, text.c_str());
+        }
+        WiFi.stopSmartConfig();
+    }
+
+    if (connected) {
+        uint32_t elapsed = millis() - connect_start;
+        text += "\nCONNECTED\nSSID: ";
+        text += mask_wifi_ssid_for_display(WiFi.SSID());
+        text += "\nIP: ";
+        text += WiFi.localIP().toString();
+        text += "\nRSSI: ";
+        text += WiFi.RSSI();
+        text += " dBm\nTakes ";
+        text += elapsed;
         text += " ms\n";
-        Serial.println(" millseconds");
+        Serial.print("\nCONNECTED\nTakes ");
+        Serial.print(elapsed);
+        Serial.println(" milliseconds");
+        lv_label_set_text(log_label, text.c_str());
+    } else {
+        text += "\nWiFi not connected\nContinue without network";
+        Serial.println("WiFi not connected, continue without network");
         lv_label_set_text(log_label, text.c_str());
     }
+
     LV_DELAY(2000);
+#ifdef CUSTOM_TIMEZONE
     setTimezone();
+#else
+    if (connected) {
+        setTimezone();
+    }
+#endif
     ui_begin();
 }
 
 void printLocalTime()
 {
-    struct tm timeinfo;
-    if (!getLocalTime(&timeinfo)) {
-        Serial.println("No time available (yet)");
-        return;
-    }
-    Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
+  struct tm timeinfo;
+  if(!getLocalTime(&timeinfo)){
+    Serial.println("No time available (yet)");
+    return;
+  }
+  Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
 }
+
 // Callback function (get's called when time adjusts via NTP)
 void timeavailable(struct timeval *t)
 {
@@ -548,8 +720,6 @@ void timeavailable(struct timeval *t)
     printLocalTime();
     WiFi.disconnect();
 }
-
-
 
 void setTimezone()
 {
