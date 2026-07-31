@@ -166,6 +166,8 @@ T-Display-S3 的 ESP-IDF 版本示例，请前往 [LilyGo-Display-IDF](https://g
 > digitalWrite(15, HIGH);
 > ```
 > SD 卡引脚（SD CMD/CLK/D0）仅适用于带 SD Shield 扩展板的型号，标准版 T-Display-S3 板载没有 SD 卡槽。
+>
+> 电池ADC引脚只能没有插入USB-C的时候读取电池电压，插入USB-C之后无法读取电池的电压
 
 ## 7. ESP32 基础示例
 

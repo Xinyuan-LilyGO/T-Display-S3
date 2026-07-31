@@ -166,6 +166,9 @@ For the ESP-IDF version of T-Display-S3 examples, see [LilyGo-Display-IDF](https
 > digitalWrite(15, HIGH);
 > ```
 > SD card pins (SD CMD/CLK/D0) are only available on boards with the SD Shield add-on. The standard T-Display-S3 board does not have an onboard SD card slot.
+>
+> The battery ADC pin can only read the battery voltage when the USB-C port is not plugged in; it cannot read the battery voltage after the USB-C port is plugged in.
+>
 
 ## 7. ESP32 Basic Examples
 
