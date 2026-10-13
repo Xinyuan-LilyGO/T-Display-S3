@@ -254,7 +254,6 @@ For the ESP-IDF version of T-Display-S3 examples, see [LilyGo-Display-IDF](https
 
 1. In USB mode, the green indicator stays on.
 2. In battery power mode, GPIO15 lights up when high and turns off when low.
-3. V3V controls the V3V output of the header pins and provides power to the screen.
 
 ### WiFi antenna
 
